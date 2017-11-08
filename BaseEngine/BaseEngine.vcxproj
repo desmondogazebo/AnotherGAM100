@@ -113,12 +113,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CustomStateManager.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="TextDataLoader.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseEngine.h" />
+    <ClInclude Include="BaseStateManager.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="CustomStateManager.h" />
     <ClInclude Include="TextDataLoader.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="Utilities.h" />

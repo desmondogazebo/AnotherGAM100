@@ -21,6 +21,9 @@
     <ClCompile Include="TextDataLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CustomStateManager.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseEngine.h">
@@ -39,6 +42,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDataLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseStateManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomStateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
