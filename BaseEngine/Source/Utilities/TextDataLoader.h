@@ -3,6 +3,8 @@ filename    TextDataLoader.h
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
 
+Created on 31 October 2017
+
 Brief Description:
 This file contains utility functions to load and access the data within a text
 file.
@@ -17,7 +19,7 @@ file.
 
 /* Public Struct & Functions */
 
-/* TODO Personal : Add more functionality to the TDL for features such as CSV loading or file writing that will be used in the team assignment. */
+/* TODO RLRA : Add more functionality to the TDL for features such as CSV loading or file writing that will be used in the team assignment. */
 
 typedef struct TextDataLoader
 {
@@ -33,17 +35,17 @@ typedef struct TextDataLoader
 	/* Loader Exit, calls free if memory was allocated to the TextData */
 	void(*Exit)();
 
-} TextDataLoader_;
+}TextDataLoader;
 
 /* Text Data Loader Functions */
 /* Initiallizes the data within the struct */
-void TextDataLoader_Initiallize(TextDataLoader_* Self);
+void TextDataLoader_Initiallize(TextDataLoader* Self);
 
 /* Loads the specified Resource into the TextData within the struct */
-void TextDataLoader_LoadResource(TextDataLoader_* Self, const char* Resource);
+void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource);
 
 /* Destructs the data within the struct */
-void TextDataLoader_Exit(TextDataLoader_* Self);
+void TextDataLoader_Exit(TextDataLoader* Self);
 
 /* Test Cases */
 void TextDataLoader_TestWorkspace();

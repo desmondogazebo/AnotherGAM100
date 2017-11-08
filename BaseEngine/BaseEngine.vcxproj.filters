@@ -19,12 +19,21 @@
     <Filter Include="Source Files\Map">
       <UniqueIdentifier>{5112884d-0b7c-4889-ac17-5fcce5321c9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{892055d2-194c-4d7d-bb63-a1bb84d9f2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{cef9fb00-6dc4-4c49-9577-e171b4d3cba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StateManager">
+      <UniqueIdentifier>{a212dd05-839f-44ed-9250-861eae03f04b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StateManager">
+      <UniqueIdentifier>{af526794-5a91-477f-a081-65d0733593c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextDataLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rooms\Room.c">
@@ -32,6 +41,12 @@
     </ClCompile>
     <ClCompile Include="Source\Rooms\RoomFactory.c">
       <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StateManager\CustomStateManager.c">
+      <Filter>Source Files\StateManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utilities\TextDataLoader.c">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,14 +65,20 @@
     <ClInclude Include="Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextDataLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Rooms\Room.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rooms\RoomFactory.h">
       <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StateManager\BaseStateManager.h">
+      <Filter>Header Files\StateManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StateManager\CustomStateManager.h">
+      <Filter>Header Files\StateManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utilities\TextDataLoader.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

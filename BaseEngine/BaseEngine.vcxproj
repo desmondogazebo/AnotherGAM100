@@ -116,14 +116,17 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="Source\Rooms\Room.c" />
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
-    <ClCompile Include="TextDataLoader.c" />
+    <ClCompile Include="Source\StateManager\CustomStateManager.c" />
+    <ClCompile Include="Source\Utilities\TextDataLoader.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseEngine.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Source\Rooms\Room.h" />
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
-    <ClInclude Include="TextDataLoader.h" />
+    <ClInclude Include="Source\StateManager\BaseStateManager.h" />
+    <ClInclude Include="Source\StateManager\CustomStateManager.h" />
+    <ClInclude Include="Source\Utilities\TextDataLoader.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vector2.h" />

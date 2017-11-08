@@ -12,15 +12,17 @@ file.
 #include <stdlib.h>
 #include <string.h>
 
-/* Text Data Loader Functions */
+///****************************************************************************
+// Function Definitions
+///****************************************************************************
 /* Initiallizes the data within the struct */
-void TextDataLoader_Initiallize(TextDataLoader_* Self)
+void TextDataLoader_Initiallize(TextDataLoader* Self)
 {
 	Self->TextData = NULL;
 }
 
 /* Loads the specified Resource into the TextData within the struct */
-void TextDataLoader_LoadResource(TextDataLoader_* Self, const char* Resource)
+void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource)
 {
 	FILE* FilePtr = NULL;
 	/* Opens the file as a read only resource */
@@ -69,7 +71,7 @@ void TextDataLoader_LoadResource(TextDataLoader_* Self, const char* Resource)
 }
 
 /* Destructs the data within the struct */
-void TextDataLoader_Exit(TextDataLoader_* Self)
+void TextDataLoader_Exit(TextDataLoader* Self)
 {
 	// Check if I have loaded something before
 	if (Self->TextData)
@@ -80,8 +82,6 @@ void TextDataLoader_Exit(TextDataLoader_* Self)
 		// Free the top level pointer
 		free(Self->TextData);
 	}
-	//// Memory Leak Display
-	//_CrtDumpMemoryLeaks();
 }
 
 /* Test Cases */
@@ -89,7 +89,7 @@ void TextDataLoader_TestWorkspace()
 {
 	/* How to use the TextDataLoader */
 	/* Linking Example - Variable Order */
-	TextDataLoader_ Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit};
+	TextDataLoader Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit};
 	/* Call Example */
 	/* Call Initiallize */
 	Loader.Initiallize(&Loader);

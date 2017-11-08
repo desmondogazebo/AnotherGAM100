@@ -18,7 +18,8 @@ This file shows an outline of the Engine
 #include "Vector2.h"
 #include "timer.h"
 #include "Console.h"
-#include "TextDataLoader.h"
+#include "Source\Utilities\TextDataLoader.h"
+#include "Source\StateManager\CustomStateManager.h"
 
 //Class Structure of the Engine
 typedef struct
@@ -32,13 +33,15 @@ typedef struct
 	//Time and console entities
 	Timer* g_timer;
 	Console* g_console;
-	TextDataLoader_ ldr;
+	TextDataLoader ldr;
 
 	//global variables
 	int g_quitGame;
 	unsigned short FPS;
 	unsigned short frameTime;
 } Engine;
+
+CustomStateManager CSM;
 
 /*
 Function Name: init
@@ -74,13 +77,16 @@ void init(void* ptr, unsigned short fps, Vec2 s_size, Vec2 f_size)
 
 	/* How to use the TextDataLoader */
 	/* Linking Example - Variable Order */
-	TextDataLoader_ Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit };
+	TextDataLoader Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit };
 	E->ldr = Loader;
 	/* Call Example */
 	/* Call Initiallize */
 	E->ldr.Initiallize(&E->ldr);
 	/* Load a file into a reference of the loader */
 	E->ldr.LoadResource(&E->ldr, "Resources/DigiPenLogo(Unofficial).txt");
+
+	// Added to showcase the custom state manager
+	CustomStateManager_Setup(&CSM);
 }
 
 /*
@@ -100,6 +106,8 @@ void update(void* ptr, Timer* t)
 	{
 		E->g_quitGame = 1;
 	}
+	// Added to showcase the custom state manager
+	CSM.Update(&CSM, 0);
 }
 
 /*
