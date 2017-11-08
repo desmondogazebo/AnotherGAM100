@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -114,11 +114,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="Source\Rooms\Room.c" />
+    <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="TextDataLoader.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseEngine.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Source\Rooms\Room.h" />
+    <ClInclude Include="Source\Rooms\RoomFactory.h" />
     <ClInclude Include="TextDataLoader.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="Utilities.h" />
