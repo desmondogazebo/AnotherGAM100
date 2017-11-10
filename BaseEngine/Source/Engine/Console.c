@@ -1,70 +1,21 @@
-/******************************************************************************
-filename    Console.h
-author      Qingping Zheng
-DP email    qingping.zheng@digipen.edu
-course      GAM100
-
-Brief Description:
-This header file shows an outline of the Console generation.
-
-******************************************************************************/
-
-//Header Guards
-#ifndef _CONSOLE_H
-#define _CONSOLE_H
-
-//Required Includes
-#include <windows.h>
-#include "Vector2.h"
-
-//Class Structure of the Console
-typedef struct {
-
-	//C-Styled constructor
-	void(*c_Console)(void* ptr, Vector2 size, char* title); 
-
-	//Fills screen with color Hex values.
-	void(*clearBuffer)(void* ptr, WORD c); 
-
-	//Supposed private variables
-	HANDLE hScreenBuffer;
-	CHAR_INFO* screenDataBuffer;
-	COORD consoleSize;
-	int screenDataBufferSize;
-
-	//Setters for Size and Font
-	void(*setConsoleSize)(void* ptr, Vector2 dimensions);
-	void(*setConsoleFont)(void* ptr, Vec2 size, LPCWSTR fontName);
-
-	//Render-Type functions
-	void(*flushBufferToConsole)(void* ptr);
-	void(*writeToBuffer)(void* ptr, Vector2 loc, char* data, WORD c);
-	void(*ptr_writeToBuffer)(void* ptr, char** data, unsigned short row, unsigned short col, WORD c);
-	void(*writeToConsole)(void* ptr, const CHAR_INFO* theBuffer);
-
-	//Cleanup function
-	void(*shutdownConsole)(void* ptr);
-} Console;
+#include "Console.h"
 
 /*
 Function Name: con_Console
 Brief Description: A constructor for the console entity.
 Parameters:
-	ptr : the console pointer itself, to allow for internal referencing
-	size : defines the size of the console window in terms of characters
-	title : sets the title of the command window.
+ptr : the console pointer itself, to allow for internal referencing
+size : defines the size of the console window in terms of characters
+title : sets the title of the command window.
 */
 
-void con_Console(void* ptr, Vector2 size, char* title)
+void Console_constructor(Console* c, Vector2 size, char* title)
 {
-	//Typecast of the void pointer
-	Console* c = (Console*)ptr;
-
 	//Sets console title
 	SetConsoleTitleA(title);
 	//Sets the default CodePage of the console.
 	//Read more here
-	//https://en.wikipedia.org/wiki/Code_page_437
+	//https://en.wikipedia.org/wiki/CodEngine_pagEngine_437
 	SetConsoleOutputCP(437);
 	//Sets the size of the Data buffer, we should not need more than this.
 	c->screenDataBufferSize = size.x * size.y;
@@ -82,10 +33,10 @@ void con_Console(void* ptr, Vector2 size, char* title)
 		CONSOLE_TEXTMODE_BUFFER,// must be TEXTMODE 
 		NULL);					// NULL since we are already working on the screen buffer
 
-	//sets the screen buffer to be active for our use.
+								//sets the screen buffer to be active for our use.
 	SetConsoleActiveScreenBuffer(c->hScreenBuffer);
 	//sets the size of the console
-	c->setConsoleSize(c, size);
+	c->SetConsoleSize(c, size);
 
 	//Hides the annoying blinking cursor from the screen.
 	CONSOLE_CURSOR_INFO     cursorInfo;
@@ -97,17 +48,15 @@ void con_Console(void* ptr, Vector2 size, char* title)
 /*
 Function Name: m_setConsoleFont
 Brief Description: prefixed with an m, this is a supposed private function
-	to allow setting of the console font
+to allow setting of the console font
 Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 size : defines the size of the font by pixels
 fontName : name of the font to use
 */
 
-void m_setConsoleFont(void* ptr, Vec2 size, LPCWSTR fontName)
+void Console_setConsoleFont(Console* c, Vec2 size, LPCWSTR fontName)
 {
-	//Typecast of the void pointer
-	Console* c = (Console*)ptr;
 	//read more here : https://docs.microsoft.com/en-us/windows/console/console-font-infoex
 	CONSOLE_FONT_INFOEX cfi;
 	cfi.cbSize = sizeof cfi;
@@ -131,12 +80,10 @@ Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 */
 
-void m_shutdownConsole(void* ptr)
+void Console_shutdownConsole(Console* c)
 {
-	//Typecast of the void pointer
-	Console* c = (Console*)ptr;
 	//clear the screen  and fill it with black
-	c->clearBuffer(c, 0x00);
+	c->ClearBuffer(c, 0x00);
 	//free the data buffer memory
 	free(c->screenDataBuffer);
 	//remove the currently active screen buffer
@@ -151,12 +98,10 @@ Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 */
 
-void m_flushBufferToConsole(void* ptr)
+void Console_flushBufferToConsole(Console* c)
 {
-	//Typecast of the void pointer
-	Console* c = (Console*)ptr;
 	//Write from data buffer to console
-	c->writeToConsole(c, c->screenDataBuffer);
+	c->WriteToConsole(c, c->screenDataBuffer);
 }
 
 /*
@@ -168,11 +113,8 @@ ptr : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 */
 
-void m_setConsoleSize(void* ptr, Vec2 size)
+void Console_setConsoleSize(Console* c, Vec2 size)
 {
-	//Typecast of the void pointer
-	Console* c = (Console*)ptr;
-	
 	//grabs the buffer info
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	GetConsoleScreenBufferInfo(c->hScreenBuffer, &info);
@@ -204,10 +146,8 @@ ptr : the console pointer itself, to allow for internal referencing
 c : the desired color to write with
 */
 
-void m_clearBuffer(void* ptr, WORD c)
+void Console_clearBuffer(Console* e, WORD c)
 {
-	//Typecast of the void pointer
-	Console* e = (Console*)ptr;
 	//fill up every slot with a ' ' character of a certain color
 	for (int i = 0; i < e->screenDataBufferSize; ++i)
 	{
@@ -227,10 +167,8 @@ data : the data to write
 c : the desired color to write with
 */
 
-void m_writeToBuffer(void* ptr, Vector2 loc, char* data, WORD c)
+void Console_writeToBuffer(Console* e, Vector2 loc, char* data, WORD c)
 {
-	//Typecast of the void pointer
-	Console* e = (Console*)ptr;
 	//Set the write position
 	size_t index = max(loc.x + e->consoleSize.X * loc.y, 0);
 	//find the length of the data
@@ -245,11 +183,8 @@ void m_writeToBuffer(void* ptr, Vector2 loc, char* data, WORD c)
 	}
 }
 
-void m_ptr_writeToBuffer(void* ptr, char** data, unsigned short row, unsigned short col, WORD c)
+void Console_ptr_writeToBuffer(Console* e, char** data, unsigned short row, unsigned short col, WORD c)
 {
-	//Typecast of the void pointer
-	Console* e = (Console*)ptr;
-
 	//write the data to buffer manually
 	for (size_t y = 0; y < row; ++y)
 	{
@@ -274,13 +209,11 @@ to write info to the console using a buffer
 Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 theBuffer : the desired buffer to write to. Note that this allows for
-	multi-buffering.
+multi-buffering.
 */
 
-void m_writeToConsole(void* ptr, const CHAR_INFO* theBuffer)
+void Console_writeToConsole(Console* e, const CHAR_INFO* theBuffer)
 {
-	//Typecast of the void pointer
-	Console* e = (Console*)ptr;
 	//A filler variable
 	COORD characterPos = { 0, 0 };
 	//the area to write, in this case, the entire console.
@@ -289,13 +222,10 @@ void m_writeToConsole(void* ptr, const CHAR_INFO* theBuffer)
 	WriteConsoleOutputA(e->hScreenBuffer, theBuffer, e->consoleSize, characterPos, &WriteRegion);
 }
 
-//forward declaration
-Console* MakeConsole(); 
-
 /*
 Function Name: MakeConsole
 Brief Description: Allocates memory needed for the console entity and
-	binds the relevant functions to said entity.
+binds the relevant functions to said entity.
 */
 
 Console* MakeConsole()
@@ -303,18 +233,16 @@ Console* MakeConsole()
 	//Allocation of memory
 	Console* e = (Console*)malloc(sizeof(Console));
 	//Binding functions
-	e->c_Console = &con_Console;
-	e->setConsoleFont = &m_setConsoleFont;
-	e->flushBufferToConsole = &m_flushBufferToConsole;
-	e->clearBuffer = &m_clearBuffer;
-	e->writeToBuffer = &m_writeToBuffer;
-	e->setConsoleSize = &m_setConsoleSize;
-	e->writeToConsole = &m_writeToConsole;
-	e->shutdownConsole = &m_shutdownConsole;
-	e->ptr_writeToBuffer = &m_ptr_writeToBuffer;
+	e->Init = &Console_constructor;
+	e->SetConsoleFont = &Console_setConsoleFont;
+	e->FlushBufferToConsole = &Console_flushBufferToConsole;
+	e->ClearBuffer = &Console_clearBuffer;
+	e->WriteToBuffer = &Console_writeToBuffer;
+	e->SetConsoleSize = &Console_setConsoleSize;
+	e->WriteToConsole = &Console_writeToConsole;
+	e->ShutdownConsole = &Console_shutdownConsole;
+	e->Ptr_writeToBuffer = &Console_ptr_writeToBuffer;
 
 	//Returns the modified console entity
 	return e;
 }
-
-#endif // ! 

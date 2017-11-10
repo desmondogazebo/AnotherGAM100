@@ -52,4 +52,39 @@ char* d_toString(double value, int length)
 	return str;
 }
 
+//GLOBAL ENUM OF COLORS
+
+enum {
+	c_black,
+	c_dblue,
+	c_dgreen,
+	c_daqua,
+	c_dred,
+	c_purple,
+	c_lime,
+	c_lgrey,
+	c_dgrey,
+	c_blue,
+	c_green,
+	c_aqua,
+	c_red,
+	c_pink,
+	c_yellow,
+	c_white,
+	TOTAL_COLOR
+} Color;
+
+/*
+Function Name: getColor
+Brief Description: gives a unsigned short Color value
+Parameters:
+foreground : the enum color value of the foreground
+background : the enum color value of the background
+*/
+
+WORD getColor(enum Color foreground, enum Color background)
+{
+	return ((int)foreground * 16) + background; //hex base 16
+}
+
 #endif

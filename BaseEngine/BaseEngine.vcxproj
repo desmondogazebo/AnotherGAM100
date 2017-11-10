@@ -22,13 +22,13 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9D509AAB-DAF2-416A-A27C-252CF6611420}</ProjectGuid>
     <RootNamespace>BaseEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -114,22 +114,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="Source\Engine\BaseEngine.c" />
+    <ClCompile Include="Source\Engine\Console.c" />
+    <ClCompile Include="Source\Engine\timer.c" />
     <ClCompile Include="Source\Rooms\Room.c" />
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseEngine.h" />
-    <ClInclude Include="Console.h" />
+    <ClInclude Include="Source\Engine\BaseEngine.h" />
+    <ClInclude Include="Source\Engine\Console.h" />
+    <ClInclude Include="Source\Engine\timer.h" />
     <ClInclude Include="Source\Rooms\Room.h" />
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
     <ClInclude Include="Source\Utilities\TextDataLoader.h" />
-    <ClInclude Include="timer.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Source\Utilities\Utilities.h" />
+    <ClInclude Include="Source\Utilities\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,7 +15,7 @@ This file implements the main function and loop.
 #include <crtdbg.h>
 
 //Header Include
-#include "BaseEngine.h"
+#include "Source\Engine\BaseEngine.h"
 
 /* The main program loop */
 int main()
@@ -33,7 +33,7 @@ int main()
 	//Define desired 'fontSize', where both
 	//width and height are scalable
 	Vec2 fontSize = { 10, 18 };
-
+	
 	//Initialize the Engine
 	theEngine->Init(theEngine, 60, windowSize, fontSize);
 
@@ -48,7 +48,7 @@ int main()
 		//Render Cycle
 		theEngine->Render(theEngine);
 		//Frame cap, preventing program from running faster
-		theEngine->g_timer->WaitUntil(theEngine->g_timer, theEngine->frameTime);
+		theEngine->g_timer->WaitUntil(theEngine->g_timer, (long long)theEngine->frameTime);
 	}
 	//shutdown
 	theEngine->Shutdown(theEngine);
