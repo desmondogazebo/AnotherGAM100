@@ -20,7 +20,7 @@ Room* RoomFactory_CreateRoom()
 	room->mapToRender = NULL;
 	
 	// Debug code
-	printf("Room created");
+	//printf("Room created");
 
 	return room;
 }

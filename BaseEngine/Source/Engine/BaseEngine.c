@@ -80,14 +80,14 @@ void Engine_render(Engine* E)
 	//Clear the Screen every frame
 	E->g_console->ClearBuffer(E->g_console, 0x0F);
 
-	//E->g_console->ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, 0x0A);
+	E->g_console->Ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, getColor(c_black, c_white));
 
 	//TEST CODE
 	Vec2 test = { 0, 0 };
 	double i = 1 / E->g_timer->GetElapsedTime(E->g_timer);
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
 	char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1
-	E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_dgrey));
+	E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
 	free(input); //VERY IMPORTANT
 
 				 //Send the new data to the Console

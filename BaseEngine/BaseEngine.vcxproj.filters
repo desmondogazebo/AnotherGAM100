@@ -63,6 +63,9 @@
     <ClCompile Include="Source\Engine\timer.c">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utilities\Utilities.c">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">

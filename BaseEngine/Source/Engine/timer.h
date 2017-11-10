@@ -1,3 +1,15 @@
+/******************************************************************************
+filename    timer.h
+author      Qingping Zheng
+DP email    qingping.zheng@digipen.edu
+course      GAM100
+
+Brief Description:
+This header file contains information for the console timer, which enables
+the engines real-time system.
+
+******************************************************************************/
+
 #ifndef _TIMER_H
 #define _TIMER_H
 
@@ -19,6 +31,7 @@ typedef struct Timer{
 
 }Timer;
 
+//Function Prototypes (PUBLIC)
 int Timer_initTimer(Timer* t);
 void Timer_terminateTimer(Timer* t);
 void Timer_startTimer(Timer* t);

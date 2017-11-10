@@ -193,10 +193,22 @@ void Console_ptr_writeToBuffer(Console* e, char** data, unsigned short row, unsi
 			if (data[y][x] == '\n')
 			{
 				e->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
+				e->screenDataBuffer[x + y * col].Attributes = c;
 			}
+			//done
+			/*else if (data[y][x] == ' ')
+			{
+				e->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
+				e->screenDataBuffer[x + y * col].Attributes = 0;
+			}*/
 			else
 			{
 				e->screenDataBuffer[x + y * col].Char.AsciiChar = data[y][x];
+				e->screenDataBuffer[x + y * col].Attributes = c;
+			}
+			if (data[y][x] == ' ')
+			{
+
 			}
 		}
 	}

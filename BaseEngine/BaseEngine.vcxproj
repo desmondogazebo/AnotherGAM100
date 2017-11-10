@@ -121,6 +121,7 @@
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
+    <ClCompile Include="Source\Utilities\Utilities.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\BaseEngine.h" />
