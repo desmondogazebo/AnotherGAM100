@@ -38,11 +38,7 @@ void Engine_init(Engine* E, unsigned short fps, Vec2 s_size, Vec2 f_size)
 
 	/* How to use the TextDataLoader */
 	/* Linking Example - Variable Order */
-	TextDataLoader Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit };
-	E->ldr = Loader;
-	/* Call Example */
-	/* Call Initiallize */
-	E->ldr.Initiallize(&E->ldr);
+	TextDataLoader_Setup(&E->ldr);
 	/* Load a file into a reference of the loader */
 	E->ldr.LoadResource(&E->ldr, "Resources/DigiPenLogo(Unofficial).txt");
 

@@ -17,7 +17,6 @@ A template on creating a customized state manager
 #include "BaseStateManager.h"
 
 /* Public Struct & Functions */
-
 typedef struct CustomStateManager
 {
 	/* Public Parameters */
@@ -40,6 +39,7 @@ typedef struct CustomStateManager
 ///****************************************************************************
 // Public Function Prototypes
 ///****************************************************************************
+/* Setup function that initiallizes the CustomStateManager */
 void CustomStateManager_Setup(CustomStateManager* Self);
 
 #endif //_CUSTOM_STATE_MANAGER_H

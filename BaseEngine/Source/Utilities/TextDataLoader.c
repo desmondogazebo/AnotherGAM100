@@ -13,12 +13,29 @@ file.
 #include <string.h>
 
 ///****************************************************************************
+// Private Function Prototypes
+///****************************************************************************
+/* Loads the specified Resource into the TextData within the struct */
+void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource);
+/* Destructs the data within the struct */
+void TextDataLoader_Exit(TextDataLoader* Self);
+/* Test Cases */
+//void TextDataLoader_TestWorkspace();
+/* Utility Functions */
+//void Print2DArray(char** Array, unsigned short NumberOfRows);
+
+///****************************************************************************
 // Function Definitions
 ///****************************************************************************
-/* Initiallizes the data within the struct */
-void TextDataLoader_Initiallize(TextDataLoader* Self)
+/* Setup function that initiallizes the TextDataLoader */
+void TextDataLoader_Setup(TextDataLoader* Self)
 {
+	// Set up base parameters and handle function pointer linking
 	Self->TextData = NULL;
+	Self->NumberOfRows = 0;
+	Self->NumberOfColumns = 0;
+	Self->LoadResource = TextDataLoader_LoadResource;
+	Self->Exit = TextDataLoader_Exit;
 }
 
 /* Loads the specified Resource into the TextData within the struct */
@@ -89,14 +106,13 @@ void TextDataLoader_TestWorkspace()
 {
 	/* How to use the TextDataLoader */
 	/* Linking Example - Variable Order */
-	TextDataLoader Loader = { NULL, 0, 0, TextDataLoader_Initiallize, TextDataLoader_LoadResource , TextDataLoader_Exit};
+	TextDataLoader Loader;
+	TextDataLoader_Setup(&Loader);
 	/* Call Example */
-	/* Call Initiallize */
-	Loader.Initiallize(&Loader);
 	/* Load a file into a reference of the loader */
 	Loader.LoadResource(&Loader, "Resources/DigiPenLogo(Unofficial).txt");
 	/* Do something with the file */
-	Print2DArray(Loader.TextData, Loader.NumberOfRows);
+	//Print2DArray(Loader.TextData, Loader.NumberOfRows);
 }
 
 /* Utility Functions */
