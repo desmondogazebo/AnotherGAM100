@@ -1,4 +1,4 @@
-#include "Console.h"
+﻿#include "Console.h"
 
 /*
 Function Name: con_Console
@@ -185,31 +185,23 @@ void Console_writeToBuffer(Console* e, Vector2 loc, char* data, WORD c)
 
 void Console_ptr_writeToBuffer(Console* e, char** data, unsigned short row, unsigned short col, WORD c)
 {
+	if (col > e->consoleSize.X) col = e->consoleSize.X;
+	if (row > e->consoleSize.Y) row = e->consoleSize.Y;
 	//write the data to buffer manually
 	for (size_t y = 0; y < row; ++y)
 	{
 		for (size_t x = 0; x < col; ++x)
 		{
-			if (data[y][x] == '\n')
+			//handle manual text tweaks here.
+			/*if (data[y][x] == '#')
 			{
-				e->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
-				e->screenDataBuffer[x + y * col].Attributes = c;
+				e->screenDataBuffer[x + y * col].Char.AsciiChar = 21;
 			}
-			//done
-			/*else if (data[y][x] == ' ')
-			{
-				e->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
-				e->screenDataBuffer[x + y * col].Attributes = 0;
-			}*/
-			else
+			else*/
 			{
 				e->screenDataBuffer[x + y * col].Char.AsciiChar = data[y][x];
-				e->screenDataBuffer[x + y * col].Attributes = c;
 			}
-			if (data[y][x] == ' ')
-			{
-
-			}
+			e->screenDataBuffer[x + y * col].Attributes = c;
 		}
 	}
 }

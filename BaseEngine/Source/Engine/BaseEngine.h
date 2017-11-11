@@ -19,6 +19,7 @@ This file shows an outline of the Engine
 #include "..\Utilities\TextDataLoader.h"
 //test code
 #include "..\StateManager\CustomStateManager.h"
+#include "..\Rooms\RoomTestScene.h"
 
 //Class Structure of the Engine
 typedef struct Engine
@@ -35,6 +36,7 @@ typedef struct Engine
 
 	//testing code
 	TextDataLoader ldr;
+	RoomTestScene testScene;
 
 	//global variables
 	int g_quitGame;
