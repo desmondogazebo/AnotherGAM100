@@ -13,12 +13,7 @@ Room class functons
 
 void Room_Init(Room* self)
 {
-	self->Loader.TextData = NULL;
-	self->Loader.NumberOfColumns = 0;
-	self->Loader.NumberOfRows = 0;
-	self->Loader.Initiallize = TextDataLoader_Initiallize;
-	self->Loader.LoadResource = TextDataLoader_LoadResource;
-	self->Loader.Exit = TextDataLoader_Exit;
+	TextDataLoader_Setup(&self->Loader);
 }
 
 void Room_Free(Room *self)
@@ -48,7 +43,6 @@ void Room_AddExit(Room* self, Room* exitRoom, char direction)
 
 void Room_LoadMap(Room* self, char* mapString)
 {
-	self->Loader.Initiallize(&(self->Loader));
 	self->Loader.LoadResource(&(self->Loader), mapString);
 	self->mapToRender = self->Loader.TextData;
 }
