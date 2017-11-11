@@ -17,7 +17,6 @@ pointers within this struct.
 #define _BASE_STATE_MANAGER_H
 
 /* Public Struct & Functions */
-
 typedef struct BaseStateManager
 {
 	/* Public Parameters */

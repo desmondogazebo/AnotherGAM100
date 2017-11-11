@@ -18,18 +18,13 @@ file.
 #include <stdio.h>
 
 /* Public Struct & Functions */
-
-/* TODO RLRA : Add more functionality to the TDL for features such as CSV loading or file writing that will be used in the team assignment. */
-
 typedef struct TextDataLoader
-{
+{	
 	/* Public Parameters */
 	char** TextData;
 	unsigned short NumberOfRows;
 	unsigned short NumberOfColumns;
 	/* Public Function Pointers*/
-	/* Initiallize the loader, requires an instance of a TDL */
-	void (*Initiallize)();
 	/* Load specified resource into a TextData */
 	void(*LoadResource)();
 	/* Loader Exit, calls free if memory was allocated to the TextData */
@@ -37,20 +32,10 @@ typedef struct TextDataLoader
 
 }TextDataLoader;
 
-/* Text Data Loader Functions */
-/* Initiallizes the data within the struct */
-void TextDataLoader_Initiallize(TextDataLoader* Self);
-
-/* Loads the specified Resource into the TextData within the struct */
-void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource);
-
-/* Destructs the data within the struct */
-void TextDataLoader_Exit(TextDataLoader* Self);
-
-/* Test Cases */
-void TextDataLoader_TestWorkspace();
-
-/* Utility Functions */
-void Print2DArray(char** Array, unsigned short NumberOfRows);
+///****************************************************************************
+// Public Function Prototypes
+///****************************************************************************
+/* Setup function that initiallizes the TextDataLoader */
+void TextDataLoader_Setup(TextDataLoader* Self);
 
 #endif //_TEXT_DATA_LOADER_H

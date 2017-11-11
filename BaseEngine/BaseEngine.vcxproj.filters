@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{32e076bf-8c19-48ab-a762-49186ccdf756}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{f2cf62b3-a312-4e6e-a43a-3691710ec603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{c2f280e2-a364-491a-8607-d651b5226ac1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -65,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="Source\Utilities\Utilities.c">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\BattleScene.c">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\timer.h">
       <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\BattleScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
