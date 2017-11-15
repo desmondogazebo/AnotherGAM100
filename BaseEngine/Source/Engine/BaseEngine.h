@@ -16,7 +16,6 @@ This file shows an outline of the Engine
 //Required Includes
 #include "timer.h"
 #include "Console.h"
-#include "..\Utilities\TextDataLoader.h"
 #include "..\Systems\SceneSystem.h"
 
 //Class Structure of the Engine
@@ -31,10 +30,6 @@ typedef struct Engine
 	//Time and console entities
 	Timer* g_timer;
 	Console* g_console;
-
-	//testing code
-	TextDataLoader ldr;
-	//RoomTestScene testScene;
 
 	//global variables
 	int g_quitGame;

@@ -36,17 +36,6 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vec2 screenSize, Vec2 fo
 	//Initializing the clock object
 	theEngine->g_timer->Init(theEngine->g_timer);
 
-	/* How to use the TextDataLoader */
-	/* Linking Example - Variable Order */
-	TextDataLoader_Setup(&theEngine->ldr);
-	/* Load a file into a reference of the loader */
-	theEngine->ldr.LoadResource(&theEngine->ldr, "Resources/DigiPenLogo(Unofficial).txt");
-
-	//Test scene initialization
-
-	/*theEngine->testScene = Create_RoomTestScene();
-	theEngine->testScene.Init(&(theEngine->testScene));*/
-
 	// Added to showcase the custom state manager
 	SceneSystem_Setup(&theEngine->InternalSceneSystem);
 	theEngine->InternalSceneSystem.Initiallize(&theEngine->InternalSceneSystem);
@@ -67,9 +56,9 @@ void Engine_update(Engine* theEngine, Timer* t)
 	{
 		theEngine->g_quitGame = 1;
 	}
-
 	t->Update(t);
-	//theEngine->testScene.Update(&(theEngine->testScene), t->dt);
+
+	// Update the Scene System's current Update target
 	theEngine->InternalSceneSystem.Update(&theEngine->InternalSceneSystem, t->dt);
 }
 
@@ -84,8 +73,7 @@ void Engine_render(Engine* theEngine)
 	//Clear the Screen every frame
 	theEngine->g_console->ClearBuffer(theEngine->g_console, 0x0F);
 
-	//theEngine->g_console->Ptr_writeToBuffer(theEngine->g_console, theEngine->ldr.TextData, theEngine->ldr.NumberOfRows, theEngine->ldr.NumberOfColumns, getColor(c_black, c_white));
-
+	// Render the Scene System's current render target
 	theEngine->InternalSceneSystem.Render(&theEngine->InternalSceneSystem, theEngine);
 	
 	//TEST CODE
@@ -110,9 +98,8 @@ ptr : the Engine pointer itself, to allow for internal referencing
 void Engine_exit(Engine* theEngine)
 {
 	// exit the scene
-	//theEngine->testScene.Exit(&theEngine->testScene);
+	// Clear up the memory used within all scenes linked to the SceneSystem
 	theEngine->InternalSceneSystem.Exit(&theEngine->InternalSceneSystem);
-	theEngine->ldr.Exit(&theEngine->ldr);
 	//stop the internal clock
 	theEngine->g_timer->Shutdown(theEngine->g_timer);
 	//release the memory
