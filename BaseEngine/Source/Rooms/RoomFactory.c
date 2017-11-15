@@ -14,13 +14,14 @@ Brief Description:
 
 Room* RoomFactory_CreateRoom()
 {
-	Room* room = malloc(sizeof(Room*));
+	Room* room = malloc(sizeof(Room));
+	room->Init = Room_Init;
 	room->Free = Room_Free;
 	room->AddExit = Room_AddExit;
+	room->LoadMap = Room_LoadMap;
 	room->mapToRender = NULL;
-	
-	// Debug code
-	//printf("Room created");
+
+	room->Init(room);
 
 	return room;
 }
@@ -28,7 +29,4 @@ Room* RoomFactory_CreateRoom()
 void RoomFactory_DeleteRoom(Room* room)
 {
 	room->Free(room);
-	
-	//Debug code
-	printf("Room deleted");
 }

@@ -12,6 +12,14 @@ This file contains definitions for the timer object.
 //Includes
 #include "timer.h"
 
+//Function Prototypes (PUBLIC)
+void Timer_initTimer(Timer* t);
+void Timer_terminateTimer(Timer* t);
+void Timer_startTimer(Timer* t);
+double Timer_liToSecs(Timer* t, LARGE_INTEGER L);
+double Timer_getElapsedTime(Timer* t);
+void Timer_waitUntil(Timer* t, long long time);
+
 /*
 Function Name: Timer_initTimer
 Brief Description: This instantiates the timer object
@@ -19,7 +27,7 @@ Parameters:
 t: The pointer to the timer object to manipulate
 */
 
-int Timer_initTimer(Timer* t)
+void Timer_initTimer(Timer* t)
 {
 	QueryPerformanceFrequency(&t->frequency);
 
@@ -29,12 +37,11 @@ int Timer_initTimer(Timer* t)
 	if (timeGetDevCaps(&tc, sizeof(TIMECAPS)) != TIMERR_NOERROR)
 	{
 		// Error; application can't continue.
+		return;
 	}
 
 	t->wTimerRes = min(max(tc.wPeriodMin, TARGET_RESOLUTION), tc.wPeriodMax);
 	timeBeginPeriod(t->wTimerRes);
-
-	return 0;
 }
 
 /*
@@ -72,7 +79,8 @@ L: The value to convert
 
 double Timer_liToSecs(Timer* t, LARGE_INTEGER L)
 {
-	return ((double)L.QuadPart / (double)(t->frequency.QuadPart));
+	double a = (double)L.QuadPart / (double)(t->frequency.QuadPart);
+	return a;
 }
 
 /*
@@ -85,15 +93,11 @@ t: The pointer to the timer object to manipulate
 
 double Timer_getElapsedTime(Timer* t)
 {
-	LARGE_INTEGER time;
-	QueryPerformanceCounter(&t->currTime);
-	time.QuadPart = t->currTime.QuadPart - t->prevTime.QuadPart;
-	t->prevTime = t->currTime;
-	return t->LIToSecs(t, time);
+	return t->dt;
 }
 
 /*
-Function Name: Timer_getElapsedTime
+Function Name: Timer_waitUntil
 Brief Description: This causes the timer to wait,
 	essentially slowing the program to a halt.
 Parameters:
@@ -115,6 +119,15 @@ void Timer_waitUntil(Timer* t, long long time)
 	}
 }
 
+void Timer_update(Timer* t)
+{
+	LARGE_INTEGER time;
+	QueryPerformanceCounter(&t->currTime);
+	time.QuadPart = t->currTime.QuadPart - t->prevTime.QuadPart;
+	t->prevTime = t->currTime;
+	t->dt = t->LIToSecs(t, time);
+}
+
 /*
 Function Name: Timer_Create
 Brief Description: This creates the timer object
@@ -131,6 +144,7 @@ Timer* Timer_Create()
 	t->GetElapsedTime = &Timer_getElapsedTime;
 	t->LIToSecs = &Timer_liToSecs;
 	t->WaitUntil = &Timer_waitUntil;
+	t->Update = &Timer_update;
 
 	return t;
 }

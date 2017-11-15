@@ -43,11 +43,14 @@
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{c2f280e2-a364-491a-8607-d651b5226ac1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Player">
+      <UniqueIdentifier>{fdeb3ba1-fe5f-4b8e-b704-8438a48668b4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\Systems">
-      <UniqueIdentifier>{a0a899b9-658f-4124-add5-fefe2396320d}</UniqueIdentifier>
+      <UniqueIdentifier>{9ca8fb1f-ed89-40f1-bf2e-33d3d01aa4bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Systems">
-      <UniqueIdentifier>{1c16620f-fc04-4c45-a5b7-10bc0439a76a}</UniqueIdentifier>
+      <UniqueIdentifier>{0368c337-f7fe-4959-a768-5ebc33a12c10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +83,12 @@
     </ClCompile>
     <ClCompile Include="Source\Scenes\BattleScene.c">
       <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rooms\RoomArray.c">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rooms\RoomTestScene.c">
+      <Filter>Source Files\Map</Filter>
     </ClCompile>
     <ClCompile Include="Source\Systems\SceneSystem.c">
       <Filter>Source Files\Systems</Filter>
@@ -118,6 +127,15 @@
     </ClInclude>
     <ClInclude Include="Source\Scenes\BattleScene.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rooms\RoomArray.h">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rooms\RoomTestScene.h">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player\Player.h">
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="Source\Systems\SceneSystem.h">
       <Filter>Header Files\Systems</Filter>

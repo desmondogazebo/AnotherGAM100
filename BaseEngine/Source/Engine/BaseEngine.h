@@ -17,8 +17,9 @@ This file shows an outline of the Engine
 #include "timer.h"
 #include "Console.h"
 #include "..\Utilities\TextDataLoader.h"
-//test code
 #include "..\Systems\SceneSystem.h"
+//test code
+#include "..\Rooms\RoomTestScene.h"
 
 //Class Structure of the Engine
 typedef struct Engine
@@ -35,6 +36,7 @@ typedef struct Engine
 
 	//testing code
 	TextDataLoader ldr;
+	RoomTestScene testScene;
 
 	//global variables
 	int g_quitGame;

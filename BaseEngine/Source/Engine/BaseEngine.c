@@ -42,6 +42,14 @@ void Engine_init(Engine* E, unsigned short fps, Vec2 s_size, Vec2 f_size)
 	/* Load a file into a reference of the loader */
 	E->ldr.LoadResource(&E->ldr, "Resources/DigiPenLogo(Unofficial).txt");
 
+	//Test scene initialization
+	E->testScene = Create_RoomTestScene();
+	E->testScene.Init(&(E->testScene));
+	E->testScene.AddRoom(&(E->testScene), "Resources/Maps/TestMap.txt");
+	E->testScene.AddRoom(&(E->testScene), "Resources/DigiPenLogo(Unofficial).txt");
+
+	E->testScene.currentRoom = E->testScene.roomList.array[0];
+
 	// Added to showcase the custom state manager
 	SceneSystem_Setup(&E->InternalSceneSystem);
 	E->InternalSceneSystem.Initiallize(&E->InternalSceneSystem);
@@ -62,8 +70,11 @@ void Engine_update(Engine* E, Timer* t)
 	{
 		E->g_quitGame = 1;
 	}
-	// Added to showcase the custom state manager
-	E->InternalSceneSystem.Update(&E->InternalSceneSystem, /*t->GetElapsedTime()*/0);
+	double dt = 1 / E->g_timer->GetElapsedTime(E->g_timer);
+
+	E->testScene.Update(&(E->testScene), dt);
+
+	E->InternalSceneSystem.Update(&E->InternalSceneSystem, t->GetElapsedTime());
 }
 
 /*
@@ -79,17 +90,19 @@ void Engine_render(Engine* E)
 
 	//E->g_console->Ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, getColor(c_black, c_white));
 
-	E->InternalSceneSystem.Render(&E->InternalSceneSystem, E);
+	//E->InternalSceneSystem.Render(&E->InternalSceneSystem, E);
+	E->g_console->Ptr_writeToBuffer(E->g_console, E->testScene.currentRoom->mapToRender, E->testScene.currentRoom->Loader.NumberOfRows, E->testScene.currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
 
 	//TEST CODE
 	Vec2 test = { 0, 0 };
 	double i = 1 / E->g_timer->GetElapsedTime(E->g_timer);
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
-	char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1
-	E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
-	free(input); //VERY IMPORTANT
+	//char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1 SF
+	//E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
+	E->g_console->WriteToBuffer(E->g_console, E->testScene.player.position, "O", getColor(c_black, c_white));
+	//free(input); //VERY IMPORTANT
 
-				 //Send the new data to the Console
+	//Send the new data to the Console
 	E->g_console->FlushBufferToConsole(E->g_console);
 }
 

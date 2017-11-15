@@ -17,3 +17,10 @@ BaseEngine/x64/Debug/BaseEngine.tlog/link.command.1.tlog
 BaseEngine/x64/Debug/BaseEngine.tlog/link.read.1.tlog
 BaseEngine/x64/Debug/BaseEngine.tlog/link.write.1.tlog
 BaseEngine/x64/Debug/vc141.idb
+.vs/
+BaseEngine/Debug/
+BaseEngine/x64/
+Debug/BaseEngine.pdb
+Debug/BaseEngine.ilk
+Debug/BaseEngine.exe
+x64/
