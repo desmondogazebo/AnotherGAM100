@@ -6,7 +6,7 @@ DP email    keith.cheng@digipen.edu
 Created on 14 November 2017
 
 Brief Description:
-
+The main world view scene of the game. This is where the player roams around before entering dungeons.
 
 ******************************************************************************/
 

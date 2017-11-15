@@ -6,7 +6,7 @@ DP email    keith.cheng@digipen.edu
 Created on 14 November 2017
 
 Brief Description:
-
+The main world view scene of the game. This is where the player roams around before entering dungeons.
 
 ******************************************************************************/
 #include "WorldViewScene.h"
@@ -25,6 +25,14 @@ Brief Description:
 // Private Variables
 ///****************************************************************************
 
+// Timers for letting the player run
+double initialRunDelay = 0.3;
+double runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
+double runDelayY = 0.15; // How fast the player runs on Y axis
+double runTimerX = 0;
+double runTimerY = 0;
+
+Vector2 moveDirection; // Direction of player movement
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -34,7 +42,7 @@ Brief Description:
 // Linked Initiallize function that will be set to the struct's Initiallize
 void WorldViewScene_LinkedInitiallize(WorldViewScene* self);
 // Linked Update function that will be set to the struct's Update
-void WorldViewScene_LinkedUpdate(WorldViewScene* self, float Delta);
+void WorldViewScene_LinkedUpdate(WorldViewScene* self, double Delta);
 // Linked Render function that will be set to the struct's Render
 void WorldViewScene_LinkedRender(WorldViewScene* self, Engine* Renderer);
 // Linked Exit function that will be set to the struct's Exit
@@ -44,14 +52,15 @@ void WorldViewScene_LinkedExit(WorldViewScene* self);
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
 void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, float Delta);
+void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
 void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer);
 // Linked Exit function that will be set to the InternalStateManager.Exit
 void WorldViewScene_LinkedInternalExit(WorldViewScene* self);
 
 // Split functions to make file neater
-void PlayerControls(WorldViewScene* self);
+void PlayerControls(WorldViewScene* self, double Delta);
+void WrapPlayer(WorldViewScene* self);
 void Add_Room(WorldViewScene* self, char *mapString);
 
 ///****************************************************************************
@@ -82,7 +91,7 @@ void WorldViewScene_LinkedInitiallize(WorldViewScene* self)
 }
 
 // Linked Update function that will be set to the struct's Update
-void WorldViewScene_LinkedUpdate(WorldViewScene* self, float Delta)
+void WorldViewScene_LinkedUpdate(WorldViewScene* self, double Delta)
 {
 	self->InternalStateManager.Update(self, Delta);
 }
@@ -112,6 +121,8 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	self->aKeyPressed = 0;
 	self->dKeyPressed = 0;
 
+	moveDirection.x = moveDirection.y = 0;
+
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
@@ -126,43 +137,18 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	Room* room1 = self->roomList.array[1];
 	room0->AddExit(room0, room1, NORTH);
 	room1->AddExit(room1, room0, SOUTH);
-
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, float Delta)
+void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta)
 {
 	// Do some state logic for the internal state manager
 	// Testing code state cycling
 	switch (self->InternalState)
 	{
 	case WVS_ROAMING:
-		PlayerControls(self);
-		if (self->player.dir != D_TOTAL)
-		{
-			if (self->currentRoom->exits[self->player.dir] != NULL)
-			{
-				self->currentRoom = self->currentRoom->exits[self->player.dir];
-
-				switch (self->player.dir)
-				{
-				case NORTH:
-					self->player.position.y = self->currentRoom->Loader.NumberOfRows - 1;
-					break;
-				case SOUTH:
-					self->player.position.y = 0;
-					break;
-				case EAST:
-					self->player.position.x = 0;
-					break;
-				case WEST:
-					self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 1;
-					break;
-				}
-
-			}
-			self->player.dir = D_TOTAL;
-		}
+		PlayerControls(self, Delta);
+		WrapPlayer(self);
 		break;
 	case WVS_TRANSITION:
 		break;
@@ -177,7 +163,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer)
 	{
 	case WVS_ROAMING:
 		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_white));
+		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	}
 }
@@ -190,7 +176,7 @@ void WorldViewScene_LinkedInternalExit(WorldViewScene* self)
 }
 
 
-void PlayerControls(WorldViewScene* self)
+void PlayerControls(WorldViewScene* self, double Delta)
 {
 	if (isKeyPressed('W'))
 	{
@@ -198,8 +184,6 @@ void PlayerControls(WorldViewScene* self)
 		if (self->wKeyPressed == 0)
 		{
 			self->wKeyPressed = 1;
-			Vector2 moveDirection;
-			moveDirection.x = 0;
 			moveDirection.y = -1;
 			MovePlayer(&self->player, moveDirection);
 		}
@@ -210,6 +194,7 @@ void PlayerControls(WorldViewScene* self)
 		if (self->wKeyPressed == 1)
 		{
 			self->wKeyPressed = 0;
+			moveDirection.y = 0;
 		}
 	}
 
@@ -219,8 +204,6 @@ void PlayerControls(WorldViewScene* self)
 		if (self->sKeyPressed == 0)
 		{
 			self->sKeyPressed = 1;
-			Vector2 moveDirection;
-			moveDirection.x = 0;
 			moveDirection.y = 1;
 			MovePlayer(&self->player, moveDirection);
 		}
@@ -231,6 +214,7 @@ void PlayerControls(WorldViewScene* self)
 		if (self->sKeyPressed == 1)
 		{
 			self->sKeyPressed = 0;
+			moveDirection.y = 0;
 		}
 	}
 
@@ -240,9 +224,7 @@ void PlayerControls(WorldViewScene* self)
 		if (self->aKeyPressed == 0)
 		{
 			self->aKeyPressed = 1;
-			Vector2 moveDirection;
 			moveDirection.x = -1;
-			moveDirection.y = 0;
 			MovePlayer(&self->player, moveDirection);
 		}
 	}
@@ -252,6 +234,7 @@ void PlayerControls(WorldViewScene* self)
 		if (self->aKeyPressed == 1)
 		{
 			self->aKeyPressed = 0;
+			moveDirection.x = 0;
 		}
 	}
 
@@ -261,9 +244,7 @@ void PlayerControls(WorldViewScene* self)
 		if (self->dKeyPressed == 0)
 		{
 			self->dKeyPressed = 1;
-			Vector2 moveDirection;
 			moveDirection.x = 1;
-			moveDirection.y = 0;
 			MovePlayer(&self->player, moveDirection);
 		}
 	}
@@ -273,7 +254,77 @@ void PlayerControls(WorldViewScene* self)
 		if (self->dKeyPressed == 1)
 		{
 			self->dKeyPressed = 0;
+			moveDirection.x = 0;
 		}
+	}
+
+	if (self->aKeyPressed == 1 || self->dKeyPressed == 1)
+	{
+		if ((runTimerX += Delta) > initialRunDelay) // Initial delay before running
+		{
+			if (runTimerX > initialRunDelay + runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			{
+				runTimerX = initialRunDelay;
+				Vector2 tempDirection = moveDirection;
+				tempDirection.y = 0;
+				MovePlayer(&self->player, tempDirection);
+			}
+		}
+	}
+	else
+	{
+		runTimerX = 0;
+		moveDirection.x = 0;
+	}
+
+
+	if (self->wKeyPressed == 1 || self->sKeyPressed == 1)
+	{
+		if ((runTimerY += Delta) > initialRunDelay) // Initial delay before running
+		{
+			if (runTimerY > initialRunDelay + runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			{
+				runTimerY = initialRunDelay;
+				Vector2 tempDirection = moveDirection;
+				tempDirection.x = 0;
+				MovePlayer(&self->player, tempDirection);
+			}
+		}
+	}
+	else
+	{
+		runTimerY = 0;
+		moveDirection.y = 0;
+	}
+
+}
+
+void WrapPlayer(WorldViewScene* self)
+{
+	if (self->player.dir != D_TOTAL)
+	{
+		if (self->currentRoom->exits[self->player.dir] != NULL)
+		{
+			self->currentRoom = self->currentRoom->exits[self->player.dir];
+
+			switch (self->player.dir)
+			{
+			case NORTH:
+				self->player.position.y = self->currentRoom->Loader.NumberOfRows - 1;
+				break;
+			case SOUTH:
+				self->player.position.y = 0;
+				break;
+			case EAST:
+				self->player.position.x = 0;
+				break;
+			case WEST:
+				self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 1;
+				break;
+			}
+
+		}
+		self->player.dir = D_TOTAL;
 	}
 }
 

@@ -24,7 +24,7 @@ A template on creating a customized state manager
 // Linked Initiallize function that will be set to the struct's Initiallize
 void CustomStateManager_LinkedInitiallize(CustomStateManager* Self);
 // Linked Update function that will be set to the struct's Update
-void CustomStateManager_LinkedUpdate(CustomStateManager* Self, float Delta);
+void CustomStateManager_LinkedUpdate(CustomStateManager* Self, double Delta);
 // Linked Render function that will be set to the struct's Render
 void CustomStateManager_LinkedRender(CustomStateManager* Self);
 // Linked Exit function that will be set to the struct's Exit
@@ -34,7 +34,7 @@ void CustomStateManager_LinkedExit(CustomStateManager* Self);
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
 void CustomStateManager_LinkedInternalInitiallize(CustomStateManager* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, float Delta);
+void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
 void CustomStateManager_LinkedInternalRender(CustomStateManager* Self);
 // Linked Exit function that will be set to the InternalStateManager.Exit
@@ -65,7 +65,7 @@ void CustomStateManager_LinkedInitiallize(CustomStateManager* Self)
 }
 
 // Linked Update function that will be set to the struct's Update
-void CustomStateManager_LinkedUpdate(CustomStateManager* Self, float Delta)
+void CustomStateManager_LinkedUpdate(CustomStateManager* Self, double Delta)
 {
 	Self->InternalStateManager.Update(Self, Delta);
 }
@@ -92,7 +92,7 @@ void CustomStateManager_LinkedInternalInitiallize(CustomStateManager* Self)
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, float Delta)
+void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, double Delta)
 {
 	// Do some state logic for the internal state manager
 	// Testing code state cycling

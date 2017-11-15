@@ -32,7 +32,7 @@ TextDataLoader Loader;
 // Linked Initiallize function that will be set to the struct's Initiallize
 void BattleScene_LinkedInitiallize(BattleScene* Self);
 // Linked Update function that will be set to the struct's Update
-void BattleScene_LinkedUpdate(BattleScene* Self, float Delta);
+void BattleScene_LinkedUpdate(BattleScene* Self, double Delta);
 // Linked Render function that will be set to the struct's Render
 void BattleScene_LinkedRender(BattleScene* Self, Engine* Renderer);
 // Linked Exit function that will be set to the struct's Exit
@@ -42,7 +42,7 @@ void BattleScene_LinkedExit(BattleScene* Self);
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
 void BattleScene_LinkedInternalInitiallize(BattleScene* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void BattleScene_LinkedInternalUpdate(BattleScene* Self, float Delta);
+void BattleScene_LinkedInternalUpdate(BattleScene* Self, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
 void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* Renderer);
 // Linked Exit function that will be set to the InternalStateManager.Exit
@@ -76,7 +76,7 @@ void BattleScene_LinkedInitiallize(BattleScene* Self)
 }
 
 // Linked Update function that will be set to the struct's Update
-void BattleScene_LinkedUpdate(BattleScene* Self, float Delta)
+void BattleScene_LinkedUpdate(BattleScene* Self, double Delta)
 {
 	Self->InternalStateManager.Update(Self, Delta);
 }
@@ -104,7 +104,7 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void BattleScene_LinkedInternalUpdate(BattleScene* Self, float Delta)
+void BattleScene_LinkedInternalUpdate(BattleScene* Self, double Delta)
 {
 	// Do some state logic for the internal state manager
 	// Testing code state cycling
