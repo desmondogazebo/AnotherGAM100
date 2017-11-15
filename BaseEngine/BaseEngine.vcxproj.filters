@@ -10,11 +10,11 @@
     <ClCompile Include="Source\Rooms\RoomArray.c" />
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="Source\Scenes\BattleScene.c" />
+    <ClCompile Include="Source\Scenes\WorldViewScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Systems\SceneSystem.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
     <ClCompile Include="Source\Utilities\Utilities.c" />
-    <ClCompile Include="Source\Scenes\WorldViewScene.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\BaseEngine.h" />
@@ -25,12 +25,12 @@
     <ClInclude Include="Source\Rooms\RoomArray.h" />
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
     <ClInclude Include="Source\Scenes\BattleScene.h" />
+    <ClInclude Include="Source\Scenes\WorldViewScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
     <ClInclude Include="Source\Systems\SceneSystem.h" />
     <ClInclude Include="Source\Utilities\TextDataLoader.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
     <ClInclude Include="Source\Utilities\Vector2.h" />
-    <ClInclude Include="Source\Scenes\WorldViewScene.h" />
   </ItemGroup>
 </Project>

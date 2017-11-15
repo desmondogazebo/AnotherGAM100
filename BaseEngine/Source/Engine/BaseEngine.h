@@ -18,8 +18,6 @@ This file shows an outline of the Engine
 #include "Console.h"
 #include "..\Utilities\TextDataLoader.h"
 #include "..\Systems\SceneSystem.h"
-//test code
-#include "..\Rooms\RoomTestScene.h"
 
 //Class Structure of the Engine
 typedef struct Engine
