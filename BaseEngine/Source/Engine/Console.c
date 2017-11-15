@@ -9,7 +9,7 @@ size : defines the size of the console window in terms of characters
 title : sets the title of the command window.
 */
 
-void Console_constructor(Console* c, Vector2 size, char* title)
+void Console_constructor(Console* theConsole, Vector2 size, char* title)
 {
 	//Sets console title
 	SetConsoleTitleA(title);
@@ -18,13 +18,13 @@ void Console_constructor(Console* c, Vector2 size, char* title)
 	//https://en.wikipedia.org/wiki/CodEngine_pagEngine_437
 	SetConsoleOutputCP(437);
 	//Sets the size of the Data buffer, we should not need more than this.
-	c->screenDataBufferSize = size.x * size.y;
+	theConsole->screenDataBufferSize = size.x * size.y;
 	//Assigns just enough memory to the data buffer.
 	//Take note, the data buffer is of type CHAR_INFO[]
-	c->screenDataBuffer = (CHAR_INFO*)malloc(c->screenDataBufferSize * sizeof(CHAR_INFO));
+	theConsole->screenDataBuffer = (CHAR_INFO*)malloc(theConsole->screenDataBufferSize * sizeof(CHAR_INFO));
 
 	//Creates the screen buffer, the actual content of the screen.
-	c->hScreenBuffer = CreateConsoleScreenBuffer(
+	theConsole->hScreenBuffer = CreateConsoleScreenBuffer(
 		GENERIC_READ |          // read permissions
 		GENERIC_WRITE,			// write permissions
 		FILE_SHARE_READ |		// shared read
@@ -34,15 +34,15 @@ void Console_constructor(Console* c, Vector2 size, char* title)
 		NULL);					// NULL since we are already working on the screen buffer
 
 								//sets the screen buffer to be active for our use.
-	SetConsoleActiveScreenBuffer(c->hScreenBuffer);
+	SetConsoleActiveScreenBuffer(theConsole->hScreenBuffer);
 	//sets the size of the console
-	c->SetConsoleSize(c, size);
+	theConsole->SetConsoleSize(theConsole, size);
 
 	//Hides the annoying blinking cursor from the screen.
 	CONSOLE_CURSOR_INFO     cursorInfo;
-	GetConsoleCursorInfo(c->hScreenBuffer, &cursorInfo);
+	GetConsoleCursorInfo(theConsole->hScreenBuffer, &cursorInfo);
 	cursorInfo.bVisible = 0; // set the cursor visibility
-	SetConsoleCursorInfo(c->hScreenBuffer, &cursorInfo);
+	SetConsoleCursorInfo(theConsole->hScreenBuffer, &cursorInfo);
 }
 
 /*
@@ -55,7 +55,7 @@ size : defines the size of the font by pixels
 fontName : name of the font to use
 */
 
-void Console_setConsoleFont(Console* c, Vec2 size, LPCWSTR fontName)
+void Console_setConsoleFont(Console* theConsole, Vec2 size, LPCWSTR fontName)
 {
 	//read more here : https://docs.microsoft.com/en-us/windows/console/console-font-infoex
 	CONSOLE_FONT_INFOEX cfi;
@@ -69,7 +69,7 @@ void Console_setConsoleFont(Console* c, Vec2 size, LPCWSTR fontName)
 	//please add _CRT_SECURE_NO_WARNINGS to disable issues with deprecation
 	//Visual Studio does not support C99 and has deprecated many functions
 	wcscpy(cfi.FaceName, fontName);
-	SetCurrentConsoleFontEx(c->hScreenBuffer, FALSE, &cfi);
+	SetCurrentConsoleFontEx(theConsole->hScreenBuffer, FALSE, &cfi);
 }
 
 /*
@@ -80,12 +80,12 @@ Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 */
 
-void Console_shutdownConsole(Console* c)
+void Console_shutdownConsole(Console* theConsole)
 {
 	//clear the screen  and fill it with black
-	c->ClearBuffer(c, 0x00);
+	theConsole->ClearBuffer(theConsole, 0x00);
 	//free the data buffer memory
-	free(c->screenDataBuffer);
+	free(theConsole->screenDataBuffer);
 	//remove the currently active screen buffer
 	SetConsoleActiveScreenBuffer(GetStdHandle(STD_OUTPUT_HANDLE));
 }
@@ -98,10 +98,10 @@ Parameters:
 ptr : the console pointer itself, to allow for internal referencing
 */
 
-void Console_flushBufferToConsole(Console* c)
+void Console_flushBufferToConsole(Console* theConsole)
 {
 	//Write from data buffer to console
-	c->WriteToConsole(c, c->screenDataBuffer);
+	theConsole->WriteToConsole(theConsole, theConsole->screenDataBuffer);
 }
 
 /*
@@ -113,11 +113,11 @@ ptr : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 */
 
-void Console_setConsoleSize(Console* c, Vec2 size)
+void Console_setConsoleSize(Console* theConsole, Vec2 size)
 {
 	//grabs the buffer info
 	CONSOLE_SCREEN_BUFFER_INFO info;
-	GetConsoleScreenBufferInfo(c->hScreenBuffer, &info);
+	GetConsoleScreenBufferInfo(theConsole->hScreenBuffer, &info);
 
 	//Clamping of maximum limits
 	if (size.x > info.dwMaximumWindowSize.X) size.x = info.dwMaximumWindowSize.X;
@@ -128,13 +128,13 @@ void Console_setConsoleSize(Console* c, Vec2 size)
 	//set the size of the buffer
 	COORD buffSize = { size.x, size.y };
 	//Copy variables that we should use elsewhere
-	c->consoleSize.X = size.x;
-	c->consoleSize.Y = size.y;
+	theConsole->consoleSize.X = size.x;
+	theConsole->consoleSize.Y = size.y;
 
 	//set the window size
-	SetConsoleWindowInfo(c->hScreenBuffer, TRUE, &windowSize);
+	SetConsoleWindowInfo(theConsole->hScreenBuffer, TRUE, &windowSize);
 	//set the buffer sie
-	SetConsoleScreenBufferSize(c->hScreenBuffer, buffSize);
+	SetConsoleScreenBufferSize(theConsole->hScreenBuffer, buffSize);
 }
 
 /*
@@ -146,13 +146,13 @@ ptr : the console pointer itself, to allow for internal referencing
 c : the desired color to write with
 */
 
-void Console_clearBuffer(Console* e, WORD c)
+void Console_clearBuffer(Console* theConsole, WORD colour)
 {
 	//fill up every slot with a ' ' character of a certain color
-	for (int i = 0; i < e->screenDataBufferSize; ++i)
+	for (int i = 0; i < theConsole->screenDataBufferSize; ++i)
 	{
-		e->screenDataBuffer[i].Char.AsciiChar = ' ';
-		e->screenDataBuffer[i].Attributes = c;
+		theConsole->screenDataBuffer[i].Char.AsciiChar = ' ';
+		theConsole->screenDataBuffer[i].Attributes = colour;
 	}
 }
 
@@ -167,41 +167,45 @@ data : the data to write
 c : the desired color to write with
 */
 
-void Console_writeToBuffer(Console* e, Vector2 loc, char* data, WORD c)
+void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
 {
 	//Set the write position
-	size_t index = max(loc.x + e->consoleSize.X * loc.y, 0);
+	size_t index = max(loc.x + theConsole->consoleSize.X * loc.y, 0);
 	//find the length of the data
 	size_t length = strlen(data);
 	//if the length of the data exceeds the buffer size, we chop it off at the end
-	length = min(e->screenDataBufferSize - index - 1, length);
+	length = min(theConsole->screenDataBufferSize - index - 1, length);
 	//write the data to buffer manually
 	for (size_t i = 0; i < length; ++i)
 	{
-		e->screenDataBuffer[index + i].Char.AsciiChar = data[i];
-		e->screenDataBuffer[index + i].Attributes = c;
+		theConsole->screenDataBuffer[index + i].Char.AsciiChar = data[i];
+		theConsole->screenDataBuffer[index + i].Attributes = colour;
 	}
 }
 
-void Console_ptr_writeToBuffer(Console* e, char** data, unsigned short row, unsigned short col, WORD c)
+void Console_ptr_writeToBuffer(Console* theConsole, char** data, unsigned short row, unsigned short col, WORD colour)
 {
-	if (col > e->consoleSize.X) col = e->consoleSize.X;
-	if (row > e->consoleSize.Y) row = e->consoleSize.Y;
+	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X;
+	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
 	//write the data to buffer manually
 	for (size_t y = 0; y < row; ++y)
 	{
 		for (size_t x = 0; x < col; ++x)
 		{
 			//handle manual text tweaks here.
-			/*if (data[y][x] == '#')
+			if (data[y][x] == '~')
 			{
-				e->screenDataBuffer[x + y * col].Char.AsciiChar = 21;
+				if (!data[y][x])
+				{
+					theConsole->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
+				}
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
 			}
-			else*/
+			else
 			{
-				e->screenDataBuffer[x + y * col].Char.AsciiChar = data[y][x];
+				theConsole->screenDataBuffer[x + y * col].Char.AsciiChar = data[y][x];
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
 			}
-			e->screenDataBuffer[x + y * col].Attributes = c;
 		}
 	}
 }
@@ -216,14 +220,14 @@ theBuffer : the desired buffer to write to. Note that this allows for
 multi-buffering.
 */
 
-void Console_writeToConsole(Console* e, const CHAR_INFO* theBuffer)
+void Console_writeToConsole(Console* theConsole, const CHAR_INFO* theBuffer)
 {
 	//A filler variable
 	COORD characterPos = { 0, 0 };
 	//the area to write, in this case, the entire console.
-	SMALL_RECT WriteRegion = { 0, 0, e->consoleSize.X - 1, e->consoleSize.Y - 1 };
+	SMALL_RECT WriteRegion = { 0, 0, theConsole->consoleSize.X - 1, theConsole->consoleSize.Y - 1 };
 	// WriteConsoleOutputA for ASCII text
-	WriteConsoleOutputA(e->hScreenBuffer, theBuffer, e->consoleSize, characterPos, &WriteRegion);
+	WriteConsoleOutputA(theConsole->hScreenBuffer, theBuffer, theConsole->consoleSize, characterPos, &WriteRegion);
 }
 
 /*
@@ -235,18 +239,18 @@ binds the relevant functions to said entity.
 Console* MakeConsole()
 {
 	//Allocation of memory
-	Console* e = (Console*)malloc(sizeof(Console));
+	Console* theConsole = (Console*)malloc(sizeof(Console));
 	//Binding functions
-	e->Init = &Console_constructor;
-	e->SetConsoleFont = &Console_setConsoleFont;
-	e->FlushBufferToConsole = &Console_flushBufferToConsole;
-	e->ClearBuffer = &Console_clearBuffer;
-	e->WriteToBuffer = &Console_writeToBuffer;
-	e->SetConsoleSize = &Console_setConsoleSize;
-	e->WriteToConsole = &Console_writeToConsole;
-	e->ShutdownConsole = &Console_shutdownConsole;
-	e->Ptr_writeToBuffer = &Console_ptr_writeToBuffer;
+	theConsole->Init = &Console_constructor;
+	theConsole->SetConsoleFont = &Console_setConsoleFont;
+	theConsole->FlushBufferToConsole = &Console_flushBufferToConsole;
+	theConsole->ClearBuffer = &Console_clearBuffer;
+	theConsole->WriteToBuffer = &Console_writeToBuffer;
+	theConsole->SetConsoleSize = &Console_setConsoleSize;
+	theConsole->WriteToConsole = &Console_writeToConsole;
+	theConsole->ShutdownConsole = &Console_shutdownConsole;
+	theConsole->Ptr_writeToBuffer = &Console_ptr_writeToBuffer;
 
 	//Returns the modified console entity
-	return e;
+	return theConsole;
 }

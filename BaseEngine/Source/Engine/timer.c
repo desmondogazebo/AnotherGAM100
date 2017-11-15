@@ -13,23 +13,23 @@ This file contains definitions for the timer object.
 #include "timer.h"
 
 //Function Prototypes (PUBLIC)
-void Timer_initTimer(Timer* t);
-void Timer_terminateTimer(Timer* t);
-void Timer_startTimer(Timer* t);
-double Timer_liToSecs(Timer* t, LARGE_INTEGER L);
-double Timer_getElapsedTime(Timer* t);
-void Timer_waitUntil(Timer* t, long long time);
+void Timer_initTimer(Timer* theTimer);
+void Timer_terminateTimer(Timer* theTimer);
+void Timer_startTimer(Timer* theTimer);
+double Timer_liToSecs(Timer* theTimer, LARGE_INTEGER L);
+double Timer_getElapsedTime(Timer* theTimer);
+void Timer_waitUntil(Timer* theTimer, long long time);
 
 /*
 Function Name: Timer_initTimer
 Brief Description: This instantiates the timer object
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 */
 
-void Timer_initTimer(Timer* t)
+void Timer_initTimer(Timer* theTimer)
 {
-	QueryPerformanceFrequency(&t->frequency);
+	QueryPerformanceFrequency(&theTimer->frequency);
 
 #define TARGET_RESOLUTION 1         // 1-millisecond target resolution
 	TIMECAPS tc;
@@ -40,32 +40,32 @@ void Timer_initTimer(Timer* t)
 		return;
 	}
 
-	t->wTimerRes = min(max(tc.wPeriodMin, TARGET_RESOLUTION), tc.wPeriodMax);
-	timeBeginPeriod(t->wTimerRes);
+	theTimer->wTimerRes = min(max(tc.wPeriodMin, TARGET_RESOLUTION), tc.wPeriodMax);
+	timeBeginPeriod(theTimer->wTimerRes);
 }
 
 /*
 Function Name: Timer_terminateTimer
 Brief Description: This stops the timer object
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 */
 
-void Timer_terminateTimer(Timer* t)
+void Timer_terminateTimer(Timer* theTimer)
 {
-	timeEndPeriod(t->wTimerRes);
+	timeEndPeriod(theTimer->wTimerRes);
 }
 
 /*
 Function Name: Timer_startTimer
 Brief Description: This starts the timer object
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 */
 
-void Timer_startTimer(Timer* t)
+void Timer_startTimer(Timer* theTimer)
 {
-	QueryPerformanceCounter(&t->prevTime);
+	QueryPerformanceCounter(&theTimer->prevTime);
 }
 
 /*
@@ -73,13 +73,13 @@ Function Name: Timer_liToSecs
 Brief Description: This is a helper function to convert a LARGE_INTEGER
 	to a double, by means of division.
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 L: The value to convert
 */
 
-double Timer_liToSecs(Timer* t, LARGE_INTEGER L)
+double Timer_liToSecs(Timer* theTimer, LARGE_INTEGER L)
 {
-	double a = (double)L.QuadPart / (double)(t->frequency.QuadPart);
+	double a = (double)L.QuadPart / (double)(theTimer->frequency.QuadPart);
 	return a;
 }
 
@@ -88,12 +88,12 @@ Function Name: Timer_getElapsedTime
 Brief Description: This reports the time (in milliseconds)
 	passed since last call of QueryPerformanceCounter.
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 */
 
-double Timer_getElapsedTime(Timer* t)
+double Timer_getElapsedTime(Timer* theTimer)
 {
-	return t->dt;
+	return theTimer->dt;
 }
 
 /*
@@ -101,17 +101,17 @@ Function Name: Timer_waitUntil
 Brief Description: This causes the timer to wait,
 	essentially slowing the program to a halt.
 Parameters:
-t: The pointer to the timer object to manipulate
+theTimer: The pointer to the timer object to manipulate
 time: the duration to wait for
 */
-void Timer_waitUntil(Timer* t, long long time)
+void Timer_waitUntil(Timer* theTimer, long long time)
 {
 	LARGE_INTEGER nowTime;
 	LONGLONG timeElapsed;
 	while (1)
 	{
 		QueryPerformanceCounter(&nowTime);
-		timeElapsed = ((nowTime.QuadPart - t->prevTime.QuadPart) * 1000 / (t->frequency.QuadPart));
+		timeElapsed = ((nowTime.QuadPart - theTimer->prevTime.QuadPart) * 1000 / (theTimer->frequency.QuadPart));
 		if (timeElapsed > time)
 			return;
 		else if (time - timeElapsed > 1)
@@ -119,13 +119,13 @@ void Timer_waitUntil(Timer* t, long long time)
 	}
 }
 
-void Timer_update(Timer* t)
+void Timer_update(Timer* theTimer)
 {
 	LARGE_INTEGER time;
-	QueryPerformanceCounter(&t->currTime);
-	time.QuadPart = t->currTime.QuadPart - t->prevTime.QuadPart;
-	t->prevTime = t->currTime;
-	t->dt = t->LIToSecs(t, time);
+	QueryPerformanceCounter(&theTimer->currTime);
+	time.QuadPart = theTimer->currTime.QuadPart - theTimer->prevTime.QuadPart;
+	theTimer->prevTime = theTimer->currTime;
+	theTimer->dt = theTimer->LIToSecs(theTimer, time);
 }
 
 /*
@@ -136,15 +136,15 @@ Brief Description: This creates the timer object
 
 Timer* Timer_Create()
 {
-	Timer* t = (Timer*)malloc(sizeof(Timer));
+	Timer* theTimer = (Timer*)malloc(sizeof(Timer));
 
-	t->Init = &Timer_initTimer; //constructor
-	t->Shutdown = &Timer_terminateTimer; //destructor
-	t->StartTimer = &Timer_startTimer;
-	t->GetElapsedTime = &Timer_getElapsedTime;
-	t->LIToSecs = &Timer_liToSecs;
-	t->WaitUntil = &Timer_waitUntil;
-	t->Update = &Timer_update;
+	theTimer->Init = &Timer_initTimer; //constructor
+	theTimer->Shutdown = &Timer_terminateTimer; //destructor
+	theTimer->StartTimer = &Timer_startTimer;
+	theTimer->GetElapsedTime = &Timer_getElapsedTime;
+	theTimer->LIToSecs = &Timer_liToSecs;
+	theTimer->WaitUntil = &Timer_waitUntil;
+	theTimer->Update = &Timer_update;
 
-	return t;
+	return theTimer;
 }
