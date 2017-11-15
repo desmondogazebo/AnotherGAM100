@@ -101,7 +101,7 @@ void SceneSystem_LinkedUpdate(SceneSystem* Self, float Delta)
 // Linked Render function that will be set to the struct's Render
 void SceneSystem_LinkedRender(SceneSystem* Self, Engine* Renderer)
 {
-	Self->InternalStateManager.Render(Self);
+	Self->InternalStateManager.Render(Self, Renderer);
 }
 
 // Linked Exit function that will be set to the struct's Exit

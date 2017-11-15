@@ -70,11 +70,9 @@ void Engine_update(Engine* E, Timer* t)
 	{
 		E->g_quitGame = 1;
 	}
-	double dt = 1 / E->g_timer->GetElapsedTime(E->g_timer);
-
-	E->testScene.Update(&(E->testScene), dt);
-
-	E->InternalSceneSystem.Update(&E->InternalSceneSystem, t->GetElapsedTime());
+	t->Update(t);
+	E->testScene.Update(&(E->testScene), t->dt);
+	E->InternalSceneSystem.Update(&E->InternalSceneSystem, t->dt);
 }
 
 /*
@@ -90,17 +88,17 @@ void Engine_render(Engine* E)
 
 	//E->g_console->Ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, getColor(c_black, c_white));
 
-	//E->InternalSceneSystem.Render(&E->InternalSceneSystem, E);
-	E->g_console->Ptr_writeToBuffer(E->g_console, E->testScene.currentRoom->mapToRender, E->testScene.currentRoom->Loader.NumberOfRows, E->testScene.currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+	E->InternalSceneSystem.Render(&E->InternalSceneSystem, E);
+	//E->g_console->Ptr_writeToBuffer(E->g_console, E->testScene.currentRoom->mapToRender, E->testScene.currentRoom->Loader.NumberOfRows, E->testScene.currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
 
 	//TEST CODE
 	Vec2 test = { 0, 0 };
-	double i = 1 / E->g_timer->GetElapsedTime(E->g_timer);
+	double i = 1 / E->g_timer->dt;
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
-	//char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1 SF
-	//E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
+	char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1 SF
+	E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
+	free(input); //VERY IMPORTANT
 	E->g_console->WriteToBuffer(E->g_console, E->testScene.player.position, "O", getColor(c_black, c_white));
-	//free(input); //VERY IMPORTANT
 
 	//Send the new data to the Console
 	E->g_console->FlushBufferToConsole(E->g_console);
