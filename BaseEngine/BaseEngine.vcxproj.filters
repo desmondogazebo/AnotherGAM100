@@ -43,6 +43,12 @@
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{c2f280e2-a364-491a-8607-d651b5226ac1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Systems">
+      <UniqueIdentifier>{a0a899b9-658f-4124-add5-fefe2396320d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Systems">
+      <UniqueIdentifier>{1c16620f-fc04-4c45-a5b7-10bc0439a76a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -74,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="Source\Scenes\BattleScene.c">
       <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Systems\SceneSystem.c">
+      <Filter>Source Files\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="Source\Scenes\BattleScene.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Systems\SceneSystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

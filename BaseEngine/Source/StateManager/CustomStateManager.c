@@ -21,9 +21,13 @@ A template on creating a customized state manager
 // Private Function Prototypes
 ///****************************************************************************
 // State Manager Functions
+// Linked Initiallize function that will be set to the struct's Initiallize
+void CustomStateManager_LinkedInitiallize(CustomStateManager* Self);
 // Linked Update function that will be set to the struct's Update
 void CustomStateManager_LinkedUpdate(CustomStateManager* Self, float Delta);
-// Linked Update function that will be set to the struct's Exit
+// Linked Render function that will be set to the struct's Render
+void CustomStateManager_LinkedRender(CustomStateManager* Self);
+// Linked Exit function that will be set to the struct's Exit
 void CustomStateManager_LinkedExit(CustomStateManager* Self);
 
 // Internal State Manager Functions
@@ -31,7 +35,9 @@ void CustomStateManager_LinkedExit(CustomStateManager* Self);
 void CustomStateManager_LinkedInternalInitiallize(CustomStateManager* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
 void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, float Delta);
-// Linked Update function that will be set to the InternalStateManager.Exit
+// Linked Render function that will be set to the InternalStateManager.Render
+void CustomStateManager_LinkedInternalRender(CustomStateManager* Self);
+// Linked Exit function that will be set to the InternalStateManager.Exit
 void CustomStateManager_LinkedInternalExit(CustomStateManager* Self);
 
 ///****************************************************************************
@@ -52,13 +58,25 @@ void CustomStateManager_Setup(CustomStateManager* Self)
 	Self->Exit = CustomStateManager_LinkedExit;
 }
 
+// Linked Initiallize function that will be set to the struct's Initiallize
+void CustomStateManager_LinkedInitiallize(CustomStateManager* Self)
+{
+	Self->InternalStateManager.Initiallize(Self);
+}
+
 // Linked Update function that will be set to the struct's Update
 void CustomStateManager_LinkedUpdate(CustomStateManager* Self, float Delta)
 {
 	Self->InternalStateManager.Update(Self, Delta);
 }
 
-// Linked Update function that will be set to the struct's Exit
+// Linked Render function that will be set to the struct's Render
+void CustomStateManager_LinkedRender(CustomStateManager* Self)
+{
+	Self->InternalStateManager.Render(Self);
+}
+
+// Linked Exit function that will be set to the struct's Exit
 void CustomStateManager_LinkedExit(CustomStateManager* Self)
 {
 	Self->InternalStateManager.Exit(Self);
@@ -88,6 +106,21 @@ void CustomStateManager_LinkedInternalUpdate(CustomStateManager* Self, float Del
 		break;
 	case CSM_Inactive:
 		Self->InternalState = CSM_Idle;
+		break;
+	}
+}
+
+// Linked Render function that will be set to the InternalStateManager
+void CustomStateManager_LinkedInternalRender(CustomStateManager* Self)
+{
+	// Renders the appropriate scene
+	switch (Self->InternalState)
+	{
+	case CSM_Idle:
+		break;
+	case CSM_Active:
+		break;
+	case CSM_Inactive:
 		break;
 	}
 }

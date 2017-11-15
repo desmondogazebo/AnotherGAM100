@@ -43,7 +43,8 @@ void Engine_init(Engine* E, unsigned short fps, Vec2 s_size, Vec2 f_size)
 	E->ldr.LoadResource(&E->ldr, "Resources/DigiPenLogo(Unofficial).txt");
 
 	// Added to showcase the custom state manager
-	CustomStateManager_Setup(&CSM);
+	SceneSystem_Setup(&E->InternalSceneSystem);
+	E->InternalSceneSystem.Initiallize(&E->InternalSceneSystem);
 }
 
 /*
@@ -62,7 +63,7 @@ void Engine_update(Engine* E, Timer* t)
 		E->g_quitGame = 1;
 	}
 	// Added to showcase the custom state manager
-	CSM.Update(&CSM, 0);
+	E->InternalSceneSystem.Update(&E->InternalSceneSystem, /*t->GetElapsedTime()*/0);
 }
 
 /*
@@ -76,7 +77,9 @@ void Engine_render(Engine* E)
 	//Clear the Screen every frame
 	E->g_console->ClearBuffer(E->g_console, 0x0F);
 
-	E->g_console->Ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, getColor(c_black, c_white));
+	//E->g_console->Ptr_writeToBuffer(E->g_console, E->ldr.TextData, E->ldr.NumberOfRows, E->ldr.NumberOfColumns, getColor(c_black, c_white));
+
+	E->InternalSceneSystem.Render(&E->InternalSceneSystem, E);
 
 	//TEST CODE
 	Vec2 test = { 0, 0 };
@@ -99,6 +102,7 @@ ptr : the Engine pointer itself, to allow for internal referencing
 */
 void Engine_exit(Engine* E)
 {
+	E->InternalSceneSystem.Exit(&E->InternalSceneSystem);
 	E->ldr.Exit(&E->ldr);
 	//stop the internal clock
 	E->g_timer->Shutdown(E->g_timer);

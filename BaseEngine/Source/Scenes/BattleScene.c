@@ -12,7 +12,13 @@ A template on creating a customized state manager
 #include "BattleScene.h"
 
 #include <stdio.h>
+
+// Inclusion of utility functions
 #include "../Utilities/TextDataLoader.h"
+#include "../Utilities/Utilities.h"
+
+// Included for Rendering
+#include "../Engine/BaseEngine.h"
 
 ///****************************************************************************
 // Private Variables
@@ -23,9 +29,13 @@ TextDataLoader Loader;
 // Private Function Prototypes
 ///****************************************************************************
 // State Manager Functions
+// Linked Initiallize function that will be set to the struct's Initiallize
+void BattleScene_LinkedInitiallize(BattleScene* Self);
 // Linked Update function that will be set to the struct's Update
 void BattleScene_LinkedUpdate(BattleScene* Self, float Delta);
-// Linked Update function that will be set to the struct's Exit
+// Linked Render function that will be set to the struct's Render
+void BattleScene_LinkedRender(BattleScene* Self, Engine* Renderer);
+// Linked Exit function that will be set to the struct's Exit
 void BattleScene_LinkedExit(BattleScene* Self);
 
 // Internal State Manager Functions
@@ -33,7 +43,9 @@ void BattleScene_LinkedExit(BattleScene* Self);
 void BattleScene_LinkedInternalInitiallize(BattleScene* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
 void BattleScene_LinkedInternalUpdate(BattleScene* Self, float Delta);
-// Linked Update function that will be set to the InternalStateManager.Exit
+// Linked Render function that will be set to the InternalStateManager.Render
+void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* Renderer);
+// Linked Exit function that will be set to the InternalStateManager.Exit
 void BattleScene_LinkedInternalExit(BattleScene* Self);
 
 ///****************************************************************************
@@ -44,14 +56,23 @@ void BattleScene_Setup(BattleScene* Self)
 	// Set up the InternalStateManager
 	Self->InternalStateManager.Initiallize = BattleScene_LinkedInternalInitiallize;
 	Self->InternalStateManager.Update = BattleScene_LinkedInternalUpdate;
+	Self->InternalStateManager.Render = BattleScene_LinkedInternalRender;
 	Self->InternalStateManager.Exit = BattleScene_LinkedInternalExit;
 
 	// Set the current state
 	Self->InternalState = CSM_Loading;
 
 	// Set up the functions of this object
+	Self->Initiallize = BattleScene_LinkedInitiallize;
 	Self->Update = BattleScene_LinkedUpdate;
+	Self->Render = BattleScene_LinkedRender;
 	Self->Exit = BattleScene_LinkedExit;
+}
+
+// Linked Initiallize function that will be set to the struct's Initiallize
+void BattleScene_LinkedInitiallize(BattleScene* Self)
+{
+	Self->InternalStateManager.Initiallize(Self);
 }
 
 // Linked Update function that will be set to the struct's Update
@@ -60,7 +81,13 @@ void BattleScene_LinkedUpdate(BattleScene* Self, float Delta)
 	Self->InternalStateManager.Update(Self, Delta);
 }
 
-// Linked Update function that will be set to the struct's Exit
+// Linked Render function that will be set to the struct's Render
+void BattleScene_LinkedRender(BattleScene* Self, Engine* Renderer)
+{
+	Self->InternalStateManager.Render(Self, Renderer);
+}
+
+// Linked Exit function that will be set to the struct's Exit
 void BattleScene_LinkedExit(BattleScene* Self)
 {
 	Self->InternalStateManager.Exit(Self);
@@ -97,9 +124,29 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, float Delta)
 	}
 }
 
+// Linked Render function that will be set to the InternalStateManager
+void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* Renderer)
+{
+	// Renders the appropriate scene
+	switch (Self->InternalState)
+	{
+	case CSM_Loading:
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, Loader.TextData, Loader.NumberOfRows, Loader.NumberOfColumns, getColor(c_black, c_white));
+		break;
+	case CSM_PlayerTurn:
+		break;
+	case CSM_EnemyTurn:
+		break;
+	case CSM_BattleSequence:
+		break;
+	case CSM_Results:
+		break;
+	}
+}
+
 // Linked Exit function that will be set to the InternalStateManager
 void BattleScene_LinkedInternalExit(BattleScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
-
+	Loader.Exit(&Loader);
 }

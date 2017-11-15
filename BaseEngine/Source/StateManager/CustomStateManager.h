@@ -31,6 +31,8 @@ typedef struct CustomStateManager
 	/* Public Function Pointers*/
 	/* Updates, requires an instance of itself as well as delta time */
 	void(*Update)();
+	/* Renders, requires an instance of itself */
+	void(*Render)();
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();
 

@@ -18,7 +18,7 @@ This file shows an outline of the Engine
 #include "Console.h"
 #include "..\Utilities\TextDataLoader.h"
 //test code
-#include "..\StateManager\CustomStateManager.h"
+#include "..\Systems\SceneSystem.h"
 
 //Class Structure of the Engine
 typedef struct Engine
@@ -40,10 +40,10 @@ typedef struct Engine
 	int g_quitGame;
 	unsigned short FPS;
 	unsigned short frameTime;
-} Engine;
+	// The Engine shall hold an internal scene system to encapsulate and handle all forms of scene logic and rendering
+	SceneSystem InternalSceneSystem;
 
-//testing code remove later
-CustomStateManager CSM;
+} Engine;
 
 Engine* MakeEngine();
 
