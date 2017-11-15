@@ -19,25 +19,18 @@ the engines real-time system.
 typedef struct Timer{
 	LARGE_INTEGER frequency;
 	LARGE_INTEGER prevTime, currTime;
-	double(*LIToSecs)();
 	UINT wTimerRes;
+	double dt;
 
-	int(*Init)(); //constructor
+	void(*Init)(); //constructor
+	void(*Update)();
 	void(*Shutdown)(); //destructor
-
 	void(*StartTimer)(); //starts the timer
 	double(*GetElapsedTime)(); //similar to DT
+	double(*LIToSecs)();
 	void(*WaitUntil)();
 
 }Timer;
-
-//Function Prototypes (PUBLIC)
-int Timer_initTimer(Timer* t);
-void Timer_terminateTimer(Timer* t);
-void Timer_startTimer(Timer* t);
-double Timer_liToSecs(Timer* t, LARGE_INTEGER L);
-double Timer_getElapsedTime(Timer* t);
-void Timer_waitUntil(Timer* t, long long time);
 
 Timer* Timer_Create();
 
