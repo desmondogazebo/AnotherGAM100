@@ -1,35 +1,46 @@
 /******************************************************************************
-filename    BattleScene.h
-author      Rui An Ryan Lim
-DP email    l.ruianryan@digipen.edu
+filename    WorldViewScene.h
+author      Keith Cheng
+DP email    keith.cheng@digipen.edu
 
-Created on 10 November 2017
+Created on 14 November 2017
 
 Brief Description:
-The battle scene of the game. Utilizes the base state manager to allow logic to
-be tied in together with the scene.
+
 
 ******************************************************************************/
 
 /* Header Guards */
-#ifndef _BATTLE_SCENE_H
-#define _BATTLE_SCENE_H
-	
+#ifndef WORLDVIEW_SCENE_H
+#define WORLDVIEW_SCENE_H
+
+#include "../Rooms/Room.h"
+#include "../Rooms/RoomArray.h"
+#include "../Player/Player.h"
+
 #include "../StateManager/BaseStateManager.h"
 
 /* Public Struct & Functions */
-typedef struct BattleScene
+typedef struct WorldViewScene
 {
 	/* Public Parameters */
 	enum {
-		CSM_Loading = 0,
-		CSM_PlayerTurn,
-		CSM_EnemyTurn,
-		CSM_BattleSequence,
-		CSM_Results
-	}CSM_States;
+		WVS_ROAMING = 0,
+		WVS_TRANSITION,
+		WVS_TOTAL
+	}WVS_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
+
+	RoomArray roomList;
+	Room* currentRoom;
+
+	Player player;
+
+	short wKeyPressed;
+	short sKeyPressed;
+	short aKeyPressed;
+	short dKeyPressed;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */
@@ -41,12 +52,12 @@ typedef struct BattleScene
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();
 
-}BattleScene;
+}WorldViewScene;
 
 ///****************************************************************************
 // Public Function Prototypes
 ///****************************************************************************
-/* Setup function that initiallizes the BattleScene */
-void BattleScene_Setup(BattleScene* Self);
+/* Setup function that initiallizes the WorldViewScene */
+void WorldViewScene_Setup(WorldViewScene* self);
 
-#endif //_BATTLE_SCENE_H
+#endif // WORLDVIEW_SCENE_H

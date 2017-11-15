@@ -18,6 +18,7 @@ A template on creating a customized state manager
 
 // Inclusion of Scenes
 #include "../Scenes/BattleScene.h"
+#include "../Scenes/WorldViewScene.h"
 
 ///****************************************************************************
 // Private Variables
@@ -27,6 +28,7 @@ BaseStateManager* SceneDataStorage[SS_Total];
 
 // Scene Variables
 BattleScene InternalBattleScene;
+WorldViewScene InternalWorldViewScene;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -64,8 +66,12 @@ void InitiallizeScenes()
 	// Setup the scenes
 	BattleScene_Setup(&InternalBattleScene);
 	InternalBattleScene.Initiallize(&InternalBattleScene);
+
+	WorldViewScene_Setup(&InternalWorldViewScene);
+	InternalWorldViewScene.Initiallize(&InternalWorldViewScene);
 	// Set their state managers
 	SceneDataStorage[SS_Battle] = &InternalBattleScene.InternalStateManager;
+	SceneDataStorage[SS_WorldView] = &InternalWorldViewScene.InternalStateManager;
 }
 
 void SceneSystem_Setup(SceneSystem* Self)
@@ -77,7 +83,7 @@ void SceneSystem_Setup(SceneSystem* Self)
 	Self->InternalStateManager.Exit = SceneSystem_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = SS_Battle;
+	Self->InternalState = SS_WorldView;
 
 	// Set up the functions of this object
 	Self->Initiallize = SceneSystem_LinkedInitiallize;
@@ -126,10 +132,10 @@ void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, float Delta)
 	switch (Self->InternalState)
 	{
 	case SS_WorldView:
-		Self->InternalState = SS_Battle;
+		SceneDataStorage[Self->InternalState]->Update(&InternalWorldViewScene, Delta);
 		break;
 	case SS_Battle:
-		Self->InternalState = SS_WorldView;
+		SceneDataStorage[Self->InternalState]->Update(&InternalBattleScene, Delta);
 		break;
 	default:
 		break;
@@ -143,6 +149,9 @@ void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* Renderer)
 	if (SceneDataStorage[Self->InternalState] != NULL)
 		switch (Self->InternalState)
 		{
+			case SS_WorldView:
+				SceneDataStorage[Self->InternalState]->Render(&InternalWorldViewScene, Renderer);
+				break;
 			case SS_Battle:
 				SceneDataStorage[Self->InternalState]->Render(&InternalBattleScene, Renderer);
 				break;
@@ -156,4 +165,5 @@ void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
 	InternalBattleScene.Exit(&InternalBattleScene);
+	InternalWorldViewScene.Exit(&InternalWorldViewScene);
 }

@@ -36,7 +36,7 @@ typedef struct Engine
 
 	//testing code
 	TextDataLoader ldr;
-	RoomTestScene testScene;
+	//RoomTestScene testScene;
 
 	//global variables
 	int g_quitGame;

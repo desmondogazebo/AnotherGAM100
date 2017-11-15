@@ -44,8 +44,8 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vec2 screenSize, Vec2 fo
 
 	//Test scene initialization
 
-	theEngine->testScene = Create_RoomTestScene();
-	theEngine->testScene.Init(&(theEngine->testScene));
+	/*theEngine->testScene = Create_RoomTestScene();
+	theEngine->testScene.Init(&(theEngine->testScene));*/
 
 	// Added to showcase the custom state manager
 	SceneSystem_Setup(&theEngine->InternalSceneSystem);
@@ -69,7 +69,7 @@ void Engine_update(Engine* theEngine, Timer* t)
 	}
 
 	t->Update(t);
-	theEngine->testScene.Update(&(theEngine->testScene), t->dt);
+	//theEngine->testScene.Update(&(theEngine->testScene), t->dt);
 	theEngine->InternalSceneSystem.Update(&theEngine->InternalSceneSystem, t->dt);
 }
 
@@ -86,9 +86,8 @@ void Engine_render(Engine* theEngine)
 
 	//theEngine->g_console->Ptr_writeToBuffer(theEngine->g_console, theEngine->ldr.TextData, theEngine->ldr.NumberOfRows, theEngine->ldr.NumberOfColumns, getColor(c_black, c_white));
 
-	//theEngine->InternalSceneSystem.Render(&theEngine->InternalSceneSystem, theEngine);
-	theEngine->g_console->Ptr_writeToBuffer(theEngine->g_console, theEngine->testScene.currentRoom->mapToRender, theEngine->testScene.currentRoom->Loader.NumberOfRows, theEngine->testScene.currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-
+	theEngine->InternalSceneSystem.Render(&theEngine->InternalSceneSystem, theEngine);
+	
 	//TEST CODE
 	Vec2 test = { 0, 0 };
 	double i = 1 / theEngine->g_timer->dt;
@@ -96,7 +95,6 @@ void Engine_render(Engine* theEngine)
 	char* input = d_toString(i, 6); //Decimals are worth 1 SF, the final escape character is worth 1 SF.
 	theEngine->g_console->WriteToBuffer(theEngine->g_console, test, input, getColor(c_black, c_white));
 	free(input); //VERY IMPORTANT
-	theEngine->g_console->WriteToBuffer(theEngine->g_console, theEngine->testScene.player.position, "O", getColor(c_black, c_white));
 
 	//Send the new data to the Console
 	theEngine->g_console->FlushBufferToConsole(theEngine->g_console);
@@ -112,7 +110,7 @@ ptr : the Engine pointer itself, to allow for internal referencing
 void Engine_exit(Engine* theEngine)
 {
 	// exit the scene
-	theEngine->testScene.Exit(&theEngine->testScene);
+	//theEngine->testScene.Exit(&theEngine->testScene);
 	theEngine->InternalSceneSystem.Exit(&theEngine->InternalSceneSystem);
 	theEngine->ldr.Exit(&theEngine->ldr);
 	//stop the internal clock
