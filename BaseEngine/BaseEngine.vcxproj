@@ -121,8 +121,8 @@
     <ClCompile Include="Source\Rooms\Room.c" />
     <ClCompile Include="Source\Rooms\RoomArray.c" />
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
-    <ClCompile Include="Source\Rooms\RoomTestScene.c" />
     <ClCompile Include="Source\Scenes\BattleScene.c" />
+    <ClCompile Include="Source\Scenes\WorldViewScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Systems\SceneSystem.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
@@ -136,8 +136,8 @@
     <ClInclude Include="Source\Rooms\Room.h" />
     <ClInclude Include="Source\Rooms\RoomArray.h" />
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
-    <ClInclude Include="Source\Rooms\RoomTestScene.h" />
     <ClInclude Include="Source\Scenes\BattleScene.h" />
+    <ClInclude Include="Source\Scenes\WorldViewScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
     <ClInclude Include="Source\Systems\SceneSystem.h" />
