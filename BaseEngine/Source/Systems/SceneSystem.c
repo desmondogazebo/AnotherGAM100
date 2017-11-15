@@ -41,7 +41,7 @@ void InitiallizeScenes();
 // Linked Initiallize function that will be set to the struct's Initiallize
 void SceneSystem_LinkedInitiallize(SceneSystem* Self);
 // Linked Update function that will be set to the struct's Update
-void SceneSystem_LinkedUpdate(SceneSystem* Self, float Delta);
+void SceneSystem_LinkedUpdate(SceneSystem* Self, double Delta);
 // Linked Render function that will be set to the struct's Render
 void SceneSystem_LinkedRender(SceneSystem* Self, Engine* Renderer);
 // Linked Exit function that will be set to the struct's Exit
@@ -51,7 +51,7 @@ void SceneSystem_LinkedExit(SceneSystem* Self);
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
 void SceneSystem_LinkedInternalInitiallize(SceneSystem* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, float Delta);
+void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
 void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* Renderer);
 // Linked Exit function that will be set to the InternalStateManager.Exit
@@ -99,7 +99,7 @@ void SceneSystem_LinkedInitiallize(SceneSystem* Self)
 }
 
 // Linked Update function that will be set to the struct's Update
-void SceneSystem_LinkedUpdate(SceneSystem* Self, float Delta)
+void SceneSystem_LinkedUpdate(SceneSystem* Self, double Delta)
 {
 	Self->InternalStateManager.Update(Self, Delta);
 }
@@ -125,7 +125,7 @@ void SceneSystem_LinkedInternalInitiallize(SceneSystem* Self)
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, float Delta)
+void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, double Delta)
 {
 	// Do some state logic for the internal state manager
 	// Testing code state cycling
