@@ -30,8 +30,12 @@ void AddToRoomArray(RoomArray *roomArray, Room* roomToAdd)
 
 void FreeRoomArray(RoomArray *roomArray)
 {
+	for (size_t i = 0; i < roomArray->currentSize; ++i)
+	{
+		roomArray->array[i]->Free(roomArray->array[i]);
+	}
 	free(roomArray->array);
-	roomArray = NULL;
+	roomArray->array = NULL;
 	roomArray->currentSize = 0;
 	roomArray->maxSize = 0;
 }

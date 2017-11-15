@@ -84,6 +84,9 @@
     <ClCompile Include="Source\Rooms\RoomTestScene.c">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Player\Player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">

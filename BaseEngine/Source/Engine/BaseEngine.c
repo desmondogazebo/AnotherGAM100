@@ -45,10 +45,6 @@ void Engine_init(Engine* E, unsigned short fps, Vec2 s_size, Vec2 f_size)
 	//Test scene initialization
 	E->testScene = Create_RoomTestScene();
 	E->testScene.Init(&(E->testScene));
-	E->testScene.AddRoom(&(E->testScene), "Resources/Maps/TestMap.txt");
-	E->testScene.AddRoom(&(E->testScene), "Resources/DigiPenLogo(Unofficial).txt");
-
-	E->testScene.currentRoom = E->testScene.roomList.array[0];
 
 	// Added to showcase the custom state manager
 	CustomStateManager_Setup(&CSM);
@@ -72,9 +68,9 @@ void Engine_update(Engine* E, Timer* t)
 	// Added to showcase the custom state manager
 	CSM.Update(&CSM, 0);
 
-	double dt = 1 / E->g_timer->GetElapsedTime(E->g_timer);
+	//double dt = t->GetElapsedTime(t);
 
-	E->testScene.Update(&(E->testScene), dt);
+	E->testScene.Update(&(E->testScene), 0);
 }
 
 /*
@@ -93,8 +89,8 @@ void Engine_render(Engine* E)
 	Vec2 test = { 0, 0 };
 	double i = 1 / E->g_timer->GetElapsedTime(E->g_timer);
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
-	//char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1 SF
-	//E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
+	char* input = d_toString(i, 6); //PLEASE UNDERSTAND THAT THE DECIMAL IS 1 SF
+	E->g_console->WriteToBuffer(E->g_console, test, input, getColor(c_black, c_purple));
 	E->g_console->WriteToBuffer(E->g_console, E->testScene.player.position, "O", getColor(c_black, c_white));
 	//free(input); //VERY IMPORTANT
 
@@ -111,6 +107,9 @@ ptr : the Engine pointer itself, to allow for internal referencing
 */
 void Engine_exit(Engine* E)
 {
+	// exit the scene
+	E->testScene.Exit(&E->testScene);
+
 	E->ldr.Exit(&E->ldr);
 	//stop the internal clock
 	E->g_timer->Shutdown(E->g_timer);

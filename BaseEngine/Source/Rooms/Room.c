@@ -14,6 +14,10 @@ Room class functons
 void Room_Init(Room* self)
 {
 	TextDataLoader_Setup(&self->Loader);
+	self->exits[NORTH] = NULL;
+	self->exits[SOUTH] = NULL;
+	self->exits[EAST] = NULL;
+	self->exits[WEST] = NULL;
 }
 
 void Room_Free(Room *self)
@@ -22,23 +26,9 @@ void Room_Free(Room *self)
 	free(self);
 }
 
-void Room_AddExit(Room* self, Room* exitRoom, char direction)
+void Room_AddExit(Room* self, Room* exitRoom, DIRECTION dir)
 {
-	switch (direction)
-	{
-	case 'n':
-		self->exits[0] = exitRoom;
-		break;
-	case 'e':
-		self->exits[1] = exitRoom;
-		break;
-	case 's':
-		self->exits[2] = exitRoom;
-		break;
-	case 'w':
-		self->exits[3] = exitRoom;
-		break;
-	}
+	self->exits[dir] = exitRoom;
 }
 
 void Room_LoadMap(Room* self, char* mapString)

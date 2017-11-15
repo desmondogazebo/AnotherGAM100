@@ -47,4 +47,7 @@ void Exit_RoomTestScene(RoomTestScene* self);
 
 void Add_Room(RoomTestScene* self, char* mapString);
 
+// Splitting up code into various functions
+void PlayerControls(RoomTestScene* self);
+
 #endif

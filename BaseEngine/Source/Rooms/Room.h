@@ -14,10 +14,19 @@ A base class for rooms
 typedef struct Room Room;
 #include "../Utilities/TextDataLoader.h"
 
+typedef enum DIRECTION
+{
+	NORTH,
+	EAST,
+	SOUTH,
+	WEST,
+	D_TOTAL
+} DIRECTION;
+
 struct Room
 {
 	char **mapToRender; // a 2D char array
-	Room *exits[4]; // Pointers to other rooms (Edges of map)
+	Room *exits[D_TOTAL]; // Pointers to other rooms (Edges of map)
 	TextDataLoader Loader;
 
 	void(*Init)();
@@ -31,7 +40,7 @@ void Room_Init(Room* self);
 
 void Room_Free(Room* self);
 
-void Room_AddExit(Room* self, Room* exitRoom, char direction);
+void Room_AddExit(Room* self, Room* exitRoom, DIRECTION dir);
 
 void Room_LoadMap(Room* self, char* mapString);
 

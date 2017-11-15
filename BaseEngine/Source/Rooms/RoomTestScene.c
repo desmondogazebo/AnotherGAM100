@@ -32,11 +32,66 @@ RoomTestScene Create_RoomTestScene()
 void Initialize_RoomTestScene(RoomTestScene* self)
 {
 	InitRoomArray(&(self->roomList), 5);
-	self->player.position.x = 5;
-	self->player.position.y = 5;
+	Vector2 startingPosition;
+	startingPosition.x = startingPosition.y = 5;
+	Initialize_Player(&self->player, startingPosition, &self->currentRoom);
+
+	self->AddRoom(self, "Resources/Maps/TestMap.txt"); // Room0
+	self->AddRoom(self, "Resources/Maps/TestMap2.txt"); // Room1
+
+	Room* room0 = self->roomList.array[0];
+	Room* room1 = self->roomList.array[1];
+	room0->AddExit(room0, room1, NORTH);
+	room1->AddExit(room1, room0, SOUTH);
 }
 
 void Update_RoomTestScene(RoomTestScene* self, double dt)
+{
+	PlayerControls(self);
+	if (self->player.dir != D_TOTAL)
+	{
+		if (self->currentRoom->exits[self->player.dir] != NULL)
+		{
+			self->currentRoom = self->currentRoom->exits[self->player.dir];
+
+			switch (self->player.dir)
+			{
+			case NORTH:
+				self->player.position.y = self->currentRoom->Loader.NumberOfRows - 1;
+				break;
+			case SOUTH:
+				self->player.position.y = 0;
+				break;
+			case EAST:
+				self->player.position.x = 0;
+				break;
+			case WEST:
+				self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 1;
+				break;
+			}
+
+		}
+		self->player.dir = D_TOTAL;
+	}
+}
+
+void Exit_RoomTestScene(RoomTestScene* self)
+{
+	FreeRoomArray(&(self->roomList));
+}
+
+void Add_Room(RoomTestScene* self, char *mapString)
+{
+	Room* roomToAdd = RoomFactory_CreateRoom();
+	roomToAdd->LoadMap(roomToAdd, mapString);
+	AddToRoomArray(&(self->roomList), roomToAdd);
+	if (self->currentRoom == NULL)
+	{
+		self->currentRoom = roomToAdd;
+	}
+}
+
+void PlayerControls(RoomTestScene* self)
 {
 	if (isKeyPressed('W'))
 	{
@@ -44,8 +99,11 @@ void Update_RoomTestScene(RoomTestScene* self, double dt)
 		if (self->wKeyPressed == 0)
 		{
 			self->wKeyPressed = 1;
-			self->player.position.y--;
-		}	
+			Vector2 moveDirection;
+			moveDirection.x = 0;
+			moveDirection.y = -1;
+			MovePlayer(&self->player, moveDirection);
+		}
 	}
 	else
 	{
@@ -62,7 +120,10 @@ void Update_RoomTestScene(RoomTestScene* self, double dt)
 		if (self->sKeyPressed == 0)
 		{
 			self->sKeyPressed = 1;
-			self->player.position.y++;
+			Vector2 moveDirection;
+			moveDirection.x = 0;
+			moveDirection.y = 1;
+			MovePlayer(&self->player, moveDirection);
 		}
 	}
 	else
@@ -80,7 +141,10 @@ void Update_RoomTestScene(RoomTestScene* self, double dt)
 		if (self->aKeyPressed == 0)
 		{
 			self->aKeyPressed = 1;
-			self->player.position.x--;
+			Vector2 moveDirection;
+			moveDirection.x = -1;
+			moveDirection.y = 0;
+			MovePlayer(&self->player, moveDirection);
 		}
 	}
 	else
@@ -98,7 +162,10 @@ void Update_RoomTestScene(RoomTestScene* self, double dt)
 		if (self->dKeyPressed == 0)
 		{
 			self->dKeyPressed = 1;
-			self->player.position.x++;
+			Vector2 moveDirection;
+			moveDirection.x = 1;
+			moveDirection.y = 0;
+			MovePlayer(&self->player, moveDirection);
 		}
 	}
 	else
@@ -108,21 +175,5 @@ void Update_RoomTestScene(RoomTestScene* self, double dt)
 		{
 			self->dKeyPressed = 0;
 		}
-	}
-}
-
-void Exit_RoomTestScene(RoomTestScene* self)
-{
-	FreeRoomArray(&(self->roomList));
-}
-
-void Add_Room(RoomTestScene* self, char *mapString)
-{
-	Room* roomToAdd = RoomFactory_CreateRoom();
-	roomToAdd->LoadMap(roomToAdd, mapString);
-	AddToRoomArray(&(self->roomList), roomToAdd);
-	if (self->currentRoom == NULL)
-	{
-		self->currentRoom = roomToAdd;
 	}
 }
