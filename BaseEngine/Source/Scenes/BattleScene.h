@@ -32,9 +32,11 @@ typedef struct BattleScene
 	BaseStateManager InternalStateManager;
 
 	/* Public Function Pointers*/
+	/* Initiallize, requires an instance of itself */
+	void(*Initiallize)();
 	/* Updates, requires an instance of itself as well as delta time */
 	void(*Update)();
-	/* Renders, requires an instance of itself, writes the data of the scene to the screen's buffer */
+	/* Renders, requires an instance of itself and a passed engine*, writes the data of the scene to the screen's buffer */
 	void(*Render)();
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();

@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9D509AAB-DAF2-416A-A27C-252CF6611420}</ProjectGuid>
     <RootNamespace>BaseEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -124,6 +124,7 @@
     <ClCompile Include="Source\Rooms\RoomTestScene.c" />
     <ClCompile Include="Source\Scenes\BattleScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
+    <ClCompile Include="Source\Systems\SceneSystem.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
     <ClCompile Include="Source\Utilities\Utilities.c" />
   </ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="Source\Scenes\BattleScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
+    <ClInclude Include="Source\Systems\SceneSystem.h" />
     <ClInclude Include="Source\Utilities\TextDataLoader.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
     <ClInclude Include="Source\Utilities\Vector2.h" />
