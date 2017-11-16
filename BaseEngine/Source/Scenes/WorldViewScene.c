@@ -181,15 +181,16 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta)
 // Linked Render function that will be set to the InternalStateManager
 void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer)
 {
+	Vector2 mapLocation = { 0,0 }; //this is unavoidable sumimasen
 	// Renders the appropriate scene
 	switch (self->InternalState)
 	{
-	case WVS_ROAMING:
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+	case WVS_ROAMING:	
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
 		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_TRANSITION:
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
 		Renderer->g_console->WriteToBuffer(Renderer->g_console, fakePlayerPosition, "O", getColor(c_black, c_aqua));
 		break;
 	}
@@ -380,10 +381,10 @@ void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol)
 	tempArray = (char**)malloc(numRow * sizeof(char*));
 	for (int i = 0; i < numRow; ++i)
 	{
-		tempArray[i] = (char*)malloc(numCol * sizeof(char));
+		tempArray[i] = (char*)malloc(transitionMapColumns * sizeof(char));
 	}
 
-	for (int x = 0; x < numCol; ++x)
+	for (int x = 0; x < transitionMapColumns; ++x)
 	{
 		for (int y = 0; y < numRow; ++y)
 		{
