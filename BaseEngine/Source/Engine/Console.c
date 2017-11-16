@@ -68,7 +68,7 @@ void Console_setConsoleFont(Console* theConsole, Vec2 size, LPCWSTR fontName)
 	//since we are using pure C, wsccpy falls into the C99 standard.
 	//please add _CRT_SECURE_NO_WARNINGS to disable issues with deprecation
 	//Visual Studio does not support C99 and has deprecated many functions
-	wcscpy_s(cfi.FaceName, cfi.cbSize, fontName);
+	wcscpy(cfi.FaceName, fontName);
 	SetCurrentConsoleFontEx(theConsole->hScreenBuffer, FALSE, &cfi);
 }
 
@@ -195,7 +195,7 @@ void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** dat
 
 	for (size_t y = 0; y < row; ++y)
 	{
-		size_t length = col; //we have the length of one life of data.
+		size_t length = col + 1; //we have the length of one life of data.
 
 		int trim = 0; //the amount we truncate by from left.
 		int addedSpace = 0; //number of spaces to append from left

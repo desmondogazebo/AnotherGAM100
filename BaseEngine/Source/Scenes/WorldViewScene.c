@@ -144,8 +144,7 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
-	Vector2 startingPosition;
-	startingPosition.x = startingPosition.y = 5;
+	Vector2 startingPosition = { 5,5 };
 	Initialize_Player(&self->player, startingPosition, &self->currentRoom);
 
 	Add_Room(self, "Resources/Maps/TestMap.txt"); // Room0
@@ -159,6 +158,8 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	room0->AddExit(room0, room2, EAST);
 	room0->AddExit(room0, room2, WEST);
 	room1->AddExit(room1, room0, SOUTH);
+
+	room2->AddExit(room2, room0, EAST);
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -384,6 +385,7 @@ void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol)
 		tempArray[i] = (char*)malloc(transitionMapColumns * sizeof(char));
 	}
 
+
 	for (int x = 0; x < transitionMapColumns; ++x)
 	{
 		for (int y = 0; y < numRow; ++y)
@@ -392,6 +394,7 @@ void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol)
 		}
 	}
 
+	size_t size = strlen(*tempArray);
 	*targetArray = tempArray;
 }
 
@@ -421,6 +424,7 @@ void RoomTransition(WorldViewScene* self, double Delta)
 		{
 			transitionCounter = 0;
 			FreeMapData(&transitionMap, transitionMapRows, transitionMapColumns);
+			self->player.dir = D_TOTAL;
 			self->InternalState = WVS_ROAMING;
 		}
 	}
