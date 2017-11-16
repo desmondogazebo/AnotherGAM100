@@ -162,9 +162,12 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer)
 	switch (self->InternalState)
 	{
 	case WVS_ROAMING:
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+	{
+		Vector2 mapLocation = { 0,0 }; //this is unavoidable sumimasen
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
 		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
-		break;
+	}
+	break;
 	}
 }
 

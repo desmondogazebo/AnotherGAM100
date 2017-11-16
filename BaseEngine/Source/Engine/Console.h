@@ -119,7 +119,7 @@ c : the desired color to write with
 
 void Console_writeToBuffer(Console* ptr, Vector2 loc, char* data, WORD c);
 
-void Console_ptr_writeToBuffer(Console* ptr, char** data, unsigned short row, unsigned short col, WORD c);
+void Console_ptr_writeToBuffer(Console* ptr, Vector2 loc, char** data, unsigned short row, unsigned short col, WORD c);
 
 /*
 Function Name: m_writeToConsole
