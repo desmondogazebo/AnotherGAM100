@@ -25,7 +25,7 @@ short MovePlayer(Player *player, Vector2 move)
 
 	if (player->currentRoom != NULL)
 	{
-		if (finalPosition.x < (*player->currentRoom)->Loader.NumberOfColumns && finalPosition.x >= 0 &&
+		if (finalPosition.x < (*player->currentRoom)->Loader.NumberOfColumns - 1 && finalPosition.x >= 0 &&
 			finalPosition.y < (*player->currentRoom)->Loader.NumberOfRows && finalPosition.y >= 0)
 		{
 			if ((*player->currentRoom)->mapToRender[finalPosition.y][finalPosition.x] != '#')

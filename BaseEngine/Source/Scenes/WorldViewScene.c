@@ -24,9 +24,20 @@ The main world view scene of the game. This is where the player roams around bef
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
+// Variables required for transitioning between screens
+char** transitionMap;
+int transitionMapRows;
+int transitionMapColumns;
+double roomTransitionTimer = 0;
+int transitionCounter = 0;
+Vector2 fakePlayerPosition; // A fake player used for cosmetic effect when transitioning
+
+double roomTransitionDelayY = 0.06; // Change this to change how fast rooms transition on the Y axis
+double roomTransitionDelayX = 0.02; // Same but X axis
+
 
 // Timers for letting the player run
-double initialRunDelay = 0.3;
+double initialRunDelay = 0.3; // How long it takes before the player starts running
 double runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
 double runDelayY = 0.15; // How fast the player runs on Y axis
 double runTimerX = 0;
@@ -62,6 +73,13 @@ void WorldViewScene_LinkedInternalExit(WorldViewScene* self);
 void PlayerControls(WorldViewScene* self, double Delta);
 void WrapPlayer(WorldViewScene* self);
 void Add_Room(WorldViewScene* self, char *mapString);
+void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol);
+void FreeMapData(char*** mapToFree, int numRow, int numCol);
+
+void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, int totalNumOfShifts, DIRECTION dir);
+
+// Room transition
+void RoomTransition(WorldViewScene* self, double Delta);
 
 ///****************************************************************************
 // Function Definitions
@@ -126,17 +144,22 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
-	Vector2 startingPosition;
-	startingPosition.x = startingPosition.y = 5;
+	Vector2 startingPosition = { 5,5 };
 	Initialize_Player(&self->player, startingPosition, &self->currentRoom);
 
 	Add_Room(self, "Resources/Maps/TestMap.txt"); // Room0
 	Add_Room(self, "Resources/Maps/TestMap2.txt"); // Room1
+	Add_Room(self, "Resources/Maps/TestMap2.txt"); // Room2
 
 	Room* room0 = self->roomList.array[0];
 	Room* room1 = self->roomList.array[1];
+	Room* room2 = self->roomList.array[2];
 	room0->AddExit(room0, room1, NORTH);
+	room0->AddExit(room0, room2, EAST);
+	room0->AddExit(room0, room2, WEST);
 	room1->AddExit(room1, room0, SOUTH);
+
+	room2->AddExit(room2, room0, EAST);
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -151,6 +174,7 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta)
 		WrapPlayer(self);
 		break;
 	case WVS_TRANSITION:
+		RoomTransition(self, Delta);
 		break;
 	}
 }
@@ -158,13 +182,18 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta)
 // Linked Render function that will be set to the InternalStateManager
 void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer)
 {
+	Vector2 mapLocation = { 0,0 }; //this is unavoidable sumimasen
 	// Renders the appropriate scene
 	switch (self->InternalState)
 	{
-	case WVS_ROAMING:
-		Renderer->g_console->map_WriteToBuffer(Renderer->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-		Renderer->g_console->text_WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
-	break;
+	case WVS_ROAMING:	
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+		break;
+	case WVS_TRANSITION:
+		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
+		Renderer->g_console->WriteToBuffer(Renderer->g_console, fakePlayerPosition, "O", getColor(c_black, c_aqua));
+		break;
 	}
 }
 
@@ -305,8 +334,10 @@ void WrapPlayer(WorldViewScene* self)
 	{
 		if (self->currentRoom->exits[self->player.dir] != NULL)
 		{
+			CopyMapData(&transitionMap, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns);
 			self->currentRoom = self->currentRoom->exits[self->player.dir];
-
+			self->InternalState = WVS_TRANSITION;
+			fakePlayerPosition = self->player.position;
 			switch (self->player.dir)
 			{
 			case NORTH:
@@ -319,12 +350,10 @@ void WrapPlayer(WorldViewScene* self)
 				self->player.position.x = 0;
 				break;
 			case WEST:
-				self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 1;
+				self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 2;
 				break;
 			}
-
 		}
-		self->player.dir = D_TOTAL;
 	}
 }
 
@@ -336,5 +365,146 @@ void Add_Room(WorldViewScene* self, char *mapString)
 	if (self->currentRoom == NULL)
 	{
 		self->currentRoom = roomToAdd;
+	}
+}
+
+void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol)
+{
+	transitionMapRows = numRow;
+	transitionMapColumns = numCol;
+
+	if (transitionMapColumns > 80)
+	{
+		transitionMapColumns = 80;
+	}
+	
+	char **tempArray;
+	tempArray = (char**)malloc(numRow * sizeof(char*));
+	for (int i = 0; i < numRow; ++i)
+	{
+		tempArray[i] = (char*)malloc(transitionMapColumns * sizeof(char));
+	}
+
+
+	for (int x = 0; x < transitionMapColumns; ++x)
+	{
+		for (int y = 0; y < numRow; ++y)
+		{
+			tempArray[y][x] = copyArray[y][x];
+		}
+	}
+
+	size_t size = strlen(*tempArray);
+	*targetArray = tempArray;
+}
+
+void FreeMapData(char*** mapToFree, int numRow, int numCol)
+{
+	for (int i = 0; i < numRow; ++i)
+	{
+		free((*mapToFree)[i]);
+	}
+	free(*mapToFree);
+	*mapToFree = NULL;
+}
+
+void RoomTransition(WorldViewScene* self, double Delta)
+{
+	roomTransitionTimer += Delta;
+	if ((roomTransitionTimer > roomTransitionDelayY && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
+		(roomTransitionTimer > roomTransitionDelayX && (self->player.dir == EAST || self->player.dir == WEST)))
+	{
+		roomTransitionTimer = 0;
+		transitionCounter += 1;
+
+		ShiftMap(&transitionMap, self->currentRoom->mapToRender, transitionMapRows, transitionMapColumns, transitionCounter, self->player.dir);
+
+		if ((transitionCounter == transitionMapRows && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
+			(transitionCounter == transitionMapColumns && (self->player.dir == EAST || self->player.dir == WEST)))
+		{
+			transitionCounter = 0;
+			FreeMapData(&transitionMap, transitionMapRows, transitionMapColumns);
+			self->player.dir = D_TOTAL;
+			self->InternalState = WVS_ROAMING;
+		}
+	}
+}
+
+void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, int totalNumOfShifts, DIRECTION dir)
+{
+	switch (dir)
+	{
+	case NORTH: // SHIFT DOWN
+		fakePlayerPosition.y++;
+		for (int y = numRow - 1; y > 0; --y)
+		{
+			for (int x = 0; x < numCol; ++x)
+			{
+				(*mapToShift)[y][x] = (*mapToShift)[y - 1][x];
+			}
+		}
+		for (int i = 0; i < totalNumOfShifts; ++i)
+		{
+			for (int x = 0; x < numCol; ++x)
+			{
+				//(*mapToShift)[i][x] = ' ';
+				(*mapToShift)[i][x] = shiftIntoMap[numRow - totalNumOfShifts + i][x];
+			}
+		}
+		break;
+	case SOUTH: // SHIFT UP
+		fakePlayerPosition.y--;
+		for (int y = 0; y < numRow - 1; ++y)
+		{
+			for (int x = 0; x < numCol; ++x)
+			{
+				(*mapToShift)[y][x] = (*mapToShift)[y + 1][x];
+			}
+		}
+		for (int i = 0; i < totalNumOfShifts; ++i)
+		{
+			for (int x = 0; x < numCol; ++x)
+			{
+				//(*mapToShift)[i][x] = ' ';
+				(*mapToShift)[numRow - totalNumOfShifts + i][x] = shiftIntoMap[i][x];
+			}
+		}
+		break;
+	case EAST: // SHIFT LEFT
+		fakePlayerPosition.x--;
+		for (int y = 0;y < numRow;++y)
+		{
+			for (int x = 0; x < numCol - 1; ++x)
+			{
+				(*mapToShift)[y][x] = (*mapToShift)[y][x + 1];
+			}
+		}
+		for (int i = 0; i < totalNumOfShifts; ++i)
+		{
+			for (int y = 0; y < numRow; ++y)
+			{
+				//(*mapToShift)[y][numCol - totalNumOfShifts + i] = ' ';
+				(*mapToShift)[y][numCol - totalNumOfShifts + i] = shiftIntoMap[y][i];
+			}
+		}
+		break;
+	case WEST: // SHIFT RIGHT
+		fakePlayerPosition.x++;
+		for (int y = 0; y < numRow; ++y)
+		{
+			for (int x = numCol - 1; x > 0; --x)
+			{
+				(*mapToShift)[y][x] = (*mapToShift)[y][x -1];
+			}
+		}
+		for (int i = 0; i < totalNumOfShifts; ++i)
+		{
+			for (int y = 0; y < numRow; ++y)
+			{
+				//(*mapToShift)[y][numCol - totalNumOfShifts + i] = ' ';
+				(*mapToShift)[y][totalNumOfShifts - 1 - i] = shiftIntoMap[y][numCol - 1 - i];
+			}
+		}
+		break;
 	}
 }
