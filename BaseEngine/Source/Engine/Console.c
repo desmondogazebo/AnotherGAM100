@@ -189,13 +189,13 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
 
 	//Set the write position
-	size_t writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
+	int writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
 
 	int offset = location.x; //offset from left of screen. this is a variant that counts absolute lefts.
 
-	for (size_t y = 0; y < row; ++y)
+	for (int y = 0; y < row; ++y)
 	{
-		size_t length = col + 1; //we have the length of one life of data.
+		int length = col + 1; //we have the length of one life of data.
 
 		int trim = 0; //the amount we truncate by from left.
 		int addedSpace = 0; //number of spaces to append from left
@@ -210,7 +210,7 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 			addedSpace = -offset;
 		}
 
-		for (size_t x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
+		for (int x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
 		{
 			if (writeIndex + (x + y * col) < theConsole->screenDataBufferSize) //while i still have space to write...
 			{
@@ -265,16 +265,16 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, Vector2 cha
 	int row = theConsole->consoleSize.Y;
 
 	//somehow calculate the offset.
-	//int offsetX = 
-	//int offsetY = 
+	int offsetX = 0; //TODO
+	int offsetY = 0;
 
-	for (size_t y = 0; y < row; ++y)
+	for (int y = 0; y < row; ++y)
 	{
-		for (size_t x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
+		for (int x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
 		{
-			if (data[y][x] == '~') //TO CHANGE
+			if (data[y + offsetY][x + offsetX] == '~') //TO CHANGE
 			{
-				if (!data[y][x]) //TO CHANGE
+				if (!data[y + offsetY][x + offsetX]) //TO CHANGE
 				{
 					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
 				}
@@ -282,7 +282,7 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, Vector2 cha
 			}
 			else
 			{
-				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y][x]; //TO CHANGE
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y + offsetY][x + offsetX]; //TO CHANGE
 				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
 			}
 		}

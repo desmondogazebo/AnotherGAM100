@@ -182,17 +182,16 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, double Delta)
 // Linked Render function that will be set to the InternalStateManager
 void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* Renderer)
 {
-	Vector2 mapLocation = { 0,0 }; //this is unavoidable sumimasen
 	// Renders the appropriate scene
 	switch (self->InternalState)
 	{
 	case WVS_ROAMING:	
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-		Renderer->g_console->WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+		Renderer->g_console->map_WriteToBuffer(Renderer->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+		Renderer->g_console->text_WriteToBuffer(Renderer->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_TRANSITION:
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, mapLocation, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
-		Renderer->g_console->WriteToBuffer(Renderer->g_console, fakePlayerPosition, "O", getColor(c_black, c_aqua));
+		Renderer->g_console->map_WriteToBuffer(Renderer->g_console, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
+		Renderer->g_console->text_WriteToBuffer(Renderer->g_console, fakePlayerPosition, "O", getColor(c_black, c_aqua));
 		break;
 	}
 }
