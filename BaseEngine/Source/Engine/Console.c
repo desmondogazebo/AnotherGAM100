@@ -259,14 +259,10 @@ void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short 
 	}
 }
 
-void Console_dungeon_writeToBuffer(Console* theConsole, char** data, Vector2 characterLocation, WORD colour)
+void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX, int offsetY, WORD colour)
 {
 	int col = theConsole->consoleSize.X;
 	int row = theConsole->consoleSize.Y;
-
-	//somehow calculate the offset.
-	int offsetX = 0; //TODO
-	int offsetY = 0;
 
 	for (int y = 0; y < row; ++y)
 	{
