@@ -131,7 +131,7 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* Renderer)
 	switch (Self->InternalState)
 	{
 	case CSM_Loading:
-		Renderer->g_console->Ptr_writeToBuffer(Renderer->g_console, Loader.TextData, Loader.NumberOfRows, Loader.NumberOfColumns, getColor(c_black, c_white));
+		Renderer->g_console->map_WriteToBuffer(Renderer->g_console, Loader.TextData, Loader.NumberOfRows, Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case CSM_PlayerTurn:
 		break;

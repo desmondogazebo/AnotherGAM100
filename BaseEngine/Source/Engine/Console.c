@@ -167,7 +167,7 @@ data : the data to write
 c : the desired color to write with
 */
 
-void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
+void Console_text_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
 {
 	//Set the write position
 	size_t index = max(loc.x + theConsole->consoleSize.X * loc.y, 0);
@@ -183,7 +183,7 @@ void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD co
 	}
 }
 
-void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
+void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
 {
 	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X; 
 	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
@@ -233,6 +233,62 @@ void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** dat
 	}
 }
 
+void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short row, unsigned short col, WORD colour)
+{
+	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X;
+	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
+
+	for (size_t y = 0; y < row; ++y)
+	{
+		for (size_t x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
+		{
+			if (data[y][x] == '~')
+			{
+				if (!data[y][x])
+				{
+					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				}
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+			}
+			else
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y][x];
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+		}
+	}
+}
+
+void Console_dungeon_writeToBuffer(Console* theConsole, char** data, Vector2 characterLocation, WORD colour)
+{
+	int col = theConsole->consoleSize.X;
+	int row = theConsole->consoleSize.Y;
+
+	//somehow calculate the offset.
+	//int offsetX = 
+	//int offsetY = 
+
+	for (size_t y = 0; y < row; ++y)
+	{
+		for (size_t x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
+		{
+			if (data[y][x] == '~') //TO CHANGE
+			{
+				if (!data[y][x]) //TO CHANGE
+				{
+					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				}
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+			}
+			else
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y][x]; //TO CHANGE
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+		}
+	}
+}
+
 /*
 Function Name: m_writeToConsole
 Brief Description: prefixed with an m, this is a supposed private function
@@ -268,11 +324,15 @@ Console* MakeConsole()
 	theConsole->SetConsoleFont = &Console_setConsoleFont;
 	theConsole->FlushBufferToConsole = &Console_flushBufferToConsole;
 	theConsole->ClearBuffer = &Console_clearBuffer;
-	theConsole->WriteToBuffer = &Console_writeToBuffer;
+
+	theConsole->text_WriteToBuffer = &Console_text_writeToBuffer;
+	theConsole->map_WriteToBuffer = &Console_map_writeToBuffer;
+	theConsole->sprite_WriteToBuffer= &Console_sprite_writeToBuffer;
+	theConsole->dungeon_WriteToBuffer = &Console_dungeon_writeToBuffer;
+
 	theConsole->SetConsoleSize = &Console_setConsoleSize;
 	theConsole->WriteToConsole = &Console_writeToConsole;
 	theConsole->ShutdownConsole = &Console_shutdownConsole;
-	theConsole->Ptr_writeToBuffer = &Console_ptr_writeToBuffer;
 
 	//Returns the modified console entity
 	return theConsole;
