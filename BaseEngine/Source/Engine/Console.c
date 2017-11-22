@@ -183,29 +183,52 @@ void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD co
 	}
 }
 
-void Console_ptr_writeToBuffer(Console* theConsole, char** data, unsigned short row, unsigned short col, WORD colour)
+void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
 {
-	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X;
+	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X; 
 	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
-	//write the data to buffer manually
+
+	//Set the write position
+	size_t writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
+
+	int offset = location.x; //offset from left of screen. this is a variant that counts absolute lefts.
+
 	for (size_t y = 0; y < row; ++y)
 	{
-		for (size_t x = 0; x < col; ++x)
+		size_t length = col + 1; //we have the length of one life of data.
+
+		size_t trim = 0; //the amount we truncate by from left.
+		int addedSpace = 0; //number of spaces to append from left
+
+		if (length + offset > theConsole->consoleSize.X)
+		{		
+			//by calculation, if the length + startIndex is greater than the size of one line,
+			trim = (length + offset) - theConsole->consoleSize.X - 1; //we need to trim excess!
+		}
+		else if(offset < 0) //if i'm printing out of screen (left edge)
 		{
-			//handle manual text tweaks here.
-			if (data[y][x] == '~')
+			addedSpace = -offset;
+		}
+
+		for (size_t x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
+		{
+			if (writeIndex + (x + y * col) < theConsole->screenDataBufferSize) //while i still have space to write...
 			{
-				if (!data[y][x])
+				if (data[y][x] == '~')
 				{
-					theConsole->screenDataBuffer[x + y * col].Char.AsciiChar = ' ';
+					if (!data[y][x])
+					{
+						theConsole->screenDataBuffer[writeIndex + (x + y * col)].Char.AsciiChar = ' ';
+					}
+					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Attributes = colour;
 				}
-				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+				else
+				{
+					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Char.AsciiChar = data[y][x];
+					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Attributes = colour;
+				}
 			}
-			else
-			{
-				theConsole->screenDataBuffer[x + y * col].Char.AsciiChar = data[y][x];
-				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
-			}
+			//everything else is chopped off
 		}
 	}
 }

@@ -35,7 +35,7 @@ int main()
 	Vec2 fontSize = { 10, 18 };
 	
 	//Initialize the Engine
-	theEngine->Init(theEngine, 60, windowSize, fontSize);
+	theEngine->Init(theEngine, 120, windowSize, fontSize);
 
 	//Start the internal clock of the program
 	theEngine->g_timer->StartTimer(theEngine->g_timer);

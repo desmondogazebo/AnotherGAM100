@@ -33,8 +33,8 @@ typedef struct Engine
 
 	//global variables
 	int g_quitGame;
-	unsigned short FPS;
-	unsigned short frameTime;
+	double FPS;
+	double frameTime;
 	// The Engine shall hold an internal scene system to encapsulate and handle all forms of scene logic and rendering
 	SceneSystem InternalSceneSystem;
 

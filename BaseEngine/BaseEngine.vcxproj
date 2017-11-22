@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -93,6 +93,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -122,6 +123,7 @@
     <ClCompile Include="Source\Rooms\RoomArray.c" />
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="Source\Scenes\BattleScene.c" />
+    <ClCompile Include="Source\Scenes\DungeonScene.c" />
     <ClCompile Include="Source\Scenes\WorldViewScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Systems\SceneSystem.c" />
@@ -137,6 +139,7 @@
     <ClInclude Include="Source\Rooms\RoomArray.h" />
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
     <ClInclude Include="Source\Scenes\BattleScene.h" />
+    <ClInclude Include="Source\Scenes\DungeonScene.h" />
     <ClInclude Include="Source\Scenes\WorldViewScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
@@ -144,6 +147,11 @@
     <ClInclude Include="Source\Utilities\TextDataLoader.h" />
     <ClInclude Include="Source\Utilities\Utilities.h" />
     <ClInclude Include="Source\Utilities\Vector2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\DigiPenLogo(Unofficial).txt" />
+    <Text Include="Resources\Maps\TestMap.txt" />
+    <Text Include="Resources\Maps\TestMap2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

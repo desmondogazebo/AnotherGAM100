@@ -1,15 +1,16 @@
 /******************************************************************************
-filename    BattleScene.h
+filename    DungeonScene.h
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
 
-Created on 10 November 2017
+Created on 16 November 2017
 
 Brief Description:
-A template on creating a customized state manager
+The dungeon scene of the game. Contains game state logic involving the battle
+mechanics.
 
 ******************************************************************************/
-#include "BattleScene.h"
+#include "DungeonScene.h"
 
 #include <stdio.h>
 
@@ -23,131 +24,132 @@ A template on creating a customized state manager
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
-TextDataLoader BattleScene_Loader;
+TextDataLoader DungeonScene_Loader;
+double LoadTimer = 0;
 
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
 // State Manager Functions
 // Linked Initiallize function that will be set to the struct's Initiallize
-void BattleScene_LinkedInitiallize(BattleScene* Self);
+void DungeonScene_LinkedInitiallize(DungeonScene* Self);
 // Linked Update function that will be set to the struct's Update
-void BattleScene_LinkedUpdate(BattleScene* Self, Engine* BaseEngine, double Delta);
+void DungeonScene_LinkedUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta);
 // Linked Render function that will be set to the struct's Render
-void BattleScene_LinkedRender(BattleScene* Self, Engine* BaseEngine);
+void DungeonScene_LinkedRender(DungeonScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the struct's Exit
-void BattleScene_LinkedExit(BattleScene* Self);
+void DungeonScene_LinkedExit(DungeonScene* Self);
 
 // Internal State Manager Functions
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
-void BattleScene_LinkedInternalInitiallize(BattleScene* Self);
+void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, double Delta);
+void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
-void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine);
+void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the InternalStateManager.Exit
-void BattleScene_LinkedInternalExit(BattleScene* Self);
+void DungeonScene_LinkedInternalExit(DungeonScene* Self);
 
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
-void BattleScene_Setup(BattleScene* Self)
+void DungeonScene_Setup(DungeonScene* Self)
 {
 	// Set up the InternalStateManager
-	Self->InternalStateManager.Initiallize = BattleScene_LinkedInternalInitiallize;
-	Self->InternalStateManager.Update = BattleScene_LinkedInternalUpdate;
-	Self->InternalStateManager.Render = BattleScene_LinkedInternalRender;
-	Self->InternalStateManager.Exit = BattleScene_LinkedInternalExit;
+	Self->InternalStateManager.Initiallize = DungeonScene_LinkedInternalInitiallize;
+	Self->InternalStateManager.Update = DungeonScene_LinkedInternalUpdate;
+	Self->InternalStateManager.Render = DungeonScene_LinkedInternalRender;
+	Self->InternalStateManager.Exit = DungeonScene_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = CSM_Loading;
+	Self->InternalState = DS_Loading;
 
 	// Set up the functions of this object
-	Self->Initiallize = BattleScene_LinkedInitiallize;
-	Self->Update = BattleScene_LinkedUpdate;
-	Self->Render = BattleScene_LinkedRender;
-	Self->Exit = BattleScene_LinkedExit;
+	Self->Initiallize = DungeonScene_LinkedInitiallize;
+	Self->Update = DungeonScene_LinkedUpdate;
+	Self->Render = DungeonScene_LinkedRender;
+	Self->Exit = DungeonScene_LinkedExit;
 }
 
 // Linked Initiallize function that will be set to the struct's Initiallize
-void BattleScene_LinkedInitiallize(BattleScene* Self)
+void DungeonScene_LinkedInitiallize(DungeonScene* Self)
 {
 	Self->InternalStateManager.Initiallize(Self);
 }
 
 // Linked Update function that will be set to the struct's Update
-void BattleScene_LinkedUpdate(BattleScene* Self, Engine* BaseEngine, double Delta)
+void DungeonScene_LinkedUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
 	Self->InternalStateManager.Update(Self, BaseEngine, Delta);
 }
 
 // Linked Render function that will be set to the struct's Render
-void BattleScene_LinkedRender(BattleScene* Self, Engine* BaseEngine)
+void DungeonScene_LinkedRender(DungeonScene* Self, Engine* BaseEngine)
 {
 	Self->InternalStateManager.Render(Self, BaseEngine);
 }
 
 // Linked Exit function that will be set to the struct's Exit
-void BattleScene_LinkedExit(BattleScene* Self)
+void DungeonScene_LinkedExit(DungeonScene* Self)
 {
 	Self->InternalStateManager.Exit(Self);
 }
 
 // Linked Initiallize function that will be set to the InternalStateManager
-void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
+void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 {
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
-	TextDataLoader_Setup(&BattleScene_Loader);
+	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Load the sprites that will be used in the battle scene
-	BattleScene_Loader.LoadResource(&BattleScene_Loader, "Resources/DigiPenLogo(Unofficial).txt");
+	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, "Resources/DigiPenLogo(Unofficial).txt");
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, double Delta)
+void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
 	// Do some state logic for the internal state manager
-	// Testing code state cycling
 	switch (Self->InternalState)
 	{
-	case CSM_Loading:
-		//Self->InternalState = ;
+	case DS_Loading:
+		if (LoadTimer >= 1)
+		{
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			LoadTimer = 0;
+		}
+		else LoadTimer += Delta;
 		break;
-	case CSM_PlayerTurn:
+	case DS_Exploration:
 		break;
-	case CSM_EnemyTurn:
+	case DS_Results:
 		break;
-	case CSM_BattleSequence:
-		break;
-	case CSM_Results:
+	default: 
 		break;
 	}
 }
 
 // Linked Render function that will be set to the InternalStateManager
-void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
+void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 {
-	Vec2 DefaultLocation = { 0,0 };
+	Vec2 DefaultLocation = { 1,0 };
 	// Renders the appropriate scene
 	switch (Self->InternalState)
 	{
-	case CSM_Loading:
-		BaseEngine->g_console->Ptr_writeToBuffer(BaseEngine->g_console, DefaultLocation, BattleScene_Loader.TextData, BattleScene_Loader.NumberOfRows, BattleScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+	case DS_Loading:
+		BaseEngine->g_console->Ptr_writeToBuffer(BaseEngine->g_console, DefaultLocation, DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
-	case CSM_PlayerTurn:
+	case DS_Exploration:
 		break;
-	case CSM_EnemyTurn:
+	case DS_Results:
 		break;
-	case CSM_BattleSequence:
-		break;
-	case CSM_Results:
+	default:
 		break;
 	}
 }
 
 // Linked Exit function that will be set to the InternalStateManager
-void BattleScene_LinkedInternalExit(BattleScene* Self)
+void DungeonScene_LinkedInternalExit(DungeonScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
-	BattleScene_Loader.Exit(&BattleScene_Loader);
+	DungeonScene_Loader.Exit(&DungeonScene_Loader);
 }

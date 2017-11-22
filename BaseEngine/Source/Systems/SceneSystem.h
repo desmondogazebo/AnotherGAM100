@@ -43,6 +43,9 @@ typedef struct SceneSystem
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();
 
+	/* Set Current Scene */
+	void(*SetCurrentScene)();
+
 }SceneSystem;
 
 ///****************************************************************************

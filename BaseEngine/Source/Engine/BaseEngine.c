@@ -49,17 +49,17 @@ ptr : the engine pointer itself, to allow for internal referencing
 t : the pointer to the timer, should there be a need to use GetElapsedTime();
 */
 
-void Engine_update(Engine* theEngine, Timer* t)
+void Engine_update(Engine* theEngine, Timer* theTimer)
 {
 	//TEST CODE
 	if (isKeyPressed(VK_ESCAPE))
 	{
 		theEngine->g_quitGame = 1;
 	}
-	t->Update(t);
+	theTimer->Update(theTimer);
 
 	// Update the Scene System's current Update target
-	theEngine->InternalSceneSystem.Update(&theEngine->InternalSceneSystem, t->dt);
+	theEngine->InternalSceneSystem.Update(&theEngine->InternalSceneSystem, theEngine, theTimer->dt);
 }
 
 /*

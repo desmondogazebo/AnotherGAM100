@@ -1,46 +1,33 @@
 /******************************************************************************
-filename    WorldViewScene.h
-author      Keith Cheng
-DP email    keith.cheng@digipen.edu
+filename    DungeonScene.h
+author      Rui An Ryan Lim
+DP email    l.ruianryan@digipen.edu
 
-Created on 14 November 2017
+Created on 16 November 2017
 
 Brief Description:
-The main world view scene of the game. This is where the player roams around before entering dungeons.
+The dungeon scene of the game. Contains game state logic involving the battle
+mechanics.
 
 ******************************************************************************/
 
 /* Header Guards */
-#ifndef WORLDVIEW_SCENE_H
-#define WORLDVIEW_SCENE_H
-
-#include "../Rooms/Room.h"
-#include "../Rooms/RoomArray.h"
-#include "../Player/Player.h"
+#ifndef _DUNGEON_SCENE_H
+#define _DUNGEON_SCENE_H
 
 #include "../StateManager/BaseStateManager.h"
 
 /* Public Struct & Functions */
-typedef struct WorldViewScene
+typedef struct DungeonScene
 {
 	/* Public Parameters */
 	enum {
-		WVS_ROAMING = 0,
-		WVS_TRANSITION,
-		WVS_TOTAL
-	}WVS_States;
+		DS_Loading = 0,
+		DS_Exploration,
+		DS_Results
+	}DS_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
-
-	RoomArray roomList;
-	Room* currentRoom;
-
-	Player player;
-
-	short wKeyPressed;
-	short sKeyPressed;
-	short aKeyPressed;
-	short dKeyPressed;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */
@@ -52,12 +39,12 @@ typedef struct WorldViewScene
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();
 
-}WorldViewScene;
+}DungeonScene;
 
 ///****************************************************************************
 // Public Function Prototypes
 ///****************************************************************************
-/* Setup function that initiallizes the WorldViewScene */
-void WorldViewScene_Setup(WorldViewScene* self);
+/* Setup function that initiallizes the DungeonScene */
+void DungeonScene_Setup(DungeonScene* Self);
 
-#endif // WORLDVIEW_SCENE_H
+#endif //_DUNGEON_SCENE_H
