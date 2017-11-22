@@ -167,7 +167,7 @@ data : the data to write
 c : the desired color to write with
 */
 
-void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
+void Console_text_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
 {
 	//Set the write position
 	size_t index = max(loc.x + theConsole->consoleSize.X * loc.y, 0);
@@ -183,21 +183,21 @@ void Console_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD co
 	}
 }
 
-void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
+void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
 {
 	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X; 
 	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
 
 	//Set the write position
-	size_t writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
+	int writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
 
 	int offset = location.x; //offset from left of screen. this is a variant that counts absolute lefts.
 
-	for (size_t y = 0; y < row; ++y)
+	for (int y = 0; y < row; ++y)
 	{
-		size_t length = col + 1; //we have the length of one life of data.
+		int length = col + 1; //we have the length of one life of data.
 
-		size_t trim = 0; //the amount we truncate by from left.
+		int trim = 0; //the amount we truncate by from left.
 		int addedSpace = 0; //number of spaces to append from left
 
 		if (length + offset > theConsole->consoleSize.X)
@@ -210,7 +210,7 @@ void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** dat
 			addedSpace = -offset;
 		}
 
-		for (size_t x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
+		for (int x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
 		{
 			if (writeIndex + (x + y * col) < theConsole->screenDataBufferSize) //while i still have space to write...
 			{
@@ -229,6 +229,58 @@ void Console_ptr_writeToBuffer(Console* theConsole, Vector2 location, char** dat
 				}
 			}
 			//everything else is chopped off
+		}
+	}
+}
+
+void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short row, unsigned short col, WORD colour)
+{
+	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X;
+	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
+
+	for (size_t y = 0; y < row; ++y)
+	{
+		for (size_t x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
+		{
+			if (data[y][x] == '~')
+			{
+				if (!data[y][x])
+				{
+					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				}
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+			}
+			else
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y][x];
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+		}
+	}
+}
+
+void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX, int offsetY, WORD colour)
+{
+	int col = theConsole->consoleSize.X;
+	int row = theConsole->consoleSize.Y;
+
+	for (int y = 0; y < row; ++y)
+	{
+		for (int x = 0; x < col; ++x) //we write every single character that isn't trimmed yet.
+		{
+			if (data[y + offsetY][x + offsetX] == '~') //TO CHANGE
+			{
+				if (!data[y + offsetY][x + offsetX]) //TO CHANGE
+				{
+					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				}
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+			}
+			else
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y + offsetY][x + offsetX]; //TO CHANGE
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
 		}
 	}
 }
@@ -268,11 +320,15 @@ Console* MakeConsole()
 	theConsole->SetConsoleFont = &Console_setConsoleFont;
 	theConsole->FlushBufferToConsole = &Console_flushBufferToConsole;
 	theConsole->ClearBuffer = &Console_clearBuffer;
-	theConsole->WriteToBuffer = &Console_writeToBuffer;
+
+	theConsole->text_WriteToBuffer = &Console_text_writeToBuffer;
+	theConsole->map_WriteToBuffer = &Console_map_writeToBuffer;
+	theConsole->sprite_WriteToBuffer= &Console_sprite_writeToBuffer;
+	theConsole->dungeon_WriteToBuffer = &Console_dungeon_writeToBuffer;
+
 	theConsole->SetConsoleSize = &Console_setConsoleSize;
 	theConsole->WriteToConsole = &Console_writeToConsole;
 	theConsole->ShutdownConsole = &Console_shutdownConsole;
-	theConsole->Ptr_writeToBuffer = &Console_ptr_writeToBuffer;
 
 	//Returns the modified console entity
 	return theConsole;

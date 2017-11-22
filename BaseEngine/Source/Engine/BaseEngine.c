@@ -81,7 +81,7 @@ void Engine_render(Engine* theEngine)
 	double i = 1 / theEngine->g_timer->dt;
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
 	char* input = d_toString(i, 6); //Decimals are worth 1 SF, the final escape character is worth 1 SF.
-	theEngine->g_console->WriteToBuffer(theEngine->g_console, test, input, getColor(c_black, c_white));
+	theEngine->g_console->text_WriteToBuffer(theEngine->g_console, test, input, getColor(c_black, c_white));
 	free(input); //VERY IMPORTANT
 
 	//Send the new data to the Console

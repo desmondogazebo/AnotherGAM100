@@ -34,8 +34,10 @@ typedef struct Console{
 	void(*SetConsoleFont)();
 	//Render-Type functions
 	void(*FlushBufferToConsole)();
-	void(*WriteToBuffer)();
-	void(*Ptr_writeToBuffer)();
+	void(*text_WriteToBuffer)();
+	void(*sprite_WriteToBuffer)();
+	void(*map_WriteToBuffer)();
+	void(*dungeon_WriteToBuffer)();
 	void(*WriteToConsole)();
 	//Cleanup function
 	void(*ShutdownConsole)();
@@ -117,9 +119,17 @@ data : the data to write
 c : the desired color to write with
 */
 
-void Console_writeToBuffer(Console* ptr, Vector2 loc, char* data, WORD c);
+//single line stuff, inclusive of single characters.
+void Console_text_writeToBuffer(Console* ptr, Vector2 loc, char* data, WORD c);
 
-void Console_ptr_writeToBuffer(Console* ptr, Vector2 loc, char** data, unsigned short row, unsigned short col, WORD c);
+//sprites that require locational rendering.
+void Console_sprite_writeToBuffer(Console* ptr, Vector2 loc, char** data, unsigned short row, unsigned short col, WORD c);
+
+//maps that nicely fit into 80 x 25.
+void Console_map_writeToBuffer(Console* ptr, char** data, unsigned short row, unsigned short col, WORD c);
+
+//dungeons that don't fit into the 80x25 but have some kind of offset.
+void Console_dungeon_writeToBuffer(Console* ptr, char** data, Vector2 characterLocation, WORD c);
 
 /*
 Function Name: m_writeToConsole

@@ -127,12 +127,11 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 // Linked Render function that will be set to the InternalStateManager
 void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 {
-	Vec2 DefaultLocation = { 0,0 };
 	// Renders the appropriate scene
 	switch (Self->InternalState)
 	{
 	case CSM_Loading:
-		BaseEngine->g_console->Ptr_writeToBuffer(BaseEngine->g_console, DefaultLocation, BattleScene_Loader.TextData, BattleScene_Loader.NumberOfRows, BattleScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader.TextData, BattleScene_Loader.NumberOfRows, BattleScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case CSM_PlayerTurn:
 		break;

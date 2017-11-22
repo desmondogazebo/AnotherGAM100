@@ -131,12 +131,11 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 // Linked Render function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 {
-	Vec2 DefaultLocation = { 1,0 };
 	// Renders the appropriate scene
 	switch (Self->InternalState)
 	{
 	case DS_Loading:
-		BaseEngine->g_console->Ptr_writeToBuffer(BaseEngine->g_console, DefaultLocation, DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case DS_Exploration:
 		break;
