@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -130,6 +130,7 @@
     <ClCompile Include="Source\Systems\SceneSystem.c" />
     <ClCompile Include="Source\Utilities\TextDataLoader.c" />
     <ClCompile Include="Source\Utilities\Utilities.c" />
+    <ClCompile Include="Source\Utilities\Vector2.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Enemy\Enemy.h" />

@@ -14,9 +14,11 @@ Vector2 is just a more intuitive version of the COORD system
 #define VEC2
 
 //Class Structure of Vector2
-typedef struct {
+typedef struct Vector2{
 	short x;
 	short y;
 }Vector2;
+
+Vector2 Vec2(short x, short y);
 
 #endif

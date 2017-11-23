@@ -147,8 +147,7 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
-	Vector2 startingPosition = { 5,5 };
-	Initialize_Player(&self->player, startingPosition, &self->currentRoom);
+	Initialize_Player(&self->player, Vec2(5, 5), &self->currentRoom);
 
 	Add_Room(self, "Resources/Maps/TestMap.txt"); // Room0
 	Add_Room(self, "Resources/Maps/TestMap2.txt"); // Room1

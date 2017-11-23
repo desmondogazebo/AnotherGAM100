@@ -108,6 +108,9 @@
     <ClCompile Include="Source\Enemy\EnemyDataLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Utilities\Vector2.c">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">
@@ -155,14 +158,14 @@
     <ClInclude Include="Source\Scenes\WorldViewScene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scenes\DungeonScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Enemy\EnemyDataLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Enemy\Enemy.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\DungeonScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

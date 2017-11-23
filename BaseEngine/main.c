@@ -26,14 +26,12 @@ int main()
 	//Define desired 'windowSize', that is,
 	//number of characters that can fit in the screen
 	//max for a console window is 80 by 25 for now.
-	Vector2 windowSize = { 80, 25 };
 	
 	//Define desired 'fontSize', where both
 	//width and height are scalable
-	Vector2 fontSize = { 10, 18 };
 	
 	//Initialize the Engine
-	theEngine->Init(theEngine, 120, windowSize, fontSize);
+	theEngine->Init(theEngine, 120, Vec2(80, 25), Vec2(10, 18));
 
 	//Start the internal clock of the program
 	theEngine->g_timer->StartTimer(theEngine->g_timer);

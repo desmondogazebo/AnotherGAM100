@@ -71,15 +71,4 @@ background : the enum color value of the background
 
 WORD getColor(enum Color foreground, enum Color background);
 
-typedef struct IntRange {
-	int min;
-	int max;
-}IntRange;
-
-int randomFromRange(IntRange i);
-
-int math_clamp(int variable, int min, int max);
-
-Vector2 Vec2(short x, short y);
-
 #endif

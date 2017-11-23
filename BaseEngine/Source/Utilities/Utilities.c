@@ -47,25 +47,3 @@ WORD getColor(enum Color background, enum Color foreground)
 {
 	return ((int)background * 16) + foreground; //hex base 16
 }
-
-int randomFromRange(IntRange i)
-{
-	return rand() % (i.max - i.min) + i.min;
-}
-
-int math_clamp(int variable, int min, int max)
-{
-	if (variable < min)
-		variable = min;
-	else if (variable > max)
-		variable = max;
-	return variable;
-}
-
-Vector2 Vec2(short x, short y)
-{
-	Vector2 temp;
-	temp.x = x;
-	temp.y = y;
-	return temp;
-}

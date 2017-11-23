@@ -19,9 +19,7 @@ void Initialize_Player(Player* player, Vector2 position, Room** currentRoom)
 
 short MovePlayer(Player *player, Vector2 move)
 {
-	Vector2 finalPosition;
-	finalPosition.x = player->position.x + move.x;
-	finalPosition.y = player->position.y + move.y;
+	Vector2 finalPosition = Vec2(player->position.x + move.x, player->position.y + move.y);
 
 	if (player->currentRoom != NULL)
 	{
