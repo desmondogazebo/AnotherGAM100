@@ -135,7 +135,7 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 	switch (Self->InternalState)
 	{
 	case DS_Loading:
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(1, 0), DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case DS_Exploration:
 		break;

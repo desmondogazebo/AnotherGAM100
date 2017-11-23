@@ -16,6 +16,7 @@ This header file has helpful tools that are not associated with anything.
 //Required Includes
 #include <Windows.h>
 #include <stdio.h>
+#include "Vector2.h"
 
 /*
 Function Name: isKeyPressed
@@ -78,5 +79,7 @@ typedef struct IntRange {
 int randomFromRange(IntRange i);
 
 int math_clamp(int variable, int min, int max);
+
+Vector2 Vec2(short x, short y);
 
 #endif

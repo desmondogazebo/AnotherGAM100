@@ -55,7 +55,7 @@ size : defines the size of the font by pixels
 fontName : name of the font to use
 */
 
-void Console_setConsoleFont(Console* theConsole, Vec2 size, LPCWSTR fontName)
+void Console_setConsoleFont(Console* theConsole, Vector2 size, LPCWSTR fontName)
 {
 	//read more here : https://docs.microsoft.com/en-us/windows/console/console-font-infoex
 	CONSOLE_FONT_INFOEX cfi;
@@ -113,7 +113,7 @@ ptr : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 */
 
-void Console_setConsoleSize(Console* theConsole, Vec2 size)
+void Console_setConsoleSize(Console* theConsole, Vector2 size)
 {
 	//grabs the buffer info
 	CONSOLE_SCREEN_BUFFER_INFO info;

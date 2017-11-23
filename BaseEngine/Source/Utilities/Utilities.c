@@ -61,3 +61,11 @@ int math_clamp(int variable, int min, int max)
 		variable = max;
 	return variable;
 }
+
+Vector2 Vec2(short x, short y)
+{
+	Vector2 temp;
+	temp.x = x;
+	temp.y = y;
+	return temp;
+}

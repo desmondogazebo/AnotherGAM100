@@ -23,16 +23,14 @@ int main()
 	//Create an Instance of the Engine
 	Engine* theEngine = MakeEngine();
 
-	//Vec2 or Vector2 is okay
-
 	//Define desired 'windowSize', that is,
 	//number of characters that can fit in the screen
 	//max for a console window is 80 by 25 for now.
-	Vec2 windowSize = { 80, 25 };
+	Vector2 windowSize = { 80, 25 };
 	
 	//Define desired 'fontSize', where both
 	//width and height are scalable
-	Vec2 fontSize = { 10, 18 };
+	Vector2 fontSize = { 10, 18 };
 	
 	//Initialize the Engine
 	theEngine->Init(theEngine, 120, windowSize, fontSize);
