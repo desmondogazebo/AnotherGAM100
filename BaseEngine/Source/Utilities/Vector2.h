@@ -5,7 +5,7 @@ DP email    qingping.zheng@digipen.edu
 course      GAM100
 
 Brief Description:
-Vector2 is just a shorthand for the COORD system
+Vector2 is just a more intuitive version of the COORD system
 
 ******************************************************************************/
 
@@ -17,10 +17,6 @@ Vector2 is just a shorthand for the COORD system
 typedef struct {
 	short x;
 	short y;
-
 }Vector2;
-
-//more shorthand for Vector2
-typedef Vector2 Vec2;
 
 #endif

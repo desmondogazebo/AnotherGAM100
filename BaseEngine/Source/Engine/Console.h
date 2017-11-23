@@ -64,7 +64,7 @@ size : defines the size of the font by pixels
 fontName : name of the font to use
 */
 
-void Console_setConsoleFont(Console* ptr, Vec2 size, LPCWSTR fontName);
+void Console_setConsoleFont(Console* ptr, Vector2 size, LPCWSTR fontName);
 
 /*
 Function Name: m_shutdownConsole
@@ -95,7 +95,7 @@ ptr : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 */
 
-void Console_setConsoleSize(Console* ptr, Vec2 size);
+void Console_setConsoleSize(Console* ptr, Vector2 size);
 
 /*
 Function Name: m_clearBuffer
@@ -129,7 +129,7 @@ void Console_sprite_writeToBuffer(Console* ptr, Vector2 loc, char** data, unsign
 void Console_map_writeToBuffer(Console* ptr, char** data, unsigned short row, unsigned short col, WORD c);
 
 //dungeons that don't fit into the 80x25 but have some kind of offset.
-void Console_dungeon_writeToBuffer(Console* ptr, char** data, Vector2 characterLocation, WORD c);
+void Console_dungeon_writeToBuffer(Console* ptr, char** data, int offsetX, int offsetY, WORD c);
 
 /*
 Function Name: m_writeToConsole

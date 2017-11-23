@@ -103,7 +103,7 @@
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scenes\DungeonScene.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Source\Enemy\EnemyDataLoader.c">
       <Filter>Source Files</Filter>

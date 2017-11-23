@@ -2,7 +2,7 @@
 #include "..\Utilities\Utilities.h"
 #include "..\Utilities\Vector2.h"
 //PROTOTYPES
-void Engine_init(Engine* theEngine, unsigned short fps, Vec2 screenSize, Vec2 fontSize);
+void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vector2 fontSize);
 void Engine_update(Engine* theEngine, Timer* theTimer);
 void Engine_render(Engine* theEngine);
 void Engine_exit(Engine* theEngine);
@@ -17,7 +17,7 @@ screenSize : window size
 fontSize : font size
 */
 
-void Engine_init(Engine* theEngine, unsigned short fps, Vec2 screenSize, Vec2 fontSize)
+void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vector2 fontSize)
 {
 	//Private function call
 	theEngine->g_console = MakeConsole();
@@ -77,7 +77,7 @@ void Engine_render(Engine* theEngine)
 	theEngine->InternalSceneSystem.Render(&theEngine->InternalSceneSystem, theEngine);
 	
 	//TEST CODE
-	Vec2 test = { 0, 0 };
+	Vector2 test = { 0, 0 };
 	double i = 1 / theEngine->g_timer->dt;
 	//NOTE THIS SECTION, THIS IS HOW YOU PRINT A DOUBLE IN CHAR*
 	char* input = d_toString(i, 6); //Decimals are worth 1 SF, the final escape character is worth 1 SF.
