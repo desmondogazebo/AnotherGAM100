@@ -28,13 +28,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="Source\Enemy\EnemyDataLoader.c" />
     <ClCompile Include="Source\Engine\BaseEngine.c" />
     <ClCompile Include="Source\Engine\Console.c" />
     <ClCompile Include="Source\Engine\timer.c" />
@@ -131,6 +132,8 @@
     <ClCompile Include="Source\Utilities\Utilities.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Enemy\Enemy.h" />
+    <ClInclude Include="Source\Enemy\EnemyDataLoader.h" />
     <ClInclude Include="Source\Engine\BaseEngine.h" />
     <ClInclude Include="Source\Engine\Console.h" />
     <ClInclude Include="Source\Engine\timer.h" />

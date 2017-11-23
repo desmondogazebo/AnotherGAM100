@@ -18,6 +18,9 @@ The main world view scene of the game. This is where the player roams around bef
 #include "../Utilities/Utilities.h"
 #include "../Rooms/RoomFactory.h"
 
+#include "../Enemy/Enemy.h"
+#include "../Enemy/EnemyDataLoader.h"
+
 // Included for Rendering
 #include "../Engine/BaseEngine.h"
 
@@ -158,8 +161,14 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	room0->AddExit(room0, room2, EAST);
 	room0->AddExit(room0, room2, WEST);
 	room1->AddExit(room1, room0, SOUTH);
-
 	room2->AddExit(room2, room0, EAST);
+
+	Enemy testEnemy;
+	PopulateEnemy(&testEnemy, "Resources/Enemy/Goblin.txt");
+
+	int i = 0;
+
+	FreeEnemy(&testEnemy);
 }
 
 // Linked Update function that will be set to the InternalStateManager

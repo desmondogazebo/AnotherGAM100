@@ -36,19 +36,19 @@ short MovePlayer(Player *player, Vector2 move)
 		}
 		else
 		{
-			if (move.x > 0)
+			if (move.x > 0 && player->position.x == (*player->currentRoom)->Loader.NumberOfColumns - 2)
 			{
 				player->dir = EAST;
 			}
-			else if (move.x < 0)
+			else if (move.x < 0 && player->position.x == 0)
 			{
 				player->dir = WEST;
 			}
-			else if (move.y < 0)
+			else if (move.y < 0 && player->position.y == 0)
 			{
 				player->dir = NORTH;
 			}
-			else if (move.y > 0)
+			else if (move.y > 0 && player->position.y == (*player->currentRoom)->Loader.NumberOfRows - 1)
 			{
 				player->dir = SOUTH;
 			}

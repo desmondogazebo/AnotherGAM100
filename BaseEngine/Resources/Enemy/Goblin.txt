@@ -1,0 +1,6 @@
+Name:Goblin
+HP:10
+ATK:10
+LVL:1
+SPD:1
+SPRITE:Resources/Enemy/Sprites/GoblinSprite.txt
