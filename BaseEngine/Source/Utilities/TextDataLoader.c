@@ -47,14 +47,14 @@ void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource)
 	if (FilePtr && Self)
 	{
 		/* Iterate the file and find the number of rows and columns */
-		char TempArray[256];
+		char TempArray[512];
 		Self->NumberOfRows = 0;
 		/* Getting the number of columns and rows from a single line of text */
-		while (fgets(TempArray, 256, FilePtr)) /* Only checking up to 256 characters */
+		while (fgets(TempArray, 512, FilePtr)) /* Only checking up to 256 characters */
 		{
 			/* Adds the current line of the file into the temp array for checking */
 			unsigned short MaxCharacters = 0;
-			while (MaxCharacters < 256)
+			while (MaxCharacters < 512)
 			{
 				if (TempArray[MaxCharacters] == '\0')
 				{

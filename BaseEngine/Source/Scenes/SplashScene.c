@@ -1,16 +1,16 @@
 /******************************************************************************
-filename    DungeonScene.h
+filename    SplashScene.h
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
 
-Created on 16 November 2017
+Created on 23 November 2017
 
 Brief Description:
-The dungeon scene of the game. Contains game state logic involving the battle
-mechanics.
+The splash screen, displays splash logos/icons for a few seconds before
+transiting scenes
 
 ******************************************************************************/
-#include "DungeonScene.h"
+#include "SplashScene.h"
 
 #include <stdio.h>
 
@@ -24,97 +24,100 @@ mechanics.
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
-TextDataLoader DungeonScene_Loader;
+TextDataLoader SplashScene_Loader;
+double SplashScene_LoadTimer = 0;
 
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
 // State Manager Functions
 // Linked Initiallize function that will be set to the struct's Initiallize
-void DungeonScene_LinkedInitiallize(DungeonScene* Self);
+void SplashScene_LinkedInitiallize(SplashScene* Self);
 // Linked Update function that will be set to the struct's Update
-void DungeonScene_LinkedUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta);
+void SplashScene_LinkedUpdate(SplashScene* Self, Engine* BaseEngine, double Delta);
 // Linked Render function that will be set to the struct's Render
-void DungeonScene_LinkedRender(DungeonScene* Self, Engine* BaseEngine);
+void SplashScene_LinkedRender(SplashScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the struct's Exit
-void DungeonScene_LinkedExit(DungeonScene* Self);
+void SplashScene_LinkedExit(SplashScene* Self);
 
 // Internal State Manager Functions
 // Linked initiallize function that will be set to the InternalStateManager.Initiallize
-void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self);
+void SplashScene_LinkedInternalInitiallize(SplashScene* Self);
 // Linked Update function that will be set to the InternalStateManager.Update
-void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta);
+void SplashScene_LinkedInternalUpdate(SplashScene* Self, Engine* BaseEngine, double Delta);
 // Linked Render function that will be set to the InternalStateManager.Render
-void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine);
+void SplashScene_LinkedInternalRender(SplashScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the InternalStateManager.Exit
-void DungeonScene_LinkedInternalExit(DungeonScene* Self);
+void SplashScene_LinkedInternalExit(SplashScene* Self);
 
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
-void DungeonScene_Setup(DungeonScene* Self)
+void SplashScene_Setup(SplashScene* Self)
 {
 	// Set up the InternalStateManager
-	Self->InternalStateManager.Initiallize = DungeonScene_LinkedInternalInitiallize;
-	Self->InternalStateManager.Update = DungeonScene_LinkedInternalUpdate;
-	Self->InternalStateManager.Render = DungeonScene_LinkedInternalRender;
-	Self->InternalStateManager.Exit = DungeonScene_LinkedInternalExit;
+	Self->InternalStateManager.Initiallize = SplashScene_LinkedInternalInitiallize;
+	Self->InternalStateManager.Update = SplashScene_LinkedInternalUpdate;
+	Self->InternalStateManager.Render = SplashScene_LinkedInternalRender;
+	Self->InternalStateManager.Exit = SplashScene_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = DS_Loading;
+	Self->InternalState = SS_Loading;
 
 	// Set up the functions of this object
-	Self->Initiallize = DungeonScene_LinkedInitiallize;
-	Self->Update = DungeonScene_LinkedUpdate;
-	Self->Render = DungeonScene_LinkedRender;
-	Self->Exit = DungeonScene_LinkedExit;
+	Self->Initiallize = SplashScene_LinkedInitiallize;
+	Self->Update = SplashScene_LinkedUpdate;
+	Self->Render = SplashScene_LinkedRender;
+	Self->Exit = SplashScene_LinkedExit;
 }
 
 // Linked Initiallize function that will be set to the struct's Initiallize
-void DungeonScene_LinkedInitiallize(DungeonScene* Self)
+void SplashScene_LinkedInitiallize(SplashScene* Self)
 {
 	Self->InternalStateManager.Initiallize(Self);
 }
 
 // Linked Update function that will be set to the struct's Update
-void DungeonScene_LinkedUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
+void SplashScene_LinkedUpdate(SplashScene* Self, Engine* BaseEngine, double Delta)
 {
 	Self->InternalStateManager.Update(Self, BaseEngine, Delta);
 }
 
 // Linked Render function that will be set to the struct's Render
-void DungeonScene_LinkedRender(DungeonScene* Self, Engine* BaseEngine)
+void SplashScene_LinkedRender(SplashScene* Self, Engine* BaseEngine)
 {
 	Self->InternalStateManager.Render(Self, BaseEngine);
 }
 
 // Linked Exit function that will be set to the struct's Exit
-void DungeonScene_LinkedExit(DungeonScene* Self)
+void SplashScene_LinkedExit(SplashScene* Self)
 {
 	Self->InternalStateManager.Exit(Self);
 }
 
 // Linked Initiallize function that will be set to the InternalStateManager
-void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
+void SplashScene_LinkedInternalInitiallize(SplashScene* Self)
 {
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
-	TextDataLoader_Setup(&DungeonScene_Loader);
+	TextDataLoader_Setup(&SplashScene_Loader);
 	// Load the sprites that will be used in the battle scene
-	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, "Resources/Maps/dungeonTemplate.txt");
+	SplashScene_Loader.LoadResource(&SplashScene_Loader, "Resources/DigiPenLogo(Unofficial).txt");
 }
 
 // Linked Update function that will be set to the InternalStateManager
-void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
+void SplashScene_LinkedInternalUpdate(SplashScene* Self, Engine* BaseEngine, double Delta)
 {
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
 	{
-	case DS_Loading:
-		break;
-	case DS_Exploration:
-		break;
-	case DS_Results:
+	case SS_Loading:
+		if (SplashScene_LoadTimer >= 1)
+		{
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+			SplashScene_LoadTimer = 0;
+		}
+		else SplashScene_LoadTimer += Delta;
 		break;
 	default: 
 		break;
@@ -122,17 +125,13 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 }
 
 // Linked Render function that will be set to the InternalStateManager
-void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
+void SplashScene_LinkedInternalRender(SplashScene* Self, Engine* BaseEngine)
 {
 	// Renders the appropriate scene
 	switch (Self->InternalState)
 	{
-	case DS_Loading:
-		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(-10, 0), DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
-		break;
-	case DS_Exploration:
-		break;
-	case DS_Results:
+	case SS_Loading:
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(1, 0), SplashScene_Loader.TextData, SplashScene_Loader.NumberOfRows, SplashScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	default:
 		break;
@@ -140,8 +139,8 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 }
 
 // Linked Exit function that will be set to the InternalStateManager
-void DungeonScene_LinkedInternalExit(DungeonScene* Self)
+void SplashScene_LinkedInternalExit(SplashScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
-	DungeonScene_Loader.Exit(&DungeonScene_Loader);
+	SplashScene_Loader.Exit(&SplashScene_Loader);
 }

@@ -20,6 +20,7 @@ A template on creating a customized state manager
 #include "../Scenes/BattleScene.h"
 #include "../Scenes/WorldViewScene.h"
 #include "../Scenes/DungeonScene.h"
+#include "../Scenes/SplashScene.h"
 
 ///****************************************************************************
 // Private Variables
@@ -31,6 +32,7 @@ BaseStateManager* SceneDataStorage[SS_Total];
 BattleScene InternalBattleScene;
 WorldViewScene InternalWorldViewScene;
 DungeonScene InternalDungeonScene;
+SplashScene InternalSplashScene;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -77,10 +79,14 @@ void InitiallizeScenes()
 	// Dungeon Scene Init
 	DungeonScene_Setup(&InternalDungeonScene);
 	InternalDungeonScene.Initiallize(&InternalDungeonScene);
+	// Splash Scene Init
+	SplashScene_Setup(&InternalSplashScene);
+	InternalSplashScene.Initiallize(&InternalSplashScene);
 	// Set their state managers
 	SceneDataStorage[SS_Battle] = &InternalBattleScene.InternalStateManager;
 	SceneDataStorage[SS_WorldView] = &InternalWorldViewScene.InternalStateManager;
 	SceneDataStorage[SS_Dungeon] = &InternalDungeonScene.InternalStateManager;
+	SceneDataStorage[SS_Splash] = &InternalSplashScene.InternalStateManager;
 }
 
 void SceneSystem_Setup(SceneSystem* Self)
@@ -93,7 +99,7 @@ void SceneSystem_Setup(SceneSystem* Self)
 	Self->SetCurrentScene = SceneSystem_LinkedSetCurrentScene;
 
 	// Set the current state
-	Self->InternalState = SS_Dungeon;
+	Self->InternalState = SS_Splash;
 
 	// Set up the functions of this object
 	Self->Initiallize = SceneSystem_LinkedInitiallize;
@@ -157,6 +163,9 @@ void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, Engine* BaseEngine, dou
 			case SS_Battle:
 				SceneDataStorage[Self->InternalState]->Update(&InternalBattleScene, BaseEngine, Delta);
 				break;
+			case SS_Splash:
+				SceneDataStorage[Self->InternalState]->Update(&InternalSplashScene, BaseEngine, Delta);
+				break;
 			default:
 				break;
 		}
@@ -177,6 +186,9 @@ void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* BaseEngine)
 				break;
 			case SS_Battle:
 				SceneDataStorage[Self->InternalState]->Render(&InternalBattleScene, BaseEngine);
+				break;
+			case SS_Splash:
+				SceneDataStorage[Self->InternalState]->Render(&InternalSplashScene, BaseEngine);
 				break;
 			default:
 				break;
