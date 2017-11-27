@@ -234,7 +234,7 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 					{
 						theConsole->screenDataBuffer[actualValue].Char.AsciiChar = ' ';
 					}
-					theConsole->screenDataBuffer[actualValue].Attributes = colour;
+					//theConsole->screenDataBuffer[actualValue].Attributes = colour;
 				}
 				else
 				{
