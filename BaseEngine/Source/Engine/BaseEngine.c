@@ -24,7 +24,7 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vect
 	//Constructor call
 	theEngine->g_console->Init(theEngine->g_console, screenSize, "GAM100 PROJECT");
 	//Set font of the console
-	theEngine->g_console->SetConsoleFont(theEngine->g_console, fontSize, L"Raster Fonts");
+	theEngine->g_console->SetConsoleFont(theEngine->g_console, fontSize, L"Consolas");
 
 	//Initializing variables
 	theEngine->g_quitGame = 0;

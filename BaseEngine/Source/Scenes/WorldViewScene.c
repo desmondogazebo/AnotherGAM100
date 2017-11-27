@@ -639,6 +639,7 @@ void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		{
 			wvs_dungeonTransitionCount = 0;
 			wvs_dungeonTransitionTimer = 0;
+			wvs_dungeonWaitToggle = 0;
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
 		}
 	}
