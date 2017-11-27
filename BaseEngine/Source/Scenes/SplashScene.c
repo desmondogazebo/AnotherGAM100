@@ -115,7 +115,7 @@ void SplashScene_LinkedInternalUpdate(SplashScene* Self, Engine* BaseEngine, dou
 		if (SplashScene_LoadTimer >= 1)
 		{
 			//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
-			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_MainMenu);
 			SplashScene_LoadTimer = 0;
 		}
 		else SplashScene_LoadTimer += Delta;

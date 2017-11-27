@@ -21,6 +21,7 @@ A template on creating a customized state manager
 #include "../Scenes/WorldViewScene.h"
 #include "../Scenes/DungeonScene.h"
 #include "../Scenes/SplashScene.h"
+#include "../Scenes/MenuScene.h"
 
 ///****************************************************************************
 // Private Variables
@@ -33,6 +34,7 @@ BattleScene InternalBattleScene;
 WorldViewScene InternalWorldViewScene;
 DungeonScene InternalDungeonScene;
 SplashScene InternalSplashScene;
+MenuScene InternalMenuScene;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -82,11 +84,15 @@ void InitiallizeScenes()
 	// Splash Scene Init
 	SplashScene_Setup(&InternalSplashScene);
 	InternalSplashScene.Initiallize(&InternalSplashScene);
+	// Menu Scene Init
+	MenuScene_Setup(&InternalMenuScene);
+	InternalMenuScene.Initiallize(&InternalMenuScene);
 	// Set their state managers
 	SceneDataStorage[SS_Battle] = &InternalBattleScene.InternalStateManager;
 	SceneDataStorage[SS_WorldView] = &InternalWorldViewScene.InternalStateManager;
 	SceneDataStorage[SS_Dungeon] = &InternalDungeonScene.InternalStateManager;
 	SceneDataStorage[SS_Splash] = &InternalSplashScene.InternalStateManager;
+	SceneDataStorage[SS_MainMenu] = &InternalMenuScene.InternalStateManager;
 }
 
 void SceneSystem_Setup(SceneSystem* Self)
@@ -166,6 +172,8 @@ void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, Engine* BaseEngine, dou
 			case SS_Splash:
 				SceneDataStorage[Self->InternalState]->Update(&InternalSplashScene, BaseEngine, Delta);
 				break;
+			case SS_MainMenu:
+				SceneDataStorage[Self->InternalState]->Update(&InternalMenuScene, BaseEngine, Delta);
 			default:
 				break;
 		}
@@ -189,6 +197,9 @@ void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* BaseEngine)
 				break;
 			case SS_Splash:
 				SceneDataStorage[Self->InternalState]->Render(&InternalSplashScene, BaseEngine);
+				break;
+			case SS_MainMenu:
+				SceneDataStorage[Self->InternalState]->Render(&InternalMenuScene, BaseEngine);
 				break;
 			default:
 				break;
