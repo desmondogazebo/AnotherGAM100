@@ -300,7 +300,7 @@ void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short 
 			else if (data[y][x] == '#')
 			{
 				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = 219;
-				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = getColor(c_black, c_dgrey);
 			}
 			else
 			{
@@ -348,7 +348,7 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX
 			else if (data[y + offsetY][x + offsetX] == '#')
 			{
 				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = 219;
-				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = getColor(c_black, c_dgrey);
 			}
 			else
 			{

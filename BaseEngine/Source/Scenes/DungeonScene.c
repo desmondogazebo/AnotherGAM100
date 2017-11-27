@@ -207,7 +207,7 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(-10, 0), DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case DS_Exploration:
-		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_dgrey));
+		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		break;
 	case DS_Results:
