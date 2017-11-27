@@ -64,6 +64,18 @@
     <Filter Include="Resource Files\Enemy\Sprites">
       <UniqueIdentifier>{4e19a45f-b494-4027-a356-2d14ae893519}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Enemy">
+      <UniqueIdentifier>{64e1b47b-96e6-4c3e-89d0-9ad927460213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enemy">
+      <UniqueIdentifier>{858cced0-dd0f-4c84-a7cb-5eae5c5a5ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\LogicalObjects">
+      <UniqueIdentifier>{c85d57fd-1ca8-440c-8566-e265c2d72016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LogicalObjects">
+      <UniqueIdentifier>{c51b84b4-5e2e-4837-bd38-d0f30b82e490}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -111,20 +123,20 @@
     <ClCompile Include="Source\Scenes\DungeonScene.c">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Enemy\EnemyDataLoader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Utilities\Vector2.c">
       <Filter>Source Files\Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LogicalObjects\DungeonCamera.c">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scenes\SplashScene.c">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scenes\MenuScene.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy\EnemyDataLoader.c">
+      <Filter>Source Files\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LogicalObjects\DungeonCamera.c">
+      <Filter>Source Files\LogicalObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,23 +185,23 @@
     <ClInclude Include="Source\Scenes\WorldViewScene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Enemy\EnemyDataLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Enemy\Enemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Scenes\DungeonScene.h">
       <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LogicalObjects\DungeonCamera.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scenes\SplashScene.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scenes\MenuScene.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\Enemy.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy\EnemyDataLoader.h">
+      <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LogicalObjects\DungeonCamera.h">
+      <Filter>Header Files\LogicalObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
