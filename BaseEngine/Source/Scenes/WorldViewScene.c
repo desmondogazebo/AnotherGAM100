@@ -28,23 +28,31 @@ The main world view scene of the game. This is where the player roams around bef
 // Private Variables
 ///****************************************************************************
 // Variables required for transitioning between screens
-char** transitionMap;
-int transitionMapRows;
-int transitionMapColumns;
-double roomTransitionTimer = 0;
-int transitionCounter = 0;
-Vector2 fakePlayerPosition; // A fake player used for cosmetic effect when transitioning
+char** wvs_transitionMap;
+int wvs_transitionMapRows;
+int wvs_transitionMapColumns;
+double wvs_roomTransitionTimer = 0;
+int wvs_transitionCounter = 0;
+Vector2 wvs_fakePlayerPosition; // A fake player used for cosmetic effect when transitioning
 
-double roomTransitionDelayY = 0.06; // Change this to change how fast rooms transition on the Y axis
-double roomTransitionDelayX = 0.02; // Same but X axis
+double wvs_roomTransitionDelayY = 0.06; // Change this to change how fast rooms transition on the Y axis
+double wvs_roomTransitionDelayX = 0.02; // Same but X axis
 
 
 // Timers for letting the player run
-double initialRunDelay = 0.3; // How long it takes before the player starts running
-double runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
-double runDelayY = 0.15; // How fast the player runs on Y axis
-double runTimerX = 0;
-double runTimerY = 0;
+double wvs_initialRunDelay = 0.3; // How long it takes before the player starts running
+double wvs_runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
+double wvs_runDelayY = 0.15; // How fast the player runs on Y axis
+double wvs_runTimerX = 0;
+double wvs_runTimerY = 0;
+
+// Dungeon transition variables
+short wvs_dungeonTransitionCount = 0;
+double wvs_dungeonTransitionTimer = 0;
+double wvs_dungeonTransitionTimerDelay = 0.05;
+short wvs_dungeonWaitToggle = 0;
+double wvs_dungeonTransitionTimerWaitDelay = 0.3;
+TextDataLoader wvs_dungeonTransitionSprite;
 
 Vector2 moveDirection; // Direction of player movement
 
@@ -73,16 +81,22 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 void WorldViewScene_LinkedInternalExit(WorldViewScene* self);
 
 // Split functions to make file neater
-void PlayerControls(WorldViewScene* self, double Delta);
+void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta);
 void WrapPlayer(WorldViewScene* self);
-void Add_Room(WorldViewScene* self, char *mapString);
+Room* Add_Room(WorldViewScene* self, char *mapString);
 void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol);
 void FreeMapData(char*** mapToFree, int numRow, int numCol);
 
 void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, int totalNumOfShifts, DIRECTION dir);
 
+// Initializing the maps of the world
+void InitializeWorldMaps(WorldViewScene* self);
+
 // Room transition
 void RoomTransition(WorldViewScene* self, double Delta);
+
+// Dungeon transition
+void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta);
 
 ///****************************************************************************
 // Function Definitions
@@ -144,23 +158,15 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 
 	moveDirection.x = moveDirection.y = 0;
 
+	TextDataLoader_Setup(&wvs_dungeonTransitionSprite);
+	wvs_dungeonTransitionSprite.LoadResource(&wvs_dungeonTransitionSprite, "Resources/DungeonTransition.txt");
+
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
 	Initialize_Player(&self->player, Vec2(5, 5), &self->currentRoom);
 
-	Add_Room(self, "Resources/Maps/TestMap.txt"); // Room0
-	Add_Room(self, "Resources/Maps/TestMap2.txt"); // Room1
-	Add_Room(self, "Resources/Maps/TestMap2.txt"); // Room2
-
-	Room* room0 = self->roomList.array[0];
-	Room* room1 = self->roomList.array[1];
-	Room* room2 = self->roomList.array[2];
-	room0->AddExit(room0, room1, NORTH);
-	room0->AddExit(room0, room2, EAST);
-	room0->AddExit(room0, room2, WEST);
-	room1->AddExit(room1, room0, SOUTH);
-	room2->AddExit(room2, room0, EAST);
+	InitializeWorldMaps(self);
 
 	Enemy testEnemy;
 	PopulateEnemy(&testEnemy, "Resources/Enemy/Goblin.txt");
@@ -173,16 +179,25 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 // Linked Update function that will be set to the InternalStateManager
 void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, Engine* BaseEngine, double Delta)
 {
+	// Debug code
+	if (isKeyPressed('Q'))
+	{
+		Delta *= 4;
+	}
+
 	// Do some state logic for the internal state manager
 	// Testing code state cycling
 	switch (self->InternalState)
 	{
 	case WVS_ROAMING:
-		PlayerControls(self, Delta);
+		PlayerControls(self, BaseEngine, Delta);
 		WrapPlayer(self);
 		break;
 	case WVS_TRANSITION:
 		RoomTransition(self, Delta);
+		break;
+	case WVS_DUNGEONTRANSITION:
+		DungeonTransition(self, BaseEngine, Delta);
 		break;
 	}
 }
@@ -198,8 +213,16 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_TRANSITION:
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, transitionMap, transitionMapRows, transitionMapColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, fakePlayerPosition, "O", getColor(c_black, c_aqua));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, wvs_fakePlayerPosition, "O", getColor(c_black, c_aqua));
+		break;
+	case WVS_DUNGEONTRANSITION:
+		{
+			Vector2 location = { 0, wvs_dungeonTransitionSprite.NumberOfRows - wvs_dungeonTransitionCount };
+			BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_dungeonTransitionSprite.TextData, wvs_dungeonTransitionSprite.NumberOfRows, wvs_dungeonTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
+		}
 		break;
 	}
 }
@@ -208,11 +231,12 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 void WorldViewScene_LinkedInternalExit(WorldViewScene* self)
 {
 	// Free the stuff initiallized in the Internal State Manager
+	wvs_dungeonTransitionSprite.Exit(&wvs_dungeonTransitionSprite);
 	FreeRoomArray(&(self->roomList));
 }
 
 
-void PlayerControls(WorldViewScene* self, double Delta)
+void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 {
 	if (isKeyPressed('W'))
 	{
@@ -221,7 +245,11 @@ void PlayerControls(WorldViewScene* self, double Delta)
 		{
 			self->wKeyPressed = 1;
 			moveDirection.y = -1;
-			MovePlayer(&self->player, moveDirection);
+			short plrMoveCode = MovePlayer(&self->player, moveDirection);
+			if (plrMoveCode == 2)
+			{
+				self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -241,7 +269,11 @@ void PlayerControls(WorldViewScene* self, double Delta)
 		{
 			self->sKeyPressed = 1;
 			moveDirection.y = 1;
-			MovePlayer(&self->player, moveDirection);
+			short plrMoveCode = MovePlayer(&self->player, moveDirection);
+			if (plrMoveCode == 2)
+			{
+				self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -261,7 +293,11 @@ void PlayerControls(WorldViewScene* self, double Delta)
 		{
 			self->aKeyPressed = 1;
 			moveDirection.x = -1;
-			MovePlayer(&self->player, moveDirection);
+			short plrMoveCode = MovePlayer(&self->player, moveDirection);
+			if (plrMoveCode == 2)
+			{
+				self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -281,7 +317,11 @@ void PlayerControls(WorldViewScene* self, double Delta)
 		{
 			self->dKeyPressed = 1;
 			moveDirection.x = 1;
-			MovePlayer(&self->player, moveDirection);
+			short plrMoveCode = MovePlayer(&self->player, moveDirection);
+			if (plrMoveCode == 2)
+			{
+				self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -296,40 +336,48 @@ void PlayerControls(WorldViewScene* self, double Delta)
 
 	if (self->aKeyPressed == 1 || self->dKeyPressed == 1)
 	{
-		if ((runTimerX += Delta) > initialRunDelay) // Initial delay before running
+		if ((wvs_runTimerX += Delta) > wvs_initialRunDelay) // Initial delay before running
 		{
-			if (runTimerX > initialRunDelay + runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			if (wvs_runTimerX > wvs_initialRunDelay + wvs_runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
-				runTimerX = initialRunDelay;
+				wvs_runTimerX = wvs_initialRunDelay;
 				Vector2 tempDirection = moveDirection;
 				tempDirection.y = 0;
-				MovePlayer(&self->player, tempDirection);
+				short plrMoveCode = MovePlayer(&self->player, moveDirection);
+				if (plrMoveCode == 2)
+				{
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				}
 			}
 		}
 	}
 	else
 	{
-		runTimerX = 0;
+		wvs_runTimerX = 0;
 		moveDirection.x = 0;
 	}
 
 
 	if (self->wKeyPressed == 1 || self->sKeyPressed == 1)
 	{
-		if ((runTimerY += Delta) > initialRunDelay) // Initial delay before running
+		if ((wvs_runTimerY += Delta) > wvs_initialRunDelay) // Initial delay before running
 		{
-			if (runTimerY > initialRunDelay + runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			if (wvs_runTimerY > wvs_initialRunDelay + wvs_runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
-				runTimerY = initialRunDelay;
+				wvs_runTimerY = wvs_initialRunDelay;
 				Vector2 tempDirection = moveDirection;
 				tempDirection.x = 0;
-				MovePlayer(&self->player, tempDirection);
+				short plrMoveCode = MovePlayer(&self->player, moveDirection);
+				if (plrMoveCode == 2)
+				{
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				}
 			}
 		}
 	}
 	else
 	{
-		runTimerY = 0;
+		wvs_runTimerY = 0;
 		moveDirection.y = 0;
 	}
 
@@ -341,10 +389,10 @@ void WrapPlayer(WorldViewScene* self)
 	{
 		if (self->currentRoom->exits[self->player.dir] != NULL)
 		{
-			CopyMapData(&transitionMap, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns);
+			CopyMapData(&wvs_transitionMap, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns);
 			self->currentRoom = self->currentRoom->exits[self->player.dir];
 			self->InternalState = WVS_TRANSITION;
-			fakePlayerPosition = self->player.position;
+			wvs_fakePlayerPosition = self->player.position;
 			switch (self->player.dir)
 			{
 			case NORTH:
@@ -364,7 +412,7 @@ void WrapPlayer(WorldViewScene* self)
 	}
 }
 
-void Add_Room(WorldViewScene* self, char *mapString)
+Room* Add_Room(WorldViewScene* self, char *mapString)
 {
 	Room* roomToAdd = RoomFactory_CreateRoom();
 	roomToAdd->LoadMap(roomToAdd, mapString);
@@ -373,27 +421,28 @@ void Add_Room(WorldViewScene* self, char *mapString)
 	{
 		self->currentRoom = roomToAdd;
 	}
+	return roomToAdd;
 }
 
 void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol)
 {
-	transitionMapRows = numRow;
-	transitionMapColumns = numCol;
+	wvs_transitionMapRows = numRow;
+	wvs_transitionMapColumns = numCol;
 
-	if (transitionMapColumns > 80)
+	if (wvs_transitionMapColumns > 80)
 	{
-		transitionMapColumns = 80;
+		wvs_transitionMapColumns = 80;
 	}
 	
 	char **tempArray;
 	tempArray = (char**)malloc(numRow * sizeof(char*));
 	for (int i = 0; i < numRow; ++i)
 	{
-		tempArray[i] = (char*)malloc(transitionMapColumns * sizeof(char));
+		tempArray[i] = (char*)malloc(wvs_transitionMapColumns * sizeof(char));
 	}
 
 
-	for (int x = 0; x < transitionMapColumns; ++x)
+	for (int x = 0; x < wvs_transitionMapColumns; ++x)
 	{
 		for (int y = 0; y < numRow; ++y)
 		{
@@ -417,20 +466,20 @@ void FreeMapData(char*** mapToFree, int numRow, int numCol)
 
 void RoomTransition(WorldViewScene* self, double Delta)
 {
-	roomTransitionTimer += Delta;
-	if ((roomTransitionTimer > roomTransitionDelayY && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
-		(roomTransitionTimer > roomTransitionDelayX && (self->player.dir == EAST || self->player.dir == WEST)))
+	wvs_roomTransitionTimer += Delta;
+	if ((wvs_roomTransitionTimer > wvs_roomTransitionDelayY && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
+		(wvs_roomTransitionTimer > wvs_roomTransitionDelayX && (self->player.dir == EAST || self->player.dir == WEST)))
 	{
-		roomTransitionTimer = 0;
-		transitionCounter += 1;
+		wvs_roomTransitionTimer = 0;
+		wvs_transitionCounter += 1;
 
-		ShiftMap(&transitionMap, self->currentRoom->mapToRender, transitionMapRows, transitionMapColumns, transitionCounter, self->player.dir);
+		ShiftMap(&wvs_transitionMap, self->currentRoom->mapToRender, wvs_transitionMapRows, wvs_transitionMapColumns, wvs_transitionCounter, self->player.dir);
 
-		if ((transitionCounter == transitionMapRows && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
-			(transitionCounter == transitionMapColumns && (self->player.dir == EAST || self->player.dir == WEST)))
+		if ((wvs_transitionCounter == wvs_transitionMapRows && (self->player.dir == NORTH || self->player.dir == SOUTH)) ||
+			(wvs_transitionCounter == wvs_transitionMapColumns && (self->player.dir == EAST || self->player.dir == WEST)))
 		{
-			transitionCounter = 0;
-			FreeMapData(&transitionMap, transitionMapRows, transitionMapColumns);
+			wvs_transitionCounter = 0;
+			FreeMapData(&wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns);
 			self->player.dir = D_TOTAL;
 			self->InternalState = WVS_ROAMING;
 		}
@@ -442,7 +491,7 @@ void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, i
 	switch (dir)
 	{
 	case NORTH: // SHIFT DOWN
-		fakePlayerPosition.y++;
+		wvs_fakePlayerPosition.y++;
 		for (int y = numRow - 1; y > 0; --y)
 		{
 			for (int x = 0; x < numCol; ++x)
@@ -460,7 +509,7 @@ void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, i
 		}
 		break;
 	case SOUTH: // SHIFT UP
-		fakePlayerPosition.y--;
+		wvs_fakePlayerPosition.y--;
 		for (int y = 0; y < numRow - 1; ++y)
 		{
 			for (int x = 0; x < numCol; ++x)
@@ -478,7 +527,7 @@ void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, i
 		}
 		break;
 	case EAST: // SHIFT LEFT
-		fakePlayerPosition.x--;
+		wvs_fakePlayerPosition.x--;
 		for (int y = 0;y < numRow;++y)
 		{
 			for (int x = 0; x < numCol - 1; ++x)
@@ -496,7 +545,7 @@ void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, i
 		}
 		break;
 	case WEST: // SHIFT RIGHT
-		fakePlayerPosition.x++;
+		wvs_fakePlayerPosition.x++;
 		for (int y = 0; y < numRow; ++y)
 		{
 			for (int x = numCol - 1; x > 0; --x)
@@ -514,4 +563,86 @@ void ShiftMap(char*** mapToShift, char** shiftIntoMap, int numRow, int numCol, i
 		}
 		break;
 	}
+}
+
+void InitializeWorldMaps(WorldViewScene* self)
+{
+	// Initialization of maps
+	Room* map1 = Add_Room(self, "Resources/Maps/WorldMap1.txt"); // Map1
+	Room* map2 = Add_Room(self, "Resources/Maps/WorldMap2.txt"); // Map2
+	Room* map3 = Add_Room(self, "Resources/Maps/WorldMap3.txt"); // Map3
+	Room* map4 = Add_Room(self, "Resources/Maps/WorldMap4.txt"); // Map4
+	Room* map5 = Add_Room(self, "Resources/Maps/WorldMap5.txt"); // Map5
+	Room* map6 = Add_Room(self, "Resources/Maps/WorldMap6.txt"); // Map6
+	Room* map7 = Add_Room(self, "Resources/Maps/WorldMap7.txt"); // Map7
+	Room* map8 = Add_Room(self, "Resources/Maps/WorldMap8.txt"); // Map8
+	Room* map9 = Add_Room(self, "Resources/Maps/WorldMap9.txt"); // Map9
+
+	// MAP LAYOUT IS AS SUCH
+	// 7 // 8 // 9
+	// 4 // 5 // 6
+	// 1 // 2 // 3
+
+	// Adding exits to rooms
+	map1->AddExit(map1, map2, EAST);
+	map1->AddExit(map1, map4, NORTH);
+
+	map2->AddExit(map2, map1, WEST);
+	map2->AddExit(map2, map5, NORTH);
+	map2->AddExit(map2, map3, EAST);
+
+	map3->AddExit(map3, map2, WEST);
+	map3->AddExit(map3, map6, NORTH);
+
+	map4->AddExit(map4, map7, NORTH);
+	map4->AddExit(map4, map5, EAST);
+	map4->AddExit(map4, map1, SOUTH);
+
+	map5->AddExit(map5, map8, NORTH);
+	map5->AddExit(map5, map6, EAST);
+	map5->AddExit(map5, map2, SOUTH);
+	map5->AddExit(map5, map4, WEST);
+
+	map6->AddExit(map6, map9, NORTH);
+	map6->AddExit(map6, map7, WEST);
+	map6->AddExit(map6, map3, SOUTH);
+
+	map7->AddExit(map7, map8, EAST);
+	map7->AddExit(map7, map4, SOUTH);
+
+	map8->AddExit(map8, map7, WEST);
+	map8->AddExit(map8, map5, SOUTH);
+	map8->AddExit(map8, map9, EAST);
+
+	map9->AddExit(map9, map8, WEST);
+	map9->AddExit(map9, map6, SOUTH);
+}
+
+void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
+{
+	wvs_dungeonTransitionTimer += Delta;
+
+	if (wvs_dungeonWaitToggle == 0)
+	{
+		if (wvs_dungeonTransitionTimer > wvs_dungeonTransitionTimerDelay)
+		{
+			wvs_dungeonTransitionCount++;
+			wvs_dungeonTransitionTimer = 0;
+			if (wvs_dungeonTransitionCount == self->currentRoom->Loader.NumberOfRows)
+			{
+				wvs_dungeonWaitToggle = 1;
+			}
+		}
+	}
+	else if (wvs_dungeonWaitToggle == 1)
+	{
+		if (wvs_dungeonTransitionTimer > wvs_dungeonTransitionTimerWaitDelay)
+		{
+			wvs_dungeonTransitionCount = 0;
+			wvs_dungeonTransitionTimer = 0;
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+		}
+	}
+
+
 }

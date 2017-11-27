@@ -32,7 +32,7 @@ struct Room
 	void(*Init)();
 	
 	void(*Free)();
-	void(*AddExit)();
+	void(*AddExit)(); // Params : self,exitroom,direction
 	void(*LoadMap)();
 };
 
