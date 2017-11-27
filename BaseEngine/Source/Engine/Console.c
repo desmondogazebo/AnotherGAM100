@@ -189,7 +189,7 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 	if (row > theConsole->consoleSize.Y) row = theConsole->consoleSize.Y;
 
 	//Set the write position
-	int writeIndex = max(location.x + theConsole->consoleSize.X * location.y, 0); //this is the starting print location.
+	int writeIndex = location.x + theConsole->consoleSize.X * location.y; //this is the starting print location.
 
 	int offset = location.x; //offset from left of screen. this is a variant that counts absolute lefts.
 
@@ -212,20 +212,34 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 
 		for (int x = addedSpace; x < col - trim; ++x) //we write every single character that isn't trimmed yet.
 		{
-			if (writeIndex + (x + y * col) < theConsole->screenDataBufferSize) //while i still have space to write...
+			if (data[y][x] == '\n') //this is assuming the sprite has constant col and row throughout
+			{
+				writeIndex += theConsole->consoleSize.X - strlen(data[y]); //move initial write location if \n
+				break;
+			}
+			if (data[y][x] == '\0')
+			{
+				break; //ignore if null character
+			}
+			int actualValue = writeIndex + (x + y * col);
+			if (actualValue < 0)
+			{
+				continue; // skip if attempting to write to illegal location
+			}
+			if (actualValue < theConsole->screenDataBufferSize) //while i still have space to write...
 			{
 				if (data[y][x] == '~')
 				{
 					if (!data[y][x])
 					{
-						theConsole->screenDataBuffer[writeIndex + (x + y * col)].Char.AsciiChar = ' ';
+						theConsole->screenDataBuffer[actualValue].Char.AsciiChar = ' ';
 					}
-					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Attributes = colour;
+					theConsole->screenDataBuffer[actualValue].Attributes = colour;
 				}
 				else
 				{
-					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Char.AsciiChar = data[y][x];
-					theConsole->screenDataBuffer[writeIndex + (x + y * col)].Attributes = colour;
+					theConsole->screenDataBuffer[actualValue].Char.AsciiChar = data[y][x];
+					theConsole->screenDataBuffer[actualValue].Attributes = colour;
 				}
 			}
 			//everything else is chopped off

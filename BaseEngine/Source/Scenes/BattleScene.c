@@ -20,12 +20,16 @@ A template on creating a customized state manager
 // Included for Rendering
 #include "../Engine/BaseEngine.h"
 
+// Inclusion of Enemies
+#include "../Enemy/EnemyDataLoader.h"
+
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
 TextDataLoader BattleScene_Loader_Base;
 TextDataLoader BattleScene_Loader_Layout;
 TextDataLoader BattleScene_Loader_Enemy;
+Enemy TestEnemy;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -105,8 +109,9 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	TextDataLoader_Setup(&BattleScene_Loader_Enemy);
 	// Load the sprites that will be used in the battle scene
 	BattleScene_Loader_Base.LoadResource(&BattleScene_Loader_Base, "Resources/DigiPenLogo(Unofficial).txt");
-	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Maps/dungeonTemplate.txt");
-
+	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Battle/Borders.txt");
+	// Load the testing enemy
+	PopulateEnemy(&TestEnemy, "Resources/Enemy/Goblin.txt");
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -137,8 +142,9 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 	switch (Self->InternalState)
 	{
 	case CSM_Loading:
+		//BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader_Base.TextData, BattleScene_Loader_Base.NumberOfRows, BattleScene_Loader_Base.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(BaseEngine->g_console->consoleSize.X * 0.5f - TestEnemy.spriteColumns * 0.5f, BaseEngine->g_console->consoleSize.Y * 0.5f - TestEnemy.spriteRows*0.75f), TestEnemy.sprite, TestEnemy.spriteRows, TestEnemy.spriteColumns, getColor(c_black, c_white));
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader_Base.TextData, BattleScene_Loader_Base.NumberOfRows, BattleScene_Loader_Base.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case CSM_PlayerTurn:
 		break;
@@ -158,4 +164,5 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 	BattleScene_Loader_Base.Exit(&BattleScene_Loader_Base);
 	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
 	BattleScene_Loader_Enemy.Exit(&BattleScene_Loader_Enemy);
+	FreeEnemy(&TestEnemy);
 }
