@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9D509AAB-DAF2-416A-A27C-252CF6611420}</ProjectGuid>
     <RootNamespace>BaseEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -160,8 +160,23 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\DigiPenLogo(Unofficial).txt" />
-    <Text Include="Resources\Maps\TestMap.txt" />
-    <Text Include="Resources\Maps\TestMap2.txt" />
+    <Text Include="Resources\Dungeons\dungeon0.txt" />
+    <Text Include="Resources\Dungeons\dungeon1.txt" />
+    <Text Include="Resources\Dungeons\dungeon2.txt" />
+    <Text Include="Resources\Dungeons\dungeon3.txt" />
+    <Text Include="Resources\Dungeons\dungeonTemplate.txt" />
+    <Text Include="Resources\DungeonTransition.txt" />
+    <Text Include="Resources\Enemy\Goblin.txt" />
+    <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt" />
+    <Text Include="Resources\Maps\WorldMap1.txt" />
+    <Text Include="Resources\Maps\WorldMap2.txt" />
+    <Text Include="Resources\Maps\WorldMap3.txt" />
+    <Text Include="Resources\Maps\WorldMap4.txt" />
+    <Text Include="Resources\Maps\WorldMap5.txt" />
+    <Text Include="Resources\Maps\WorldMap6.txt" />
+    <Text Include="Resources\Maps\WorldMap7.txt" />
+    <Text Include="Resources\Maps\WorldMap8.txt" />
+    <Text Include="Resources\Maps\WorldMap9.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

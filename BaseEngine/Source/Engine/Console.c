@@ -1,10 +1,20 @@
-﻿#include "Console.h"
+﻿/******************************************************************************
+filename    Console.c
+author      Qingping Zheng
+DP email    qingping.zheng@digipen.edu
+course      GAM100
+
+Brief Description:
+This file contains definitions for a Console object.
+
+******************************************************************************/
+#include "Console.h"
 
 /*
-Function Name: con_Console
+Function Name: Console_constructor
 Brief Description: A constructor for the console entity.
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 title : sets the title of the command window.
 */
@@ -46,11 +56,10 @@ void Console_constructor(Console* theConsole, Vector2 size, char* title)
 }
 
 /*
-Function Name: m_setConsoleFont
-Brief Description: prefixed with an m, this is a supposed private function
-to allow setting of the console font
+Function Name: Console_setConsoleFont
+Brief Description: Sets the console font
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 size : defines the size of the font by pixels
 fontName : name of the font to use
 */
@@ -73,11 +82,10 @@ void Console_setConsoleFont(Console* theConsole, Vector2 size, LPCWSTR fontName)
 }
 
 /*
-Function Name: m_shutdownConsole
-Brief Description: prefixed with an m, this is a supposed private function
-to shutdown the console and free associated memory
+Function Name: Console_shutdownConsole
+Brief Description: Shuts down the console and frees associated memory
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 */
 
 void Console_shutdownConsole(Console* theConsole)
@@ -91,11 +99,10 @@ void Console_shutdownConsole(Console* theConsole)
 }
 
 /*
-Function Name: m_shutdownConsole
-Brief Description: prefixed with an m, this is a supposed private function
-to help send information from the data buffer to the screen
+Function Name: Console_flushBufferToConsole
+Brief Description: Sends information from the data buffer to the screen
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 */
 
 void Console_flushBufferToConsole(Console* theConsole)
@@ -105,11 +112,10 @@ void Console_flushBufferToConsole(Console* theConsole)
 }
 
 /*
-Function Name: m_setConsoleSize
-Brief Description: prefixed with an m, this is a supposed private function
-to set window and buffer size of the console
+Function Name: Console_setConsoleSize
+Brief Description: Sets window and buffer size of the console
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 size : defines the size of the console window in terms of characters
 */
 
@@ -138,12 +144,11 @@ void Console_setConsoleSize(Console* theConsole, Vector2 size)
 }
 
 /*
-Function Name: m_clearBuffer
-Brief Description: prefixed with an m, this is a supposed private function
-to fill the screen with a certain color
+Function Name: Console_clearBuffer
+Brief Description: Fills the screen with a certain color
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
-c : the desired color to write with
+theConsole : the console pointer itself, to allow for internal referencing
+colour : the desired color to write with
 */
 
 void Console_clearBuffer(Console* theConsole, WORD colour)
@@ -157,14 +162,13 @@ void Console_clearBuffer(Console* theConsole, WORD colour)
 }
 
 /*
-Function Name: m_writeToBuffer
-Brief Description: prefixed with an m, this is a supposed private function
-to write information to the buffer
+Function Name: Console_text_writeToBuffer
+Brief Description: Writes a char pointer to the buffer
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 loc : the console coordinates to write to: NOTE, TOP LEFT is (0,0)
 data : the data to write
-c : the desired color to write with
+colour : the desired color to write with
 */
 
 void Console_text_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WORD colour)
@@ -182,6 +186,21 @@ void Console_text_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WO
 		theConsole->screenDataBuffer[index + i].Attributes = colour;
 	}
 }
+
+/*
+Function Name: Console_sprite_writeToBuffer
+Brief Description: Writes a char double pointer to the buffer
+Parameters:
+theConsole : the console pointer itself, to allow for internal referencing
+location : the console coordinates to write to: NOTE, TOP LEFT is (0,0)
+data : the data to write
+row : number of rows in the data.
+col : number of columns in the data
+
+NOTE: for legacy reasons, even though we could pass in a full TextDataLoader, I refrain from doing so.
+
+colour : the desired color to write with
+*/
 
 void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** data, unsigned short row, unsigned short col, WORD colour)
 {
@@ -247,6 +266,20 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 	}
 }
 
+/*
+Function Name: Console_map_writeToBuffer
+Brief Description: Writes a char double pointer to the buffer
+Parameters:
+theConsole : the console pointer itself, to allow for internal referencing
+data : the data to write
+row : number of rows in the data.
+col : number of columns in the data
+
+NOTE: for legacy reasons, even though we could pass in a full TextDataLoader, I refrain from doing so.
+
+colour : the desired color to write with
+*/
+
 void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short row, unsigned short col, WORD colour)
 {
 	if (col > theConsole->consoleSize.X) col = theConsole->consoleSize.X;
@@ -262,7 +295,12 @@ void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short 
 				{
 					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
 				}
-				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+			else if (data[y][x] == '#')
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = 219;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = getColor(c_black, c_dgrey);
 			}
 			else
 			{
@@ -272,6 +310,18 @@ void Console_map_writeToBuffer(Console* theConsole, char** data, unsigned short 
 		}
 	}
 }
+
+/*
+Function Name: Console_dungeon_writeToBuffer
+Brief Description: Writes a char double pointer to the buffer
+	this double pointer tends to be larger than the screen.
+Parameters:
+theConsole : the console pointer itself, to allow for internal referencing
+data : the data to write
+offsetX : offset from left of screen
+offsetY : offset from top of screen
+colour : the desired color to write with
+*/
 
 void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX, int offsetY, WORD colour)
 {
@@ -288,7 +338,17 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX
 				{
 					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
 				}
-				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+			else if (data[y + offsetY][x + offsetX] == 'E')
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
+			}
+			else if (data[y + offsetY][x + offsetX] == '#')
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = 219;
+				theConsole->screenDataBuffer[(x + y * col)].Attributes = getColor(c_black, c_dgrey);
 			}
 			else
 			{
@@ -300,11 +360,10 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX
 }
 
 /*
-Function Name: m_writeToConsole
-Brief Description: prefixed with an m, this is a supposed private function
-to write info to the console using a buffer
+Function Name: Console_writeToConsole
+Brief Description: Write info to the console using a buffer
 Parameters:
-ptr : the console pointer itself, to allow for internal referencing
+theConsole : the console pointer itself, to allow for internal referencing
 theBuffer : the desired buffer to write to. Note that this allows for
 multi-buffering.
 */

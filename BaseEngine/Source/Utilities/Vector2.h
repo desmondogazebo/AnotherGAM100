@@ -14,11 +14,19 @@ Vector2 is just a more intuitive version of the COORD system
 #define VEC2
 
 //Class Structure of Vector2
-typedef struct Vector2{
+typedef struct {
 	short x;
 	short y;
 }Vector2;
 
+/*
+Function Name: Vec2
+Brief Description: A lazy init for a Vector2 variable.
+Parameters:
+x : x of the vector
+y : y of the vector
+Returns : A vector2 variable of values x and y.
+*/
 Vector2 Vec2(short x, short y);
 
 #endif

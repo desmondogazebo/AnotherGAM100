@@ -1,6 +1,6 @@
 /******************************************************************************
 filename    DungeonCamera.h
-author      Rui An Ryan Lim
+author      Rui An Ryan Lim & Qingping Zheng
 DP email    l.ruianryan@digipen.edu
 
 Created on 23 November 2017
@@ -12,12 +12,13 @@ the dungeon scene
 ******************************************************************************/
 #include "DungeonCamera.h"
 #include "../Utilities/TextDataLoader.h"
+#include "../Engine/Console.h"
 
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
 /* Uses passed TextDataLoader and Vec2 Player coords to determine the offset of the map */
-void DungeonCamera_UpdateCameraLogic(DungeonCamera* Self, TextDataLoader* MapData, Vector2* PlayerLocation);
+void DungeonCamera_UpdateCameraLogic(DungeonCamera* Self, Console* console, TextDataLoader* MapData, Vector2* PlayerLocation);
 
 ///****************************************************************************
 // Function Definitions
@@ -30,7 +31,7 @@ void DungeonCamera_Setup(DungeonCamera* Self)
 }
 
 /* Uses passed TextDataLoader and Vec2 Player coords to determine the offset of the map */
-void DungeonCamera_UpdateCameraLogic(DungeonCamera* Self, TextDataLoader* MapData, Vector2* PlayerLocation)
+void DungeonCamera_UpdateCameraLogic(DungeonCamera* Self, Console* console, TextDataLoader* MapData, Vector2* PlayerLocation)
 {
 	// Default the Offset Variable
 	Self->CalculatedMapOffset = Vec2(0, 0);
@@ -39,4 +40,22 @@ void DungeonCamera_UpdateCameraLogic(DungeonCamera* Self, TextDataLoader* MapDat
 	
 	// Make changes to the offset variable if required
 
+
+	if (PlayerLocation->x > (console->consoleSize.X >> 1)) //started to offset
+	{
+		Self->CalculatedMapOffset.x = PlayerLocation->x - (console->consoleSize.X >> 1);
+	}
+	if (PlayerLocation->y > (console->consoleSize.Y >> 1)) //started to offset
+	{
+		Self->CalculatedMapOffset.y = PlayerLocation->y - (console->consoleSize.Y >> 1);
+	}
+
+	if (Self->CalculatedMapOffset.x > MapData->NumberOfColumns - console->consoleSize.X -1)
+	{
+		Self->CalculatedMapOffset.x = MapData->NumberOfColumns - console->consoleSize.X - 1;
+	}
+	if (Self->CalculatedMapOffset.y > MapData->NumberOfRows - console->consoleSize.Y)
+	{
+		Self->CalculatedMapOffset.y = MapData->NumberOfRows - console->consoleSize.Y;
+	}
 }

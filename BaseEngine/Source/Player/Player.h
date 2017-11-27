@@ -13,16 +13,16 @@ Player class to store player variables
 
 #include "../Utilities/Vector2.h"
 #include "../Rooms/Room.h"
+#include "../Utilities/TextDataLoader.h"
 
 typedef struct Player
 {
 	Vector2 position;
-	Room** currentRoom;
 	DIRECTION dir;
 }Player;
 
-void Initialize_Player(Player* player, Vector2 position, Room** currentRoom);
+void Initialize_Player(Player* player, Vector2 position);
 
-short MovePlayer(Player *player, Vector2 move);
+short MovePlayer(Player *player, Vector2 move, TextDataLoader Loader);
 
 #endif
