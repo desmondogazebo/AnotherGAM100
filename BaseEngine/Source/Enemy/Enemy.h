@@ -12,7 +12,7 @@ An enemy struct to store enemy stats
 
 typedef struct Enemy
 {
-	char* name;
+	char name[100];
 	int hp;
 	int atk;
 	int lvl;
