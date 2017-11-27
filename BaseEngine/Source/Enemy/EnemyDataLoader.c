@@ -27,8 +27,13 @@ void PopulateEnemy(Enemy* target, char* filePath)
 		switch (i)
 		{
 		case 0:
-			target->name = (char*)malloc(strlen(token) * sizeof(char));
-			memcpy(target->name, token, strlen(token));
+			//target->name = (char*)malloc(strlen(token) * sizeof(char));
+			//strcpy(target->name, token);
+			for (int j = 0; j < strlen(token); ++j)
+			{
+				target->name[j] = token[j];
+			}
+			target->name[strlen(token) - 1] = '\0';
 			break;
 		case 1:
 			sscanf_s(token,"%d",&target->hp);
@@ -61,7 +66,7 @@ void PopulateEnemy(Enemy* target, char* filePath)
 
 void FreeEnemy(Enemy* target)
 {
-	free(target->name);
+	//free(target->name);
 	for (int i = 0; i < target->spriteRows; ++i)
 		free(target->sprite[i]);
 	free(target->sprite);

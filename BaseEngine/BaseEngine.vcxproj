@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -160,10 +160,14 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\DigiPenLogo(Unofficial).txt" />
+    <Text Include="Resources\Dungeons\dungeon0.txt" />
+    <Text Include="Resources\Dungeons\dungeon1.txt" />
+    <Text Include="Resources\Dungeons\dungeon2.txt" />
+    <Text Include="Resources\Dungeons\dungeon3.txt" />
+    <Text Include="Resources\Dungeons\dungeonTemplate.txt" />
     <Text Include="Resources\DungeonTransition.txt" />
     <Text Include="Resources\Enemy\Goblin.txt" />
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt" />
-    <Text Include="Resources\Maps\dungeonTemplate.txt" />
     <Text Include="Resources\Maps\WorldMap1.txt" />
     <Text Include="Resources\Maps\WorldMap2.txt" />
     <Text Include="Resources\Maps\WorldMap3.txt" />

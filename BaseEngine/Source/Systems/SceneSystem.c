@@ -213,4 +213,6 @@ void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 	InternalBattleScene.Exit(&InternalBattleScene);
 	InternalDungeonScene.Exit(&InternalDungeonScene);
 	InternalWorldViewScene.Exit(&InternalWorldViewScene);
+	InternalMenuScene.Exit(&InternalMenuScene);
+	InternalSplashScene.Exit(&InternalSplashScene);
 }
