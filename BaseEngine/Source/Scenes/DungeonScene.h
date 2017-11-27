@@ -16,6 +16,7 @@ mechanics.
 #define _DUNGEON_SCENE_H
 
 #include "../StateManager/BaseStateManager.h"
+#include "../Player/Player.h"
 
 /* Public Struct & Functions */
 typedef struct DungeonScene
@@ -28,6 +29,13 @@ typedef struct DungeonScene
 	}DS_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
+
+	Player player;
+
+	short wKeyPressed;
+	short sKeyPressed;
+	short aKeyPressed;
+	short dKeyPressed;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */

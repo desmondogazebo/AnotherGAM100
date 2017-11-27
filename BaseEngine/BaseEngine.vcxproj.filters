@@ -58,6 +58,12 @@
     <Filter Include="Resource Files\Maps">
       <UniqueIdentifier>{518f0eae-6be8-428c-a778-79985ada1c7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Enemy">
+      <UniqueIdentifier>{68d22157-958c-4841-a68e-1fde42b019c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Enemy\Sprites">
+      <UniqueIdentifier>{4e19a45f-b494-4027-a356-2d14ae893519}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -115,7 +121,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scenes\SplashScene.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,18 +183,51 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scenes\SplashScene.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\DigiPenLogo(Unofficial).txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Maps\TestMap.txt">
+    <Text Include="Resources\DungeonTransition.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Maps\dungeonTemplate.txt">
       <Filter>Resource Files\Maps</Filter>
     </Text>
-    <Text Include="Resources\Maps\TestMap2.txt">
+    <Text Include="Resources\Maps\WorldMap1.txt">
       <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap2.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap3.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap4.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap5.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap6.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap7.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap8.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Maps\WorldMap9.txt">
+      <Filter>Resource Files\Maps</Filter>
+    </Text>
+    <Text Include="Resources\Enemy\Goblin.txt">
+      <Filter>Resource Files\Enemy</Filter>
+    </Text>
+    <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt">
+      <Filter>Resource Files\Enemy\Sprites</Filter>
     </Text>
   </ItemGroup>
 </Project>
