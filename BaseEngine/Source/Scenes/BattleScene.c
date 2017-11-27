@@ -26,10 +26,11 @@ A template on creating a customized state manager
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
-TextDataLoader BattleScene_Loader_Base;
 TextDataLoader BattleScene_Loader_Layout;
-TextDataLoader BattleScene_Loader_Enemy;
-Enemy TestEnemy;
+Enemy CurrentEnemy;
+int EnemyCurrentHealth;
+char ScreenLineInfoBuffer[100];
+char TempCharArray[10];
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -54,6 +55,17 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the InternalStateManager.Exit
 void BattleScene_LinkedInternalExit(BattleScene* Self);
 
+// Scene Based Functions
+void RenderLoading(BattleScene* Self, Engine* BaseEngine);
+void RenderBattle(BattleScene* Self, Engine* BaseEngine);
+void RenderResults(BattleScene* Self, Engine* BaseEngine);
+
+// Utility Functions
+void ResetCharArray(char* Array)
+{
+	memset(&Array[0], 0, sizeof(Array));
+}
+
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -66,7 +78,7 @@ void BattleScene_Setup(BattleScene* Self)
 	Self->InternalStateManager.Exit = BattleScene_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = CSM_Loading;
+	Self->InternalState = CSM_PlayerTurn;
 
 	// Set up the functions of this object
 	Self->Initiallize = BattleScene_LinkedInitiallize;
@@ -104,14 +116,12 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 {
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
-	TextDataLoader_Setup(&BattleScene_Loader_Base);
 	TextDataLoader_Setup(&BattleScene_Loader_Layout);
-	TextDataLoader_Setup(&BattleScene_Loader_Enemy);
 	// Load the sprites that will be used in the battle scene
-	BattleScene_Loader_Base.LoadResource(&BattleScene_Loader_Base, "Resources/DigiPenLogo(Unofficial).txt");
 	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Battle/Borders.txt");
-	// Load the testing enemy
-	PopulateEnemy(&TestEnemy, "Resources/Enemy/Goblin.txt");
+	// Load the enemy
+	PopulateEnemy(&CurrentEnemy, "Resources/Enemy/Goblin.txt");
+	EnemyCurrentHealth = CurrentEnemy.hp;
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -142,15 +152,15 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 	switch (Self->InternalState)
 	{
 	case CSM_Loading:
-		//BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader_Base.TextData, BattleScene_Loader_Base.NumberOfRows, BattleScene_Loader_Base.NumberOfColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(BaseEngine->g_console->consoleSize.X * 0.5f - TestEnemy.spriteColumns * 0.5f, BaseEngine->g_console->consoleSize.Y * 0.5f - TestEnemy.spriteRows*0.75f), TestEnemy.sprite, TestEnemy.spriteRows, TestEnemy.spriteColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case CSM_PlayerTurn:
+		RenderBattle(Self, BaseEngine);
 		break;
 	case CSM_EnemyTurn:
+		RenderBattle(Self, BaseEngine);
 		break;
 	case CSM_BattleSequence:
+		RenderBattle(Self, BaseEngine);
 		break;
 	case CSM_Results:
 		break;
@@ -161,8 +171,44 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 void BattleScene_LinkedInternalExit(BattleScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
-	BattleScene_Loader_Base.Exit(&BattleScene_Loader_Base);
 	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
-	BattleScene_Loader_Enemy.Exit(&BattleScene_Loader_Enemy);
-	FreeEnemy(&TestEnemy);
+	FreeEnemy(&CurrentEnemy);
+}
+
+// Scene Based Functions
+void RenderLoading(BattleScene* Self, Engine* BaseEngine)
+{
+
+}
+
+void RenderBattle(BattleScene* Self, Engine* BaseEngine)
+{
+	ResetCharArray(ScreenLineInfoBuffer);
+	ResetCharArray(TempCharArray);
+	// Render the enemy
+	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(BaseEngine->g_console->consoleSize.X * 0.5f - CurrentEnemy.spriteColumns * 0.5f, BaseEngine->g_console->consoleSize.Y * 0.5f - CurrentEnemy.spriteRows*0.75f), CurrentEnemy.sprite, CurrentEnemy.spriteRows, CurrentEnemy.spriteColumns, getColor(c_black, c_red));
+	// Render the layout
+	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_dgrey));
+	// Render the text on screen
+	// Enemy Name
+	strcpy(ScreenLineInfoBuffer, CurrentEnemy.name);
+	strcat(ScreenLineInfoBuffer, " ( Level: ");
+	sprintf(TempCharArray, "%d", CurrentEnemy.lvl);
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	strcat(ScreenLineInfoBuffer, " )");
+	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(BaseEngine->g_console->consoleSize.X * 0.35f - strlen(ScreenLineInfoBuffer) * 0.5f, BaseEngine->g_console->consoleSize.Y * 0.1f), ScreenLineInfoBuffer, getColor(c_black, c_yellow));
+	// Enemy Health
+	sprintf(TempCharArray, "%d", EnemyCurrentHealth);
+	strcpy(ScreenLineInfoBuffer, "Health: ");
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	strcat(ScreenLineInfoBuffer, " / ");
+	sprintf(TempCharArray, "%d", CurrentEnemy.hp);
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(BaseEngine->g_console->consoleSize.X * 0.65f - strlen(ScreenLineInfoBuffer) * 0.5f, BaseEngine->g_console->consoleSize.Y * 0.1f), ScreenLineInfoBuffer, getColor(c_black, c_yellow));
+
+}
+
+void RenderResults(BattleScene* Self, Engine* BaseEngine)
+{
+
 }
