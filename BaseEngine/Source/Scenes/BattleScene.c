@@ -23,7 +23,9 @@ A template on creating a customized state manager
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
-TextDataLoader BattleScene_Loader;
+TextDataLoader BattleScene_Loader_Base;
+TextDataLoader BattleScene_Loader_Layout;
+TextDataLoader BattleScene_Loader_Enemy;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -98,9 +100,13 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 {
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
-	TextDataLoader_Setup(&BattleScene_Loader);
+	TextDataLoader_Setup(&BattleScene_Loader_Base);
+	TextDataLoader_Setup(&BattleScene_Loader_Layout);
+	TextDataLoader_Setup(&BattleScene_Loader_Enemy);
 	// Load the sprites that will be used in the battle scene
-	BattleScene_Loader.LoadResource(&BattleScene_Loader, "Resources/DigiPenLogo(Unofficial).txt");
+	BattleScene_Loader_Base.LoadResource(&BattleScene_Loader_Base, "Resources/DigiPenLogo(Unofficial).txt");
+	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Maps/dungeonTemplate.txt");
+
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -131,7 +137,8 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 	switch (Self->InternalState)
 	{
 	case CSM_Loading:
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader.TextData, BattleScene_Loader.NumberOfRows, BattleScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, BattleScene_Loader_Base.TextData, BattleScene_Loader_Base.NumberOfRows, BattleScene_Loader_Base.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case CSM_PlayerTurn:
 		break;
@@ -148,5 +155,7 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 void BattleScene_LinkedInternalExit(BattleScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
-	BattleScene_Loader.Exit(&BattleScene_Loader);
+	BattleScene_Loader_Base.Exit(&BattleScene_Loader_Base);
+	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
+	BattleScene_Loader_Enemy.Exit(&BattleScene_Loader_Enemy);
 }
