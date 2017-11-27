@@ -126,6 +126,7 @@
     <ClCompile Include="Source\Rooms\RoomFactory.c" />
     <ClCompile Include="Source\Scenes\BattleScene.c" />
     <ClCompile Include="Source\Scenes\DungeonScene.c" />
+    <ClCompile Include="Source\Scenes\MenuScene.c" />
     <ClCompile Include="Source\Scenes\SplashScene.c" />
     <ClCompile Include="Source\Scenes\WorldViewScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Source\Rooms\RoomFactory.h" />
     <ClInclude Include="Source\Scenes\BattleScene.h" />
     <ClInclude Include="Source\Scenes\DungeonScene.h" />
+    <ClInclude Include="Source\Scenes\MenuScene.h" />
     <ClInclude Include="Source\Scenes\SplashScene.h" />
     <ClInclude Include="Source\Scenes\WorldViewScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />

@@ -123,6 +123,9 @@
     <ClCompile Include="Source\Scenes\SplashScene.c">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scenes\MenuScene.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="Source\Scenes\SplashScene.h">
       <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\MenuScene.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

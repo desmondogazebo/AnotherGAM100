@@ -1,47 +1,40 @@
 /******************************************************************************
-filename    WorldViewScene.h
+filename    MenuScene.h
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
 
-Created on 14 November 2017
-
 Brief Description:
-The main world view scene of the game. This is where the player roams around before entering dungeons.
+The menu screen that occurs after the splash screen.
+It is used to either transit to the game or exit
 
 ******************************************************************************/
 
 /* Header Guards */
-#ifndef WORLDVIEW_SCENE_H
-#define WORLDVIEW_SCENE_H
-
-#include "../Rooms/Room.h"
-#include "../Rooms/RoomArray.h"
-#include "../Player/Player.h"
+#ifndef MENU_SCENE_H
+#define MENU_SCENE_H
 
 #include "../StateManager/BaseStateManager.h"
 
 /* Public Struct & Functions */
-typedef struct WorldViewScene
+typedef struct MenuScene
 {
 	/* Public Parameters */
 	enum {
-		WVS_ROAMING = 0,
-		WVS_TRANSITION,
-		WVS_DUNGEONTRANSITION,
-		WVS_TOTAL
+		CSM_MENU = 0
 	}CSM_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
 
-	RoomArray roomList;
-	Room* currentRoom;
-
-	Player player;
+	enum{
+		SEL_START,
+		SEL_EXIT,
+		SEL_TOTAL
+	}MENU_SELECTED;
 
 	short wKeyPressed;
 	short sKeyPressed;
-	short aKeyPressed;
-	short dKeyPressed;
+
+	enum MENU_SELECTED selectedMenuState;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */
@@ -53,12 +46,12 @@ typedef struct WorldViewScene
 	/* Exits, requires an instance, calls free if memory was allocated */
 	void(*Exit)();
 
-}WorldViewScene;
+}MenuScene;
 
 ///****************************************************************************
 // Public Function Prototypes
 ///****************************************************************************
-/* Setup function that initiallizes the WorldViewScene */
-void WorldViewScene_Setup(WorldViewScene* self);
+/* Setup function that initiallizes the SplashScene */
+void MenuScene_Setup(MenuScene* Self);
 
-#endif // WORLDVIEW_SCENE_H
+#endif //MENU_SCENE_H
