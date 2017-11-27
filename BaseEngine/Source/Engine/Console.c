@@ -290,6 +290,11 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX
 				}
 				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
 			}
+			else if (data[y + offsetY][x + offsetX] == 'E')
+			{
+				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
+				theConsole->screenDataBuffer[x + y * col].Attributes = colour;
+			}
 			else
 			{
 				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = data[y + offsetY][x + offsetX]; //TO CHANGE

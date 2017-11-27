@@ -76,6 +76,9 @@
     <Filter Include="Header Files\LogicalObjects">
       <UniqueIdentifier>{c51b84b4-5e2e-4837-bd38-d0f30b82e490}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Dungeons">
+      <UniqueIdentifier>{2480b1cf-ba31-4852-b5e7-0035236d5ace}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -211,9 +214,6 @@
     <Text Include="Resources\DungeonTransition.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Maps\dungeonTemplate.txt">
-      <Filter>Resource Files\Maps</Filter>
-    </Text>
     <Text Include="Resources\Maps\WorldMap1.txt">
       <Filter>Resource Files\Maps</Filter>
     </Text>
@@ -246,6 +246,21 @@
     </Text>
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt">
       <Filter>Resource Files\Enemy\Sprites</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeonTemplate.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeonTemplate0.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeonTemplate1.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeonTemplate2.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeonTemplate3.txt">
+      <Filter>Resource Files\Dungeons</Filter>
     </Text>
   </ItemGroup>
 </Project>

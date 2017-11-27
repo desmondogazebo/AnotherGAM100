@@ -1,6 +1,6 @@
 /******************************************************************************
 filename    DungeonScene.h
-author      Rui An Ryan Lim
+author      Rui An Ryan Lim & Qingping Zheng
 DP email    l.ruianryan@digipen.edu
 
 Created on 16 November 2017
@@ -17,6 +17,7 @@ mechanics.
 // Inclusion of utility functions
 #include "../Utilities/TextDataLoader.h"
 #include "../Utilities/Utilities.h"
+#include <time.h>
 
 // Included for Rendering
 #include "../Engine/BaseEngine.h"
@@ -31,11 +32,11 @@ DungeonCamera DungeonScene_Camera;
 Vector2 moveDirection; // Direction of player movement
 
 // Timers for letting the player run
-double dungeon_wvs_initialRunDelay = 0.3; // How long it takes before the player starts running
-double dungeon_wvs_runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
-double dungeon_wvs_runDelayY = 0.15; // How fast the player runs on Y axis
-double dungeon_wvs_runTimerX = 0;
-double dungeon_wvs_runTimerY = 0;
+double dungeon_initialRunDelay = 0.3; // How long it takes before the player starts running
+double dungeon_runDelayX = 0.1; // How fast the player runs on X axis, speed = 1/runDelayX
+double dungeon_runDelayY = 0.15; // How fast the player runs on Y axis
+double dungeon_runTimerX = 0;
+double dungeon_runTimerY = 0;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -61,7 +62,7 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine);
 void DungeonScene_LinkedInternalExit(DungeonScene* Self);
 
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta);
-
+Vector2 parseRandomSpawnPoint(TextDataLoader map);
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -107,16 +108,67 @@ void DungeonScene_LinkedExit(DungeonScene* Self)
 	Self->InternalStateManager.Exit(Self);
 }
 
+Vector2 parseRandomSpawnPoint(TextDataLoader map)
+{
+	int spawnPointOccurenceCount = 0;
+	//we take note of how many potential spawnpoints there are
+	for (int y = 0; y < map.NumberOfRows; ++y)
+	{
+		for (int x = 0; x < map.NumberOfColumns; ++x)
+		{
+			if (map.TextData[y][x] == 'E') //potential spawnpoint
+			{
+				spawnPointOccurenceCount++;
+			}
+		}
+	}
+	
+	Vector2* possiblelocations = (Vector2*)malloc(spawnPointOccurenceCount * sizeof(Vector2));
+
+	//re-iterate and add to list of spawnpoints
+	int counter = 0;
+	for (int y = 0; y < map.NumberOfRows; ++y)
+	{
+		for (int x = 0; x < map.NumberOfColumns; ++x)
+		{
+			if (map.TextData[y][x] == 'E') //potential spawnpoint
+			{
+				possiblelocations[counter] = Vec2(x, y);
+				counter++;
+			}
+		}
+	}
+	//gimme a random spawnpoint
+	int randomSpawnPoint = rand() % spawnPointOccurenceCount;
+	//we got the spawnpoint, free memory
+	Vector2 copyVector = Vec2(possiblelocations[randomSpawnPoint].x, possiblelocations[randomSpawnPoint].y);
+	free(possiblelocations);
+	return copyVector;
+}
+
 // Linked Initiallize function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 {
+	srand((unsigned)time(NULL)); //intialize random seed
+
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
 	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Load the sprites that will be used in the battle scene
-	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, "Resources/Maps/dungeonTemplate.txt");
+
+	//ADD MORE IF NEEDED.
+	char *maps[] = {
+		"Resources/Dungeons/dungeon0.txt", //completed
+		"Resources/Dungeons/dungeon1.txt", //todo
+		"Resources/Dungeons/dungeon2.txt", //todo
+		"Resources/Dungeons/dungeon3.txt"  //todo
+	};
+
+	int randomMap = rand() % (sizeof(maps) / sizeof(char*));
+
+	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[randomMap]);
 	DungeonCamera_Setup(&DungeonScene_Camera);
-	Initialize_Player(&Self->player, Vec2(50, 5));
+	Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader));
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -249,40 +301,36 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 
 	if (self->aKeyPressed == 1 || self->dKeyPressed == 1)
 	{
-		if ((dungeon_wvs_runTimerX += Delta) > dungeon_wvs_initialRunDelay) // Initial delay before running
+		if ((dungeon_runTimerX += Delta) > dungeon_initialRunDelay) // Initial delay before running
 		{
-			if (dungeon_wvs_runTimerX > dungeon_wvs_initialRunDelay + dungeon_wvs_runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			if (dungeon_runTimerX > dungeon_initialRunDelay + dungeon_runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
-				dungeon_wvs_runTimerX = dungeon_wvs_initialRunDelay;
-				Vector2 tempDirection = moveDirection;
-				tempDirection.y = 0;
+				dungeon_runTimerX = dungeon_initialRunDelay;
 				short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
 			}
 		}
 	}
 	else
 	{
-		dungeon_wvs_runTimerX = 0;
+		dungeon_runTimerX = 0;
 		moveDirection.x = 0;
 	}
 
 
 	if (self->wKeyPressed == 1 || self->sKeyPressed == 1)
 	{
-		if ((dungeon_wvs_runTimerY += Delta) > dungeon_wvs_initialRunDelay) // Initial delay before running
+		if ((dungeon_runTimerY += Delta) > dungeon_initialRunDelay) // Initial delay before running
 		{
-			if (dungeon_wvs_runTimerY > dungeon_wvs_initialRunDelay + dungeon_wvs_runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
+			if (dungeon_runTimerY > dungeon_initialRunDelay + dungeon_runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
-				dungeon_wvs_runTimerY = dungeon_wvs_initialRunDelay;
-				Vector2 tempDirection = moveDirection;
-				tempDirection.x = 0;
+				dungeon_runTimerY = dungeon_initialRunDelay;
 				short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
 			}
 		}
 	}
 	else
 	{
-		dungeon_wvs_runTimerY = 0;
+		dungeon_runTimerY = 0;
 		moveDirection.y = 0;
 	}
 }
