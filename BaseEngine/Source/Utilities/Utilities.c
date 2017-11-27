@@ -1,3 +1,13 @@
+/******************************************************************************
+filename    Utilities.c
+author      Qingping Zheng
+DP email    qingping.zheng@digipen.edu
+course      GAM100
+
+Brief Description:
+This file contains definitions for functions in Utilities.h
+
+******************************************************************************/
 #include "Utilities.h"
 
 /*
@@ -16,15 +26,16 @@ int isKeyPressed(unsigned short key)
 }
 
 /*
-Function Name: d_toString
+Function Name: double_toString
 Brief Description: converts a double to a C-styled string
 Parameters:
 value : the value to convert
 length : the amount of spaces in memory to assign
+
 Note that the decimal point counts as a significant figure in this case
-Thus, 123.56 takes up 7 spaces due to null terminating character
+Thus, 123.56 takes up 7 spaces. 5 numbers + 1 decimal point + 1 null terminating character.
 */
-char* d_toString(double value, int length)
+char* double_toString(double value, int length)
 {
 	//Assign a temporary memory
 	// Take note that we provide 1 more space in memory for the null character
@@ -36,8 +47,28 @@ char* d_toString(double value, int length)
 }
 
 /*
+Function Name: int_toString
+Brief Description: converts an integer to a C-styled string
+Parameters:
+value : the value to convert
+length : the amount of spaces in memory to assign
+Note that the null terminating character counts as a significant figure in this case
+*/
+char* int_toString(int value, int length)
+{
+	//Assign a temporary memory
+	// Take note that we provide 1 more space in memory for the null character
+	char* str = malloc(length + 1);
+	//converts the value and stores it in str
+	snprintf(str, length + 1, "%d", value);
+	//return the C-string
+	return str;
+}
+
+/*
 Function Name: getColor
-Brief Description: gives a unsigned short Color value
+Brief Description: provides a unsigned short for a representation of color
+	based on understanding of hex values and windows values.
 Parameters:
 background : the enum color value of the background
 foreground : the enum color value of the foreground

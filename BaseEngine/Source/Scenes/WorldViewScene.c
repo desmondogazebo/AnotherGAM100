@@ -209,17 +209,17 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 	switch (self->InternalState)
 	{
 	case WVS_ROAMING:	
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_dgrey));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_TRANSITION:
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_dgrey));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, wvs_fakePlayerPosition, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_DUNGEONTRANSITION:
 		{
 			Vector2 location = { 0, wvs_dungeonTransitionSprite.NumberOfRows - wvs_dungeonTransitionCount };
-			BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+			BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_dgrey));
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_dungeonTransitionSprite.TextData, wvs_dungeonTransitionSprite.NumberOfRows, wvs_dungeonTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
 		}

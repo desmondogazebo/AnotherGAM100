@@ -1,6 +1,6 @@
 /******************************************************************************
 filename    DungeonCamera.h
-author      Rui An Ryan Lim
+author      Rui An Ryan Lim & Qingping Zheng
 DP email    l.ruianryan@digipen.edu
 
 Created on 23 November 2017

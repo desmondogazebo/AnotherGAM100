@@ -17,7 +17,6 @@ mechanics.
 // Inclusion of utility functions
 #include "../Utilities/TextDataLoader.h"
 #include "../Utilities/Utilities.h"
-#include <time.h>
 
 // Included for Rendering
 #include "../Engine/BaseEngine.h"
@@ -61,8 +60,9 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the InternalStateManager.Exit
 void DungeonScene_LinkedInternalExit(DungeonScene* Self);
 
+//Local functions that relate to the scene.
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta);
-Vector2 parseRandomSpawnPoint(TextDataLoader map);
+Vector2 parseRandomSpawnPoint(TextDataLoader map, char charToLookOutFor);
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -108,7 +108,8 @@ void DungeonScene_LinkedExit(DungeonScene* Self)
 	Self->InternalStateManager.Exit(Self);
 }
 
-Vector2 parseRandomSpawnPoint(TextDataLoader map)
+//local function, parses the map for an E, and 
+Vector2 parseRandomSpawnPoint(TextDataLoader map, char charToLookOutFor)
 {
 	int spawnPointOccurenceCount = 0;
 	//we take note of how many potential spawnpoints there are
@@ -116,13 +117,14 @@ Vector2 parseRandomSpawnPoint(TextDataLoader map)
 	{
 		for (int x = 0; x < map.NumberOfColumns; ++x)
 		{
-			if (map.TextData[y][x] == 'E') //potential spawnpoint
+			if (map.TextData[y][x] == charToLookOutFor) //potential spawnpoint
 			{
 				spawnPointOccurenceCount++;
 			}
 		}
 	}
 	
+	//we now know the number of spawnpoints in the provided map
 	Vector2* possiblelocations = (Vector2*)malloc(spawnPointOccurenceCount * sizeof(Vector2));
 
 	//re-iterate and add to list of spawnpoints
@@ -131,7 +133,7 @@ Vector2 parseRandomSpawnPoint(TextDataLoader map)
 	{
 		for (int x = 0; x < map.NumberOfColumns; ++x)
 		{
-			if (map.TextData[y][x] == 'E') //potential spawnpoint
+			if (map.TextData[y][x] == charToLookOutFor) //potential spawnpoint
 			{
 				possiblelocations[counter] = Vec2(x, y);
 				counter++;
@@ -139,9 +141,9 @@ Vector2 parseRandomSpawnPoint(TextDataLoader map)
 		}
 	}
 	//gimme a random spawnpoint
-	int randomSpawnPoint = rand() % spawnPointOccurenceCount;
+	int randomIndex = rand() % spawnPointOccurenceCount;
 	//we got the spawnpoint, free memory
-	Vector2 copyVector = Vec2(possiblelocations[randomSpawnPoint].x, possiblelocations[randomSpawnPoint].y);
+	Vector2 copyVector = Vec2(possiblelocations[randomIndex].x, possiblelocations[randomIndex].y);
 	free(possiblelocations);
 	return copyVector;
 }
@@ -149,8 +151,6 @@ Vector2 parseRandomSpawnPoint(TextDataLoader map)
 // Linked Initiallize function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 {
-	srand((unsigned)time(NULL)); //intialize random seed
-
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
 	TextDataLoader_Setup(&DungeonScene_Loader);
@@ -168,12 +168,18 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 
 	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[randomMap]);
 	DungeonCamera_Setup(&DungeonScene_Camera);
-	Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader));
+	Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader, 'E'));
 }
 
 // Linked Update function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
+	// Debug code
+	if (isKeyPressed('Q'))
+	{
+		Delta *= 4;
+	}
+
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
 	{
@@ -197,10 +203,11 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 	switch (Self->InternalState)
 	{
 	case DS_Loading:
+		//what is this used for?
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(-10, 0), DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
 		break;
 	case DS_Exploration:
-		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
+		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_dgrey));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		break;
 	case DS_Results:

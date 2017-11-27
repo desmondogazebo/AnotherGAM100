@@ -247,19 +247,19 @@
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt">
       <Filter>Resource Files\Enemy\Sprites</Filter>
     </Text>
+    <Text Include="Resources\Dungeons\dungeon0.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeon1.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeon2.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
+    <Text Include="Resources\Dungeons\dungeon3.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
     <Text Include="Resources\Dungeons\dungeonTemplate.txt">
-      <Filter>Resource Files\Dungeons</Filter>
-    </Text>
-    <Text Include="Resources\Dungeons\dungeonTemplate0.txt">
-      <Filter>Resource Files\Dungeons</Filter>
-    </Text>
-    <Text Include="Resources\Dungeons\dungeonTemplate1.txt">
-      <Filter>Resource Files\Dungeons</Filter>
-    </Text>
-    <Text Include="Resources\Dungeons\dungeonTemplate2.txt">
-      <Filter>Resource Files\Dungeons</Filter>
-    </Text>
-    <Text Include="Resources\Dungeons\dungeonTemplate3.txt">
       <Filter>Resource Files\Dungeons</Filter>
     </Text>
   </ItemGroup>

@@ -29,7 +29,7 @@ key : the keycode to check for
 int isKeyPressed(unsigned short key);
 
 /*
-Function Name: d_toString
+Function Name: double_toString
 Brief Description: converts a double to a C-styled string
 Parameters:
 value : the value to convert
@@ -37,9 +37,23 @@ length : the amount of spaces in memory to assign
 	Note that the decimal point counts as a significant figure in this case
 	Thus, 123.56 takes up 7 spaces due to null terminating character
 */
-char* d_toString(double value, int length);
+char* double_toString(double value, int length);
 
-//GLOBAL ENUM OF COLORS
+/*
+Function Name: int_toString
+Brief Description: converts an integer to a C-styled string
+Parameters:
+value : the value to convert
+length : the amount of spaces in memory to assign
+Note that the null terminating character counts as a significant figure in this case
+*/
+char* int_toString(int value, int length);
+
+/*
+enum Name: Color
+Brief Description: an accessible enumerator of colors
+	normally used for rendering.
+*/
 
 enum {
 	c_black,

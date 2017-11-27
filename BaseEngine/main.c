@@ -13,6 +13,7 @@ This file implements the main function and loop.
 #define _CRTDBG_MAP_ALLOC  
 #include <stdlib.h>  
 #include <crtdbg.h>
+#include <time.h>
 
 //Header Include
 #include "Source\Engine\BaseEngine.h"
@@ -20,6 +21,7 @@ This file implements the main function and loop.
 /* The main program loop */
 int main()
 {
+	srand((unsigned)time(NULL)); //intialize random seed
 	//Create an Instance of the Engine
 	Engine* theEngine = MakeEngine();
 

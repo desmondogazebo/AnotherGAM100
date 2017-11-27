@@ -32,6 +32,7 @@ typedef struct Timer{
 
 }Timer;
 
+//public functions
 Timer* Timer_Create();
 
 #endif // _TIMER_H

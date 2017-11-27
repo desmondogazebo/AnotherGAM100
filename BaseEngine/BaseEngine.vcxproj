@@ -160,11 +160,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Resources\DigiPenLogo(Unofficial).txt" />
+    <Text Include="Resources\Dungeons\dungeon0.txt" />
+    <Text Include="Resources\Dungeons\dungeon1.txt" />
+    <Text Include="Resources\Dungeons\dungeon2.txt" />
+    <Text Include="Resources\Dungeons\dungeon3.txt" />
     <Text Include="Resources\Dungeons\dungeonTemplate.txt" />
-    <Text Include="Resources\Dungeons\dungeonTemplate0.txt" />
-    <Text Include="Resources\Dungeons\dungeonTemplate1.txt" />
-    <Text Include="Resources\Dungeons\dungeonTemplate2.txt" />
-    <Text Include="Resources\Dungeons\dungeonTemplate3.txt" />
     <Text Include="Resources\DungeonTransition.txt" />
     <Text Include="Resources\Enemy\Goblin.txt" />
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt" />
