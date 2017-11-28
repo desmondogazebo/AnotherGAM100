@@ -255,6 +255,11 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 					}
 					//theConsole->screenDataBuffer[actualValue].Attributes = colour;
 				}
+				if (data[y][x] == '$')
+				{
+					theConsole->screenDataBuffer[actualValue].Char.AsciiChar = 130;
+					theConsole->screenDataBuffer[actualValue].Attributes = colour;
+				}
 				else
 				{
 					theConsole->screenDataBuffer[actualValue].Char.AsciiChar = data[y][x];
