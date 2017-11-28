@@ -16,6 +16,13 @@ A system that utillizes states to manage the activity of each scene.
 
 #include "../StateManager/BaseStateManager.h"
 
+// Inclusion of Scenes
+#include "../Scenes/BattleScene.h"
+#include "../Scenes/WorldViewScene.h"
+#include "../Scenes/DungeonScene.h"
+#include "../Scenes/SplashScene.h"
+#include "../Scenes/MenuScene.h"
+
 /* Public Struct & Functions */
 typedef struct SceneSystem
 {
@@ -45,6 +52,13 @@ typedef struct SceneSystem
 
 	/* Set Current Scene */
 	void(*SetCurrentScene)();
+
+	// Scene Variables
+	BattleScene InternalBattleScene;
+	WorldViewScene InternalWorldViewScene;
+	DungeonScene InternalDungeonScene;
+	SplashScene InternalSplashScene;
+	MenuScene InternalMenuScene;
 
 }SceneSystem;
 

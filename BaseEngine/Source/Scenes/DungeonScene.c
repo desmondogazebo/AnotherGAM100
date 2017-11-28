@@ -156,6 +156,11 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Load the sprites that will be used in the battle scene
 
+	// Set the current state
+	Self->InternalState = DS_Exploration;
+
+	Self->wKeyPressed = Self->sKeyPressed = Self->aKeyPressed = Self->dKeyPressed = 0;
+
 	//ADD MORE IF NEEDED.
 	char *maps[] = {
 		"Resources/Dungeons/dungeon0.txt", //completed
@@ -167,8 +172,8 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	int randomMap = rand() % (sizeof(maps) / sizeof(char*));
 
 	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[randomMap]);
-	DungeonCamera_Setup(&DungeonScene_Camera);
 	Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader, 'E'));
+	DungeonCamera_Setup(&DungeonScene_Camera);
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -183,13 +188,15 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
 	{
-	case DS_Loading:
+	case DS_NOTHING:
+		//DungeonScene_LinkedInternalExit(Self);
+		BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 		break;
 	case DS_Exploration:
 		DungeonScene_PlayerControls(Self, BaseEngine, Delta);
 		DungeonScene_Camera.UpdateCameraLogic(&DungeonScene_Camera, BaseEngine->g_console, &DungeonScene_Loader, &Self->player.position);
 		break;
-	case DS_Results:
+	case DS_Battle:
 		break;
 	default: 
 		break;
@@ -202,15 +209,13 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 	// Renders the appropriate scene
 	switch (Self->InternalState)
 	{
-	case DS_Loading:
-		//what is this used for?
-		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(-10, 0), DungeonScene_Loader.TextData, DungeonScene_Loader.NumberOfRows, DungeonScene_Loader.NumberOfColumns, getColor(c_black, c_white));
+	case DS_NOTHING:
 		break;
 	case DS_Exploration:
 		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		break;
-	case DS_Results:
+	case DS_Battle:
 		break;
 	default:
 		break;
@@ -234,8 +239,15 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			self->wKeyPressed = 1;
 			dungeon_moveDirection.y--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
-			if (plrMoveCode == 2)
+			if (plrMoveCode == 1)
+			{
+				self->InternalState = DS_NOTHING;
+			}
+			else if (plrMoveCode == 2)
+			{
 				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+				self->InternalState = DS_Battle;
+			}
 		}
 	}
 	else
@@ -256,8 +268,15 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			self->sKeyPressed = 1;
 			dungeon_moveDirection.y++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
-			if (plrMoveCode == 2)
+			if (plrMoveCode == 1)
+			{
+				self->InternalState = DS_NOTHING;
+			}
+			else if (plrMoveCode == 2)
+			{
 				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+				self->InternalState = DS_Battle;
+			}
 		}
 	}
 	else
@@ -278,8 +297,15 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			self->aKeyPressed = 1;
 			dungeon_moveDirection.x--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
-			if (plrMoveCode == 2)
+			if (plrMoveCode == 1)
+			{
+				self->InternalState = DS_NOTHING;
+			}
+			else if (plrMoveCode == 2)
+			{
 				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+				self->InternalState = DS_Battle;
+			}
 		}
 	}
 	else
@@ -300,8 +326,15 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			self->dKeyPressed = 1;
 			dungeon_moveDirection.x++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
-			if (plrMoveCode == 2)
+			if (plrMoveCode == 1)
+			{
+				self->InternalState = DS_NOTHING;
+			}
+			else if (plrMoveCode == 2)
+			{
 				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+				self->InternalState = DS_Battle;
+			}
 		}
 	}
 	else
@@ -323,9 +356,25 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				dungeon_runTimerX = dungeon_initialRunDelay;
 
 				short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
-				plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
-				if (plrMoveCode == 2)
+				if (plrMoveCode == 1)
+				{
+					self->InternalState = DS_NOTHING;
+				}
+				else if (plrMoveCode == 2)
+				{
 					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+					self->InternalState = DS_Battle;
+				}
+				plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
+				if (plrMoveCode == 1)
+				{
+					self->InternalState = DS_NOTHING;
+				}
+				else if (plrMoveCode == 2)
+				{
+					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+					self->InternalState = DS_Battle;
+				}
 			}
 		}
 	}
