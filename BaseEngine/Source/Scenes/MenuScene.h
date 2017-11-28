@@ -20,13 +20,16 @@ typedef struct MenuScene
 {
 	/* Public Parameters */
 	enum {
-		CSM_MENU = 0
+		CSM_MENU = 0,
+		CSM_TRANSITION,
+		CSM_INSTRUCTION
 	}CSM_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
 
 	enum{
 		SEL_START,
+		SEL_INSTR,
 		SEL_EXIT,
 		SEL_TOTAL
 	}MENU_SELECTED;

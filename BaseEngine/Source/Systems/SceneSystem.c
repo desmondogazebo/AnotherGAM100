@@ -105,7 +105,7 @@ void SceneSystem_Setup(SceneSystem* Self)
 	Self->SetCurrentScene = SceneSystem_LinkedSetCurrentScene;
 
 	// Set the current state
-	Self->InternalState = SS_Battle;
+	Self->InternalState = SS_Splash;
 
 	// Set up the functions of this object
 	Self->Initiallize = SceneSystem_LinkedInitiallize;
