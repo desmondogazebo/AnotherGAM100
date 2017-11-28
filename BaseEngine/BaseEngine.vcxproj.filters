@@ -79,6 +79,9 @@
     <Filter Include="Resource Files\Dungeons">
       <UniqueIdentifier>{2480b1cf-ba31-4852-b5e7-0035236d5ace}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Information">
+      <UniqueIdentifier>{25b3046d-9315-42e5-a45b-b0f2a2f7585e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -246,6 +249,30 @@
     </Text>
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt">
       <Filter>Resource Files\Enemy\Sprites</Filter>
+    </Text>
+    <Text Include="Resources\Information\Boss_cutscene1.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\Information\Boss_cutscene2.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\Information\Boss_cutscene3.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\Information\Boss_cutscene4.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\Information\Boss_cutscene5.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\Information\Instructions.txt">
+      <Filter>Resource Files\Information</Filter>
+    </Text>
+    <Text Include="Resources\GameTransition.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\MainMenuLogo.txt">
+      <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Resources\Dungeons\dungeon0.txt">
       <Filter>Resource Files\Dungeons</Filter>
