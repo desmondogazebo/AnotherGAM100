@@ -1,0 +1,6 @@
+Name:Ghost
+HP:30
+ATK:15
+LVL:3
+SPD:2
+SPRITE:Resources/Enemy/Sprites/GhostSprite.txt
