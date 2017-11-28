@@ -144,6 +144,9 @@
     <ClCompile Include="Source\LogicalObjects\DungeonCamera.c">
       <Filter>Source Files\LogicalObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Player\PlayerData.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">
@@ -208,6 +211,9 @@
     </ClInclude>
     <ClInclude Include="Source\LogicalObjects\DungeonCamera.h">
       <Filter>Header Files\LogicalObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player\PlayerData.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

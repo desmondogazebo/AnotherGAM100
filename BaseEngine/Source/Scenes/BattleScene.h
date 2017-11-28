@@ -22,13 +22,15 @@ typedef struct BattleScene
 {
 	/* Public Parameters */
 	enum {
-		CSM_Loading = 0,
-		CSM_PlayerTurn,
-		CSM_EnemyTurn,
-		CSM_BattleSequence,
-		CSM_Results
-	}CSM_States;
-	enum CSM_States InternalState;
+		BS_Loading = 0,
+		BS_PlayerTurnChoice,
+		BS_PlayerTurnAttack,
+		BS_PlayerTurnRun,
+		BS_EnemyTurn,
+		BS_BattleSequence,
+		BS_Results
+	}BS_States;
+	enum BS_States InternalState;
 	BaseStateManager InternalStateManager;
 
 	/* Public Function Pointers*/
