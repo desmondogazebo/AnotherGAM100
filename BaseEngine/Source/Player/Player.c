@@ -24,16 +24,20 @@ short MovePlayer(Player *player, Vector2 move, TextDataLoader Loader)
 	{
 		if (Loader.TextData[finalPosition.y][finalPosition.x] == '#')
 		{				
-			return 0;
+			return 0; //wall
 		}
 		else if (Loader.TextData[finalPosition.y][finalPosition.x] == '@')
 		{
-			return 2;
+			return 1; //portal
+		}
+		else if (Loader.TextData[finalPosition.y][finalPosition.x] == 'X')
+		{
+			return 2; //bossfight
 		}
 		else
 		{
 			player->position = finalPosition;
-			return 1;
+			return 3;
 		}
 	}
 	else
