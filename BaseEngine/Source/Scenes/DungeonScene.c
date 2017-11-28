@@ -28,7 +28,7 @@ mechanics.
 ///****************************************************************************
 TextDataLoader DungeonScene_Loader;
 DungeonCamera DungeonScene_Camera;
-Vector2 moveDirection; // Direction of player movement
+Vector2 dungeon_moveDirection = { 0,0 }; // Direction of player movement
 
 // Timers for letting the player run
 double dungeon_initialRunDelay = 0.3; // How long it takes before the player starts running
@@ -232,8 +232,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->wKeyPressed == 0)
 		{
 			self->wKeyPressed = 1;
-			moveDirection.y = -1;
-			short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
+			dungeon_moveDirection.y--;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
+			if (plrMoveCode == 2)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
 	else
@@ -242,7 +244,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->wKeyPressed == 1)
 		{
 			self->wKeyPressed = 0;
-			moveDirection.y = 0;
+			dungeon_moveDirection.y++;
 		}
 	}
 
@@ -252,8 +254,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->sKeyPressed == 0)
 		{
 			self->sKeyPressed = 1;
-			moveDirection.y = 1;
-			short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
+			dungeon_moveDirection.y++;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
+			if (plrMoveCode == 2)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
 	else
@@ -262,7 +266,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->sKeyPressed == 1)
 		{
 			self->sKeyPressed = 0;
-			moveDirection.y = 0;
+			dungeon_moveDirection.y--;
 		}
 	}
 
@@ -272,8 +276,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->aKeyPressed == 0)
 		{
 			self->aKeyPressed = 1;
-			moveDirection.x = -1;
-			short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
+			dungeon_moveDirection.x--;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
+			if (plrMoveCode == 2)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
 	else
@@ -282,7 +288,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->aKeyPressed == 1)
 		{
 			self->aKeyPressed = 0;
-			moveDirection.x = 0;
+			dungeon_moveDirection.x++;
 		}
 	}
 
@@ -292,8 +298,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->dKeyPressed == 0)
 		{
 			self->dKeyPressed = 1;
-			moveDirection.x = 1;
-			short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
+			dungeon_moveDirection.x++;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
+			if (plrMoveCode == 2)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
 	else
@@ -302,42 +310,28 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		if (self->dKeyPressed == 1)
 		{
 			self->dKeyPressed = 0;
-			moveDirection.x = 0;
+			dungeon_moveDirection.x--;
 		}
 	}
 
-	if (self->aKeyPressed == 1 || self->dKeyPressed == 1)
+	if (self->aKeyPressed == 1 || self->dKeyPressed == 1 || self->wKeyPressed == 1 || self->sKeyPressed == 1)
 	{
 		if ((dungeon_runTimerX += Delta) > dungeon_initialRunDelay) // Initial delay before running
 		{
 			if (dungeon_runTimerX > dungeon_initialRunDelay + dungeon_runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
 				dungeon_runTimerX = dungeon_initialRunDelay;
-				short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
+
+				short plrMoveCode = MovePlayer(&self->player, Vec2(dungeon_moveDirection.x, 0), DungeonScene_Loader);
+				plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
+				if (plrMoveCode == 2)
+					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 			}
 		}
 	}
 	else
 	{
 		dungeon_runTimerX = 0;
-		moveDirection.x = 0;
-	}
-
-
-	if (self->wKeyPressed == 1 || self->sKeyPressed == 1)
-	{
-		if ((dungeon_runTimerY += Delta) > dungeon_initialRunDelay) // Initial delay before running
-		{
-			if (dungeon_runTimerY > dungeon_initialRunDelay + dungeon_runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
-			{
-				dungeon_runTimerY = dungeon_initialRunDelay;
-				short plrMoveCode = MovePlayer(&self->player, moveDirection, DungeonScene_Loader);
-			}
-		}
-	}
-	else
-	{
-		dungeon_runTimerY = 0;
-		moveDirection.y = 0;
+		dungeon_moveDirection.x = 0;
 	}
 }

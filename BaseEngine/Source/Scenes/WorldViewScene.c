@@ -54,7 +54,7 @@ short wvs_dungeonWaitToggle = 0;
 double wvs_dungeonTransitionTimerWaitDelay = 0.3;
 TextDataLoader wvs_dungeonTransitionSprite;
 
-Vector2 moveDirection = { 0,0 }; // Direction of player movement
+Vector2 wvs_moveDirection = { 0,0 }; // Direction of player movement
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -156,7 +156,7 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	self->aKeyPressed = 0;
 	self->dKeyPressed = 0;
 
-	moveDirection.x = moveDirection.y = 0;
+	wvs_moveDirection.x = wvs_moveDirection.y = 0;
 
 	TextDataLoader_Setup(&wvs_dungeonTransitionSprite);
 	wvs_dungeonTransitionSprite.LoadResource(&wvs_dungeonTransitionSprite, "Resources/DungeonTransition.txt");
@@ -244,12 +244,10 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->wKeyPressed == 0)
 		{
 			self->wKeyPressed = 1;
-			moveDirection.y -= 1;
-			short plrMoveCode = MovePlayer(&self->player, Vec2(0,moveDirection.y), self->currentRoom->Loader);
-			if (plrMoveCode == 2)
-			{
+			wvs_moveDirection.y--;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
+			if (plrMoveCode == 1)
 				self->InternalState = WVS_DUNGEONTRANSITION;
-			}
 		}
 	}
 	else
@@ -258,7 +256,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->wKeyPressed == 1)
 		{
 			self->wKeyPressed = 0;
-			moveDirection.y += 1;
+			wvs_moveDirection.y++;
 		}
 	}
 
@@ -268,12 +266,10 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->sKeyPressed == 0)
 		{
 			self->sKeyPressed = 1;
-			moveDirection.y += 1;
-			short plrMoveCode = MovePlayer(&self->player, Vec2(0, moveDirection.y), self->currentRoom->Loader);
-			if (plrMoveCode == 2)
-			{
+			wvs_moveDirection.y++;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
+			if (plrMoveCode == 1)
 				self->InternalState = WVS_DUNGEONTRANSITION;
-			}
 		}
 	}
 	else
@@ -282,7 +278,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->sKeyPressed == 1)
 		{
 			self->sKeyPressed = 0;
-			moveDirection.y -= 1;
+			wvs_moveDirection.y--;
 		}
 	}
 
@@ -292,12 +288,10 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->aKeyPressed == 0)
 		{
 			self->aKeyPressed = 1;
-			moveDirection.x -= 1;
-			short plrMoveCode = MovePlayer(&self->player, Vec2(moveDirection.x, 0), self->currentRoom->Loader);
-			if (plrMoveCode == 2)
-			{
+			wvs_moveDirection.x--;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
+			if (plrMoveCode == 1)
 				self->InternalState = WVS_DUNGEONTRANSITION;
-			}
 		}
 	}
 	else
@@ -306,7 +300,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->aKeyPressed == 1)
 		{
 			self->aKeyPressed = 0;
-			moveDirection.x += 1;
+			wvs_moveDirection.x++;
 		}
 	}
 
@@ -316,12 +310,10 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->dKeyPressed == 0)
 		{
 			self->dKeyPressed = 1;
-			moveDirection.x += 1;
-			short plrMoveCode = MovePlayer(&self->player, Vec2(moveDirection.x, 0), self->currentRoom->Loader);
-			if (plrMoveCode == 2)
-			{
+			wvs_moveDirection.x++;
+			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
+			if (plrMoveCode == 1)
 				self->InternalState = WVS_DUNGEONTRANSITION;
-			}
 		}
 	}
 	else
@@ -330,55 +322,31 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 		if (self->dKeyPressed == 1)
 		{
 			self->dKeyPressed = 0;
-			moveDirection.x -= 1;
+			wvs_moveDirection.x--;
 		}
 	}
 
-	if (self->aKeyPressed == 1 || self->dKeyPressed == 1)
+	if (self->aKeyPressed == 1 || self->dKeyPressed == 1 || self->wKeyPressed == 1 || self->sKeyPressed == 1)
 	{
 		if ((wvs_runTimerX += Delta) > wvs_initialRunDelay) // Initial delay before running
 		{
 			if (wvs_runTimerX > wvs_initialRunDelay + wvs_runDelayX) // 0.4 - 0.3 = 0.1, delay in between each "run step"
 			{
 				wvs_runTimerX = wvs_initialRunDelay;
-				Vector2 tempDirection = moveDirection;
-				tempDirection.y = 0;
-				short plrMoveCode = MovePlayer(&self->player, Vec2(moveDirection.x, 0), self->currentRoom->Loader);
-				if (plrMoveCode == 2)
-				{
+
+				short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
+				if (plrMoveCode == 1)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				}
+				plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
+				if (plrMoveCode == 1)
+					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
 		}
 	}
 	else
 	{
 		wvs_runTimerX = 0;
-		moveDirection.x = 0;
-	}
-
-
-	if (self->wKeyPressed == 1 || self->sKeyPressed == 1)
-	{
-		if ((wvs_runTimerY += Delta) > wvs_initialRunDelay) // Initial delay before running
-		{
-			if (wvs_runTimerY > wvs_initialRunDelay + wvs_runDelayY) // 0.4 - 0.3 = 0.1, delay in between each "run step"
-			{
-				wvs_runTimerY = wvs_initialRunDelay;
-				Vector2 tempDirection = moveDirection;
-				tempDirection.x = 0;
-				short plrMoveCode = MovePlayer(&self->player, Vec2(0, moveDirection.y), self->currentRoom->Loader);
-				if (plrMoveCode == 2)
-				{
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				}
-			}
-		}
-	}
-	else
-	{
-		wvs_runTimerY = 0;
-		moveDirection.y = 0;
+		wvs_moveDirection.x = 0;
 	}
 }
 
