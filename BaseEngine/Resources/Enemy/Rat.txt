@@ -1,0 +1,6 @@
+Name:Rat
+HP:5
+ATK:5
+LVL:1
+SPD:1
+SPRITE:Resources/Enemy/Sprites/RatSprite.txt

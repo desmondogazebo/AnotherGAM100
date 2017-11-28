@@ -1,0 +1,6 @@
+Name:Bird
+HP:20
+ATK:10
+LVL:2
+SPD:2
+SPRITE:Resources/Enemy/Sprites/BirdSprite.txt
