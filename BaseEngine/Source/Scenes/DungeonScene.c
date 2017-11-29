@@ -45,6 +45,13 @@ short dungeon_waitToggle;
 double dungeon_transitionWaitDelay;
 TextDataLoader DungeonTransition_Loader;
 
+//boss transition variables
+short dungeon_bossCount;
+short dungeon_bossToggle;
+double dungeon_bossTimer;
+double dungeon_bossDelay;
+TextDataLoader DungeonBossTransition_Loader;
+
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
@@ -72,6 +79,7 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self);
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta);
 Vector2 parseRandomSpawnPoint(TextDataLoader map, char charToLookOutFor);
 void DungeonScene_Transition(DungeonScene* Self, Engine* BaseEngine, double Delta);
+void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta);
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -169,7 +177,7 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Set the current state
 	Self->InternalState = DS_Exploration;
-
+	Self->metBoss = 0;
 	Self->wKeyPressed = Self->sKeyPressed = Self->aKeyPressed = Self->dKeyPressed = 0;
 
 	//ADD MORE IF NEEDED.
@@ -197,6 +205,11 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	dungeon_transitionTimerDelay = 0.01;
 	dungeon_waitToggle = 0;
 	dungeon_transitionWaitDelay = 0.5;
+
+	dungeon_bossCount = 0;
+	dungeon_bossToggle = 0;
+	dungeon_bossTimer = 0;
+	dungeon_bossDelay = 0.01;
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -221,6 +234,32 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 	case DS_TransitionToBattle:
 		DungeonScene_Transition(Self, BaseEngine, Delta);
 		break;
+	case DS_TransitionToBoss:
+		if (Self->metBoss == 0)
+		{
+			TextDataLoader_Setup(&DungeonBossTransition_Loader);
+			/*6 8
+			  0 2*/
+			switch (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex)
+			{
+			case 0:
+				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene1.txt");
+				break;
+			case 6:
+				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene2.txt");
+				break;
+			case 8:
+				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene3.txt");
+				break;
+			case 2:
+				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene4.txt");
+				break;
+			}
+			Self->metBoss = 1;
+		}
+		Dungeon_BossUpdate(Self, BaseEngine, Delta);
+		//transition
+		break;
 	default: 
 		break;
 	}
@@ -243,6 +282,12 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 		Vector2 location = { -BaseEngine->g_console->consoleSize.X + dungeon_transitionCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, DungeonTransition_Loader.TextData, DungeonTransition_Loader.NumberOfRows, DungeonTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
 	}
+	case DS_TransitionToBoss:
+	{
+		Vector2 location = { -BaseEngine->g_console->consoleSize.X + dungeon_bossCount, 0 };
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, DungeonBossTransition_Loader.TextData, DungeonBossTransition_Loader.NumberOfRows, DungeonBossTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
+	}
+		break;
 	default:
 		break;
 	}
@@ -254,6 +299,10 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self)
 	// Free the stuff initiallized in the Internal State Manager
 	DungeonTransition_Loader.Exit(&DungeonTransition_Loader);
 	DungeonScene_Loader.Exit(&DungeonScene_Loader);
+	if (Self->metBoss == 1)
+	{
+		DungeonBossTransition_Loader.Exit(&DungeonBossTransition_Loader);
+	}
 }
 
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta)
@@ -273,7 +322,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBattle;
+				self->InternalState = DS_TransitionToBoss;
 			}
 			else if (plrMoveCode == 3)
 				MovementCheck = 1;
@@ -303,7 +352,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBattle;
+				self->InternalState = DS_TransitionToBoss;
 			}
 			else if (plrMoveCode == 3)
 				MovementCheck = 1;
@@ -333,7 +382,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBattle;
+				self->InternalState = DS_TransitionToBoss;
 			}
 			else if (plrMoveCode == 3)
 				MovementCheck = 1;
@@ -363,7 +412,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBattle;
+				self->InternalState = DS_TransitionToBoss;
 			}
 			else if (plrMoveCode == 3)
 				MovementCheck = 1;
@@ -394,7 +443,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					self->InternalState = DS_TransitionToBattle;
+					self->InternalState = DS_TransitionToBoss;
 				}
 				else if (plrMoveCode == 3)
 					MovementCheck = 1;
@@ -405,7 +454,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					self->InternalState = DS_TransitionToBattle;
+					self->InternalState = DS_TransitionToBoss;
 				}
 				else if (plrMoveCode == 3)
 					MovementCheck = 1;
@@ -420,7 +469,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 	if (MovementCheck == 1)
 	{
 		// Check if a monster has been encountered
-		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 5, Enemy_Bird, Enemy_Rat) == 1)
+		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 0, Enemy_Bird, Enemy_Rat) == 1)
 		{
 			// Do something
 			self->InternalState = DS_TransitionToBattle;
@@ -452,6 +501,60 @@ void DungeonScene_Transition(DungeonScene* self, Engine* BaseEngine, double Delt
 			dungeon_transitionTimer = 0;
 			dungeon_waitToggle = 0;
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+		}
+	}
+}
+
+void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
+{
+
+	short tempToggle = 0;
+	if (isKeyPressed(VK_RETURN))
+	{
+		tempToggle = 1;
+	}
+
+	if (dungeon_bossToggle == 0)
+	{
+		if ((dungeon_bossTimer += Delta) > dungeon_bossDelay)
+		{
+			dungeon_bossTimer = 0;
+			if (dungeon_bossCount < 80)
+			{
+				dungeon_bossCount++;
+			}
+			else
+			{
+				dungeon_bossToggle = tempToggle;
+			}
+		}
+	}
+	else if (dungeon_bossToggle == 1)
+	{
+		//transit scenes, no need to translate back
+		if ((dungeon_bossTimer += Delta) > dungeon_bossDelay)
+		{
+			dungeon_bossTimer = 0;
+			dungeon_bossToggle = 0;
+			//rig the bossfight
+			switch (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex)
+			{
+			case 0:
+				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv1, Boss_DatBoiLv1);
+				break;
+			case 6:
+				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv2, Boss_DatBoiLv2);
+				break;
+			case 8:
+				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv3, Boss_DatBoiLv3);
+				break;
+			case 2:
+				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv4, Boss_DatBoiLv4);
+				break;
+			}
+			//change current scene
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+			Self->InternalState = DS_Exploration; //change state safely
 		}
 	}
 }
