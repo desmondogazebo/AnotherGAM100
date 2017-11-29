@@ -1,0 +1,6 @@
+Name:Skeleton
+HP:50
+ATK:10
+LVL:5
+SPD:5
+SPRITE:Resources/Enemy/Sprites/SkeletonSprite.txt

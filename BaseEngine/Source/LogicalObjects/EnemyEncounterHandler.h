@@ -23,9 +23,11 @@ typedef struct EnemyEncounterHandler
 	enum {
 		// Enemies
 		Enemy_Bird = 0,
-		Enemy_Ghost,
-		Enemy_Goblin,
+		Enemy_Frog,
 		Enemy_Rat,
+		Enemy_Goblin,
+		Enemy_Ghost,
+		Enemy_Skeleton,
 		Enemy_Max,
 		// Bosses
 		Boss_DatBoiLv1,
