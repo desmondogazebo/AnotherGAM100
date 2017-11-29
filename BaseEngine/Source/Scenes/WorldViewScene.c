@@ -460,6 +460,8 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			// Do something
 			self->InternalState = WVS_BATTLETRANSITION;
 			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
 		}
 	}
 }

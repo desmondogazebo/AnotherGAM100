@@ -151,6 +151,8 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	RenderShield = EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
 	BattleScene_Timer = 0.f;
 	BarIncrementationDirection = 1;
+	// Set the current state
+	Self->InternalState = BS_Loading;
 }
 
 // Linked Update function that will be set to the InternalStateManager
