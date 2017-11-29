@@ -1,0 +1,6 @@
+Name:Dat Boi 3
+HP:110
+ATK:20
+LVL:30
+SPD:3
+SPRITE:Resources/Enemy/Sprites/DatBoi3Sprite.txt
