@@ -44,7 +44,7 @@ void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource)
 	FILE* FilePtr = NULL;
 	/* Opens the file as a read only resource */
 	fopen_s(&FilePtr, Resource, "r");
-	if (FilePtr && Self)
+	if (FilePtr != NULL && Self != NULL)
 	{
 		/* Iterate the file and find the number of rows and columns */
 		char TempArray[512];
@@ -91,13 +91,18 @@ void TextDataLoader_LoadResource(TextDataLoader* Self, const char* Resource)
 void TextDataLoader_Exit(TextDataLoader* Self)
 {
 	// Check if I have loaded something before
-	if (Self->TextData)
+	if (Self->TextData != NULL)
 	{
 		// Free each row of the double pointer and every cell within the row
-		for (int i = 0; i < Self->NumberOfRows; ++i) 
-			free(Self->TextData[i]);
+		for (int i = 0; i < Self->NumberOfRows; ++i)
+			if (Self->TextData[i] != NULL)
+			{
+				free(Self->TextData[i]);
+				Self->TextData[i] = NULL;
+			}
 		// Free the top level pointer
 		free(Self->TextData);
+		Self->TextData = NULL;
 	}
 }
 
