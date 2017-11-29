@@ -301,5 +301,8 @@
     <Text Include="Resources\Dungeons\dungeonTemplate.txt">
       <Filter>Resource Files\Dungeons</Filter>
     </Text>
+    <Text Include="Resources\BattleTransition.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

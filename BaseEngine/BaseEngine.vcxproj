@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -163,6 +163,7 @@
     <ClInclude Include="Source\Utilities\Vector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Resources\BattleTransition.txt" />
     <Text Include="Resources\DigiPenLogo(Unofficial).txt" />
     <Text Include="Resources\Dungeons\dungeon0.txt" />
     <Text Include="Resources\Dungeons\dungeon1.txt" />

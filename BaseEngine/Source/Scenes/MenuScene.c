@@ -187,13 +187,13 @@ void MenuScene_LinkedInternalRender(MenuScene* Self, Engine* BaseEngine)
 		break;
 	case CSM_TRANSITION:
 		{
-			Vector2 location = { -80 + menu_transitionCount, 0 };
+			Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_transitionCount, 0 };
 			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, GameTransition_Loader.TextData, GameTransition_Loader.NumberOfRows, GameTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
 		}
 		break;
 	case CSM_INSTRUCTION:
 	{
-		Vector2 location = { -80 + menu_instructionCount, 0 };
+		Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_instructionCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, Instructions_Loader.TextData, Instructions_Loader.NumberOfRows, Instructions_Loader.NumberOfColumns, getColor(c_black, c_white));
 	}
 	default:
