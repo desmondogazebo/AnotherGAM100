@@ -45,6 +45,7 @@ void EnemyEncounterHandler_LinkedInitiallize(EnemyEncounterHandler* Self)
 
 	// Set up a default for testing
 	Self->CurrentEnemy = &Self->EnemyList[Enemy_Ghost];
+	Self->PreviousSceneWasDungeon = 0;
 }
 
 void EnemyEncounterHandler_LinkedExit(EnemyEncounterHandler* Self)

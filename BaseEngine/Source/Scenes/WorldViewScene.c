@@ -306,6 +306,8 @@ void WorldViewScene_LinkedInternalExit(WorldViewScene* self)
 
 void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 {
+	short MovementCheck = 0;
+
 	if (isKeyPressed('W'))
 	{
 		// Key press down
@@ -322,9 +324,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if(self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -353,9 +357,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -384,9 +390,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -415,9 +423,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -448,9 +458,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 						self->InternalState = WVS_DUNGEONTRANSITION;
 					else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 						self->InternalState = WVS_DUNGEONTRANSITION;
-					else
+					else if (self->currentRoomIndex == 0)
 						self->InternalState = WVS_DUNGEONTRANSITION;
 				}
+				else if (plrMoveCode == 3 || plrMoveCode2 == 3)
+					MovementCheck = 1;
 			}
 		}
 	}
@@ -458,6 +470,17 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 	{
 		wvs_runTimerX = 0;
 		wvs_moveDirection.x = 0;
+	}
+
+	if (MovementCheck == 1)
+	{
+		// Check if a monster has been encountered
+		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Bird, Enemy_Rat) == 1)
+		{
+			// Do something
+			self->InternalState = DS_TransitionToBattle;
+			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
+		}
 	}
 }
 

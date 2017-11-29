@@ -41,6 +41,7 @@ typedef struct EnemyEncounterHandler
 	// An array holding all the enemy objects
 	Enemy EnemyList[Boss_Max];
 	short EnemyValueChecker[Boss_Max];
+	short PreviousSceneWasDungeon;
 
 	/* Public Function Pointers*/
 	// This function loads all the enemies into the array
