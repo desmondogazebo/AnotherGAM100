@@ -144,11 +144,11 @@
     <ClCompile Include="Source\LogicalObjects\DungeonCamera.c">
       <Filter>Source Files\LogicalObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Player\PlayerData.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\LogicalObjects\EnemyEncounterHandler.c">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\LogicalObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player\PlayerData.c">
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,11 +215,11 @@
     <ClInclude Include="Source\LogicalObjects\DungeonCamera.h">
       <Filter>Header Files\LogicalObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Player\PlayerData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\LogicalObjects\EnemyEncounterHandler.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\LogicalObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player\PlayerData.h">
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +304,8 @@
     <Text Include="Resources\BattleTransition.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Resources\Dungeons\dungeon4.txt" />
+    <Text Include="Resources\Dungeons\dungeon4.txt">
+      <Filter>Resource Files\Dungeons</Filter>
+    </Text>
   </ItemGroup>
 </Project>
