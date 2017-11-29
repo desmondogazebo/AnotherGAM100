@@ -151,6 +151,7 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	RenderShield = EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
 	BattleScene_Timer = 0.f;
 	BarIncrementationDirection = 1;
+		
 	// Set the current state
 	Self->InternalState = BS_Loading;
 }
@@ -434,6 +435,7 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
 	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
+	BattleScene_Loader_ShieldIcon.Exit(&BattleScene_Loader_ShieldIcon);
 	//FreeEnemy(&CurrentEnemy);
 }
 
