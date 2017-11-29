@@ -541,16 +541,16 @@ void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 			switch (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex)
 			{
 			case 0:
-				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv1, Boss_DatBoiLv1);
+				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv1);
 				break;
 			case 6:
-				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv2, Boss_DatBoiLv2);
-				break;
-			case 8:
-				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv3, Boss_DatBoiLv3);
-				break;
-			case 2:
-				EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 100, Boss_DatBoiLv4, Boss_DatBoiLv4);
+				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv2);
+				break;																						   
+			case 8:																							   
+				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv3);
+				break;																						   
+			case 2:																							   
+				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv4);
 				break;
 			}
 			//change current scene
