@@ -26,12 +26,19 @@ A template on creating a customized state manager
 ///****************************************************************************
 // Private Variables
 ///****************************************************************************
+// Loaders
 TextDataLoader BattleScene_Loader_Layout;
+TextDataLoader BattleScene_Loader_ShieldIcon;
+
+// Player Stats
+short PlayerCurrentHealth;
+
+// Enemy Data
 Enemy CurrentEnemy;
 int EnemyCurrentHealth;
 char ScreenLineInfoBuffer[100];
-char TempCharArray[10];
 int PlayerTurnChoiceSelector;
+
 // A meter for handling just attacks, just guards & just escapes.
 float JustMeterPercent;
 float BattleScene_Timer;
@@ -39,8 +46,16 @@ int BarIncrementationDirection;
 int MeterActive;
 int BarLength = 30;
 Vector2 AttackThreshold;
+
+// Animation Values
 short AttackAnimationRunning;
 float AttackAnimationTime = 0.5f;
+short AttackFailedPlayer;
+
+// Enemy Attack Values
+short EnemyIsAttacking;
+float PerfectGuardTimeFrame = 0.5f;
+short RenderShield;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -127,11 +142,13 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
 	TextDataLoader_Setup(&BattleScene_Loader_Layout);
+	TextDataLoader_Setup(&BattleScene_Loader_ShieldIcon);
 	// Load the sprites that will be used in the battle scene
 	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Battle/Borders.txt");
+	BattleScene_Loader_ShieldIcon.LoadResource(&BattleScene_Loader_ShieldIcon, "Resources/Battle/Guard.txt");
 	
 	// Set up base variables
-	AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
+	RenderShield = EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
 	BattleScene_Timer = 0.f;
 	BarIncrementationDirection = 1;
 }
@@ -142,6 +159,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	// Do some state logic for the internal state manager
 	// Clearing the input buffer before handling checks
 	isKeyPressed(VK_SPACE);
+	isKeyPressed(VK_RETURN);
 	switch (Self->InternalState)
 	{
 	case BS_Loading:
@@ -149,6 +167,9 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		CurrentEnemy = *BaseEngine->InternalSceneSystem.InternalEncounterHandler.CurrentEnemy;
 		EnemyCurrentHealth = CurrentEnemy.hp;
 		Self->InternalState = BS_PlayerTurnChoice;
+
+		// Load the player
+		PlayerCurrentHealth = Get_PlayerHP(&BaseEngine->playerData);
 		break;
 	case BS_PlayerTurnChoice:
 		// Handle choice selection
@@ -169,10 +190,28 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 				JustMeterPercent = BattleScene_Timer = 0;
 				MeterActive = 1;
 				AttackThreshold = RandomizeOptimalBarThresholds();
+				{
+					int RandomDirection = IntRandomizeRange(0, 1);
+					if (RandomDirection > 0)
+						BarIncrementationDirection = 1;
+					else BarIncrementationDirection = -1;
+				}
+				JustMeterPercent = (float)IntRandomizeRange(0,99);
 				break;
 			case 1:
 				// I will Run
 				Self->InternalState = BS_PlayerTurnRun;
+				// Reset the timer
+				JustMeterPercent = BattleScene_Timer = 0;
+				MeterActive = 1;
+				AttackThreshold = RandomizeOptimalBarThresholds();
+				{
+					int RandomDirection = IntRandomizeRange(0, 1);
+					if (RandomDirection > 0)
+						BarIncrementationDirection = 1;
+					else BarIncrementationDirection = -1;
+				}
+				JustMeterPercent = (float)IntRandomizeRange(0, 99);
 				break;
 			}
 		}
@@ -180,34 +219,112 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_PlayerTurnAttack:
 		if (MeterActive)
 		{
-			BarLogic((float)CurrentEnemy.spd * 50, Delta);
+			BarLogic((float)CurrentEnemy.spd * 50 * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd), Delta);
 			AttackAnimationRunning = 0;
 		}
-		else if (!AttackAnimationRunning){
+		else if (!AttackAnimationRunning && !AttackFailedPlayer){
 			// It's time to do damage!
 			int CurrentIndex = (int)(JustMeterPercent * 0.01f * BarLength);
 			if (CurrentIndex >= AttackThreshold.x && CurrentIndex <= AttackThreshold.y)
-				EnemyCurrentHealth -= 1;
-			else Self->InternalState = BS_PlayerTurnChoice;
+			{
+				AttackAnimationRunning = 1;
+				EnemyCurrentHealth -= Get_PlayerATK(&BaseEngine->playerData);
+			}
+			else AttackFailedPlayer = 1;
 			BattleScene_Timer = 0.f;
-			AttackAnimationRunning = 1;
 		}
-		else if (AttackAnimationRunning)
+		else
 		{
 			// Do some attack animation before changing states
 			BattleScene_Timer += (float)Delta;
 			if (BattleScene_Timer > AttackAnimationTime)
 			{
-				AttackAnimationRunning = 0;
-				Self->InternalState = BS_PlayerTurnChoice;
+				EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = 0;
+				BattleScene_Timer = 0.f;
+				RenderShield = 1;
+				Self->InternalState = BS_EnemyTurn;
 			}
 		}
 		break;
 	case BS_PlayerTurnRun:
+		if (MeterActive)
+		{
+			BarLogic((float)CurrentEnemy.spd * 100 * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd), Delta);
+			AttackAnimationRunning = 0;
+		}
+		else if (!AttackAnimationRunning && !AttackFailedPlayer) {
+			// It's time to do damage!
+			int CurrentIndex = (int)(JustMeterPercent * 0.01f * BarLength);
+			if (CurrentIndex >= AttackThreshold.x && CurrentIndex <= AttackThreshold.y)
+			{
+				// Player Manages to Escape
+				if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
+					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+				else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			}
+			else AttackFailedPlayer = 1;
+			BattleScene_Timer = 0.f;
+		}
+		else
+		{
+			// Do some attack animation before changing states
+			BattleScene_Timer += (float)Delta;
+			if (BattleScene_Timer > AttackAnimationTime)
+			{
+				EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = 0;
+				BattleScene_Timer = 0.f;
+				RenderShield = 1;
+				Self->InternalState = BS_EnemyTurn;
+			}
+		}
 		break;
 	case BS_EnemyTurn:
-		break;
-	case BS_BattleSequence:
+		BattleScene_Timer += (float)Delta;
+		if (EnemyIsAttacking)
+		{
+			if (BattleScene_Timer > PerfectGuardTimeFrame * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd))
+			{
+				// Player takes damage as he failed to perfect guard
+				PlayerCurrentHealth -= CurrentEnemy.atk;
+				AttackFailedPlayer = 1;
+				EnemyIsAttacking = 0;
+				BattleScene_Timer = 0.f;
+				RenderShield = 0;
+			}
+			else if (isKeyPressed(VK_SPACE))
+			{
+				// Perfect Guard
+				AttackAnimationRunning = 1;
+				EnemyIsAttacking = 0;
+				BattleScene_Timer = 0.f;
+				RenderShield = 0;
+			}
+		}
+		else if (AttackAnimationRunning || AttackFailedPlayer)
+		{
+			if (BattleScene_Timer > AttackAnimationTime * 2)
+			{
+				// Time to change states!
+				AttackFailedPlayer = AttackAnimationRunning = 0;
+				BattleScene_Timer = 0.f;
+				Self->InternalState = BS_PlayerTurnChoice;
+			}
+		}
+		else if (BattleScene_Timer > (float)IntRandomizeRange(1, 5))
+		{
+			// Enemy Has Decided To Attack
+			EnemyIsAttacking = 1;
+			BattleScene_Timer = 0;
+		}
+		else if (isKeyPressed(VK_SPACE))
+		{
+			// Player takes damage as he failed to perfect guard
+			PlayerCurrentHealth -= CurrentEnemy.atk;
+			// I'm guarding for no reason guard failed
+			AttackFailedPlayer = 1;
+			RenderShield = 0;
+			BattleScene_Timer = 0.f;
+		}
 		break;
 	case BS_Results:
 		break;
@@ -238,18 +355,72 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 		RenderBattle(Self, BaseEngine);
 		RenderAttackMeter(Self, BaseEngine);
 		if (AttackAnimationRunning)
-		{
 			RenderAttackAnimation(Self, BaseEngine);
+		else if (AttackFailedPlayer)
+		{
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "< Attack Failed! >");
+			Vector2 RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.9f));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, RenderStartPosition, ScreenLineInfoBuffer, getColor(c_black, c_red));
+		}
+		else {
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "Hit <SPACE> to stop the meter! [Green Zone - Attack]");
+			Vector2 RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.9f));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, RenderStartPosition, ScreenLineInfoBuffer, getColor(c_black, c_lgrey));
 		}
 		break;
 	case BS_PlayerTurnRun:
 		RenderBattle(Self, BaseEngine);
+		RenderAttackMeter(Self, BaseEngine);
+		if (AttackFailedPlayer)
+		{
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "< Escape Failed! >");
+			Vector2 RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.9f));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, RenderStartPosition, ScreenLineInfoBuffer, getColor(c_black, c_red));
+		}
+		else {
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "Hit <SPACE> to stop the meter! [Green Zone - Escape]");
+			Vector2 RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.9f));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, RenderStartPosition, ScreenLineInfoBuffer, getColor(c_black, c_lgrey));
+		}
 		break;
 	case BS_EnemyTurn:
 		RenderBattle(Self, BaseEngine);
-		break;
-	case BS_BattleSequence:
-		RenderBattle(Self, BaseEngine);
+		// Render the Shield
+		{
+			Vector2 ShieldPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.75f));
+			if (RenderShield == 1)
+			{
+				if (EnemyIsAttacking == 1)
+					BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(ShieldPosition.x - (short)(BattleScene_Loader_ShieldIcon.NumberOfColumns * 0.5f), ShieldPosition.y - (short)(BattleScene_Loader_ShieldIcon.NumberOfRows * 0.5f)), BattleScene_Loader_ShieldIcon.TextData, BattleScene_Loader_ShieldIcon.NumberOfRows, BattleScene_Loader_ShieldIcon.NumberOfColumns, getColor(c_black, c_red));
+				else {
+					if ((int)(BattleScene_Timer * 100) % 2 > 0)
+						BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(ShieldPosition.x - (short)(BattleScene_Loader_ShieldIcon.NumberOfColumns * 0.5f), ShieldPosition.y - (short)(BattleScene_Loader_ShieldIcon.NumberOfRows * 0.5f)), BattleScene_Loader_ShieldIcon.TextData, BattleScene_Loader_ShieldIcon.NumberOfRows, BattleScene_Loader_ShieldIcon.NumberOfColumns, getColor(c_black, c_white));
+					else BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(ShieldPosition.x - (short)(BattleScene_Loader_ShieldIcon.NumberOfColumns * 0.5f), ShieldPosition.y - (short)(BattleScene_Loader_ShieldIcon.NumberOfRows * 0.5f)), BattleScene_Loader_ShieldIcon.TextData, BattleScene_Loader_ShieldIcon.NumberOfRows, BattleScene_Loader_ShieldIcon.NumberOfColumns, getColor(c_black, c_blue));
+				}
+			}
+		}
+		{
+			ResetCharArray(ScreenLineInfoBuffer);
+			Vector2 RenderStartPosition;
+			if (AttackAnimationRunning){
+				strcpy(ScreenLineInfoBuffer, "< Perfect Guard! >");
+				RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.775f));
+			}	
+			else if (AttackFailedPlayer){
+				strcpy(ScreenLineInfoBuffer, "< Guard Failed... >");
+				RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.775f));
+			}
+			else{
+				strcpy(ScreenLineInfoBuffer, "When the shield is <RED>, hit <SPACE> to guard!");
+				RenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.9f));
+			}
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, RenderStartPosition, ScreenLineInfoBuffer, getColor(c_black, c_lgrey));
+		}
+		
 		break;
 	case BS_Results:
 		break;
@@ -268,15 +439,13 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 void RenderLoading(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
-	ResetCharArray(TempCharArray);
 
 }
 
 void RenderBattle(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
-	ResetCharArray(TempCharArray);
-
+	char TempCharArray[10];
 	// Render the enemy
 	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f) - (short)(CurrentEnemy.spriteColumns * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.5f) - (short)(CurrentEnemy.spriteRows*0.75f)), CurrentEnemy.sprite, CurrentEnemy.spriteRows, CurrentEnemy.spriteColumns, getColor(c_black, c_red));
 	// Render the layout
@@ -297,12 +466,44 @@ void RenderBattle(BattleScene* Self, Engine* BaseEngine)
 	sprintf(TempCharArray, "%d", CurrentEnemy.hp);
 	strcat(ScreenLineInfoBuffer, TempCharArray);
 	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.65f) - (short)(strlen(ScreenLineInfoBuffer) * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.1f)), ScreenLineInfoBuffer, getColor(c_black, c_yellow));
+
+	ResetCharArray(ScreenLineInfoBuffer);
+	ResetCharArray(TempCharArray);
+	// Player Stats
+	// Player Name
+	strcpy(ScreenLineInfoBuffer, "Player");
+	strcat(ScreenLineInfoBuffer, " (Level: ");
+	sprintf(TempCharArray, "%d", BaseEngine->playerData.lvl);
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	strcat(ScreenLineInfoBuffer, ")");
+	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.05f + 1), (short)(BaseEngine->g_console->consoleSize.Y * 0.675f)), ScreenLineInfoBuffer, getColor(c_black, c_aqua));
+	
+	ResetCharArray(ScreenLineInfoBuffer);
+	ResetCharArray(TempCharArray);
+
+	// Player Health
+	sprintf(TempCharArray, "%d", PlayerCurrentHealth);
+	strcpy(ScreenLineInfoBuffer, "HP: ");
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	strcat(ScreenLineInfoBuffer, " / ");
+	sprintf(TempCharArray, "%d", Get_PlayerHP(&BaseEngine->playerData));
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.05f + 1), (short)(BaseEngine->g_console->consoleSize.Y * 0.675f + 2)), ScreenLineInfoBuffer, getColor(c_black, c_aqua));
+
+	ResetCharArray(ScreenLineInfoBuffer);
+	ResetCharArray(TempCharArray);
+
+	// Player Attack
+	strcat(ScreenLineInfoBuffer, "Atk: ");
+	sprintf(TempCharArray, "%d", Get_PlayerATK(&BaseEngine->playerData));
+	strcat(ScreenLineInfoBuffer, TempCharArray);
+	BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.05f + 1), (short)(BaseEngine->g_console->consoleSize.Y * 0.675f + 4)), ScreenLineInfoBuffer, getColor(c_black, c_aqua));
+
 }
 
 void RenderAttackMeter(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
-	ResetCharArray(TempCharArray);
 
 	// The index at which the bar is at now
 	int CurrentIndex = (int)(JustMeterPercent * 0.01f * BarLength);
@@ -348,7 +549,6 @@ void RenderAttackAnimation(BattleScene* Self, Engine* BaseEngine)
 void RenderResults(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
-	ResetCharArray(TempCharArray);
 
 }
 

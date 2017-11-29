@@ -27,7 +27,6 @@ typedef struct BattleScene
 		BS_PlayerTurnAttack,
 		BS_PlayerTurnRun,
 		BS_EnemyTurn,
-		BS_BattleSequence,
 		BS_Results
 	}BS_States;
 	enum BS_States InternalState;

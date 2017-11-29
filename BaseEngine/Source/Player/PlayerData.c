@@ -41,7 +41,7 @@ int Get_PlayerATK(PlayerData* player)
 }
 int Get_PlayerHP(PlayerData* player)
 {
-	int hp = player->lvl * 5;
+	int hp = player->lvl * 20;
 	return hp;
 }
 
