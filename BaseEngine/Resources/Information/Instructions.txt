@@ -11,15 +11,15 @@
 #                                  Controls                                    #
 #                                                                              #
 #    WASD - Movement                                                           #
-#    <space> - Interaction in Combat                                           #
-#    <enter> - Interaction in Menus                                            #
+#    <SPACE> - Interaction in Combat                                           #
+#    <ENTER> - Interaction in Menus                                            #
 #                                                                              #
 #                                   Legend                                     #
 #                                                                              #
 #     ' ' : Another walkable space                                             #
-#     '@' : portal to Another dungeon                                          #
+#     '@' : Portal to Another dungeon                                          #
 #                                                                              #
 ##                                                                            ##
-###                  PRESS ENTER TO RETURN TO THE MAIN MENU                  ###
+###                  PRESS <ENTER> TO RETURN TO THE MAIN MENU                ###
 ####                                                                        ####	
 ################################################################################

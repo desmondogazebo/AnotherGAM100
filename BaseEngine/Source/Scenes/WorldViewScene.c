@@ -725,6 +725,9 @@ void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			wvs_dungeonTransitionTimer = 0;
 			wvs_dungeonWaitToggle = 0;
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+			self->InternalState = WVS_ROAMING;
+			BaseEngine->InternalSceneSystem.InternalDungeonScene.Exit(&BaseEngine->InternalSceneSystem.InternalDungeonScene);
+			BaseEngine->InternalSceneSystem.InternalDungeonScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalDungeonScene);
 		}
 	}
 

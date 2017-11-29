@@ -29,8 +29,8 @@ typedef struct WorldViewScene
 		WVS_TRANSITION,
 		WVS_DUNGEONTRANSITION,
 		WVS_TOTAL
-	}CSM_States;
-	enum CSM_States InternalState;
+	}WVS_States;
+	enum WVS_States InternalState;
 	BaseStateManager InternalStateManager;
 
 	RoomArray roomList;

@@ -80,7 +80,7 @@ void MenuScene_Setup(MenuScene* Self)
 	Self->InternalStateManager.Exit = MenuScene_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = CSM_MENU;
+	Self->InternalState = MM_MENU;
 	Self->selectedMenuState = SEL_START;
 
 	// Set up the functions of this object
@@ -131,7 +131,7 @@ void MenuScene_LinkedInternalInitiallize(MenuScene* Self)
 	Self->wKeyPressed = 0;
 	Self->sKeyPressed = 0;
 
-	Self->InternalState = CSM_MENU;
+	Self->InternalState = MM_MENU;
 	Self->selectedMenuState = SEL_START;
 
 }
@@ -142,13 +142,13 @@ void MenuScene_LinkedInternalUpdate(MenuScene* Self, Engine* BaseEngine, double 
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
 	{
-	case CSM_MENU:
+	case MM_MENU:
 		Menu_Controls(Self, BaseEngine);
 		break;
-	case CSM_TRANSITION:
+	case MM_TRANSITION:
 		Menu_Transition(Self, BaseEngine, Delta);
 		break;
-	case CSM_INSTRUCTION:
+	case MM_INSTRUCTION:
 		Menu_InstructionsUpdate(Self, BaseEngine, Delta);
 	default: 
 		break;
@@ -186,18 +186,18 @@ void MenuScene_LinkedInternalRender(MenuScene* Self, Engine* BaseEngine)
 
 	switch (Self->InternalState)
 	{
-	case CSM_MENU:
+	case MM_MENU:
 
 		break;
-	case CSM_TRANSITION:
+	case MM_TRANSITION:
 		{
-			Vector2 location = { -80 + menu_transitionCount, 0 };
+			Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_transitionCount, 0 };
 			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, GameTransition_Loader.TextData, GameTransition_Loader.NumberOfRows, GameTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
 		}
 		break;
-	case CSM_INSTRUCTION:
+	case MM_INSTRUCTION:
 	{
-		Vector2 location = { -80 + menu_instructionCount, 0 };
+		Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_instructionCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, Instructions_Loader.TextData, Instructions_Loader.NumberOfRows, Instructions_Loader.NumberOfColumns, getColor(c_black, c_white));
 	}
 	default:
@@ -260,7 +260,7 @@ void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
 	{
 		if (Self->selectedMenuState == SEL_START)
 		{
-			Self->InternalState = CSM_TRANSITION;
+			Self->InternalState = MM_TRANSITION;
 			//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 		}
 		else if (Self->selectedMenuState == SEL_EXIT)
@@ -269,7 +269,7 @@ void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
 		}
 		else if (Self->selectedMenuState == SEL_INSTR)
 		{
-			Self->InternalState = CSM_INSTRUCTION;
+			Self->InternalState = MM_INSTRUCTION;
 		}
 	}
 }
@@ -336,7 +336,7 @@ void Menu_InstructionsUpdate(MenuScene* Self, Engine* BaseEngine, double Delta)
 			if (menu_instructionCount <= 0)
 			{
 				menu_instructionToggle = 0;
-				Self->InternalState = CSM_MENU;
+				Self->InternalState = MM_MENU;
 			}
 		}
 	}

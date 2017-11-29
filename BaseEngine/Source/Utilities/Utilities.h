@@ -1,7 +1,7 @@
 /******************************************************************************
 filename    Utilities.h
-author      Qingping Zheng
-DP email    qingping.zheng@digipen.edu
+author      Qingping Zheng & Rui An Ryan Lim
+DP email    qingping.zheng@digipen.edu & l.ruianryan@digipen.edu
 course      GAM100
 
 Brief Description:
@@ -84,5 +84,12 @@ background : the enum color value of the background
 */
 
 WORD getColor(enum Color foreground, enum Color background);
+
+
+/* A function that takes in a Char* Array and resets it's contents to '\0' */
+void ResetCharArray(char* Array);
+
+/* A function that in two variables to signify a range to randomize between and returns a random value within the provided range */
+int IntRandomizeRange(int Lower, int Upper);
 
 #endif
