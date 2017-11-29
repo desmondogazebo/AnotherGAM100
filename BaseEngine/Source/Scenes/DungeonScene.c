@@ -474,6 +474,8 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			// Do something
 			self->InternalState = DS_TransitionToBattle;
 			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 1;
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
 		}
 	}
 }

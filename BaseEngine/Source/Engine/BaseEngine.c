@@ -1,17 +1,34 @@
 #include "BaseEngine.h"
 #include "..\Utilities\Utilities.h"
 #include "..\Utilities\Vector2.h"
+
 //PROTOTYPES
 void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vector2 fontSize);
 void Engine_update(Engine* theEngine, Timer* theTimer);
 void Engine_render(Engine* theEngine);
 void Engine_exit(Engine* theEngine);
+void FMODErrorCheck(FMOD_RESULT result);
 
 /*
-Function Name: init
+Function Name: FMODErrorCheck
+Brief Description: FMOD error check utility
+Parameters:
+result: output from FMOD operations
+*/
+void FMODErrorCheck(FMOD_RESULT result)
+{
+	if (result != FMOD_OK)
+	{
+		//some error thing
+		exit(-1);
+	}
+}
+
+/*
+Function Name: Engine_init
 Brief Description: initializer of the Engine
 Parameters:
-ptr : the engine pointer itself, to allow for internal referencing
+theEngine : the engine pointer itself, to allow for internal referencing
 fps : the desired fps to run the game
 screenSize : window size
 fontSize : font size
@@ -30,7 +47,11 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vect
 	theEngine->g_quitGame = 0;
 	theEngine->FPS = fps;
 	theEngine->frameTime = 1000 / theEngine->FPS;
-
+	FMOD_RESULT result = FMOD_System_Create(&theEngine->SoundEngine);	
+	FMODErrorCheck(result);
+	result = FMOD_System_Init(theEngine->SoundEngine, 32, FMOD_INIT_NORMAL, 0);
+	FMODErrorCheck(result);
+	
 	//Creating the internal clock object
 	theEngine->g_timer = Timer_Create();
 	//Initializing the clock object
@@ -42,11 +63,11 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vect
 }
 
 /*
-Function Name: update
+Function Name: Engine_update
 Brief Description: The main loop of the engine
 Parameters:
-ptr : the engine pointer itself, to allow for internal referencing
-t : the pointer to the timer, should there be a need to use GetElapsedTime();
+theEngine : the engine pointer itself, to allow for internal referencing
+theTimer : the pointer to the timer, should there be a need to use GetElapsedTime();
 */
 
 void Engine_update(Engine* theEngine, Timer* theTimer)
@@ -63,10 +84,10 @@ void Engine_update(Engine* theEngine, Timer* theTimer)
 }
 
 /*
-Function Name: render
+Function Name: Engine_render
 Brief Description: The render code
 Parameters:
-ptr : the engine pointer itself, to allow for internal referencing
+theEngine : the engine pointer itself, to allow for internal referencing
 */
 void Engine_render(Engine* theEngine)
 {
@@ -88,9 +109,8 @@ void Engine_render(Engine* theEngine)
 }
 
 /*
-Function Name: m_shutdown
-Brief Description: prefixed with an m, this is a supposed private function
-to shutdown the Engine and free associated memory
+Function Name: Engine_exit
+Brief Description: Shutdown the Engine and free associated memory
 Parameters:
 ptr : the Engine pointer itself, to allow for internal referencing
 */
@@ -107,8 +127,22 @@ void Engine_exit(Engine* theEngine)
 	theEngine->g_console->ShutdownConsole(theEngine->g_console);
 	//release the memory
 	free(theEngine->g_console);
+	//release the soundEngine
+	FMOD_System_Release(theEngine->SoundEngine);
 	//finally, release the engine memory
 	free(theEngine);
+}
+
+void Engine_LoadSound(Engine* theEngine, char* filename, FMOD_SOUND* soundToLoadTo) 
+{
+	FMOD_RESULT result = FMOD_System_CreateSound(theEngine->SoundEngine, filename, FMOD_DEFAULT, 0, &soundToLoadTo);
+	FMODErrorCheck(result);
+}
+
+void Engine_PlaySound(Engine* theEngine, FMOD_SOUND* soundToPlay)
+{
+	FMOD_RESULT result = FMOD_System_PlaySound(theEngine->SoundEngine, soundToPlay, 0, 0, 0);
+	FMODErrorCheck(result);
 }
 
 /*
@@ -126,6 +160,8 @@ Engine* MakeEngine()
 	theEngine->Render = &Engine_render;
 	theEngine->Update = &Engine_update;
 	theEngine->Shutdown = &Engine_exit;
+	theEngine->Load_Sound = &Engine_LoadSound;
+	theEngine->Play_Sound = &Engine_PlaySound;
 
 	//Returns the modified Engine entity
 	return theEngine;
