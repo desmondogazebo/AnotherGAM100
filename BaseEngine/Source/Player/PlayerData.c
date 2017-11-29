@@ -24,14 +24,26 @@ short Gain_PlayerExp(PlayerData* player, int exp)
 
 	short levelUp = 0;
 
-	while (player->exp >= (player->lvl * 50))
+	while (player->exp >= Get_PlayerRequiredEXPForLevel(player))
 	{
-		player->exp -= (player->lvl * 50);
+		player->exp -= Get_PlayerRequiredEXPForLevel(player);
 		player->lvl++;
 		levelUp = 1;
 	}
 
 	return levelUp;
+}
+
+// Amount of total exp to next level
+short Get_PlayerRequiredEXPForLevel(PlayerData* player)
+{
+	return player->lvl * 50;
+}
+
+// Amount of remaining exp to next level
+short Get_PlayerRemainingEXPForLevel(PlayerData* player)
+{
+	return Get_PlayerRequiredEXPForLevel(player) - player->exp;
 }
 
 int Get_PlayerATK(PlayerData* player)
@@ -47,6 +59,6 @@ int Get_PlayerHP(PlayerData* player)
 
 int Get_PlayerSPD(PlayerData* player)
 {
-	int spd = player->lvl * 1;
+	int spd = player->lvl * 2;
 	return spd;
 }

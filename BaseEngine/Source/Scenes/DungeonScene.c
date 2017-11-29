@@ -179,7 +179,7 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	Self->InternalState = DS_Exploration;
 	Self->metBoss = 0;
 	Self->wKeyPressed = Self->sKeyPressed = Self->aKeyPressed = Self->dKeyPressed = 0;
-
+	dungeon_moveDirection = Vec2(0, 0);
 	//ADD MORE IF NEEDED.
 	char *maps[] = {
 		"Resources/Dungeons/dungeon0.txt", //completed
@@ -210,6 +210,8 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	dungeon_bossToggle = 0;
 	dungeon_bossTimer = 0;
 	dungeon_bossDelay = 0.01;
+
+	Self->metBoss = 0;
 }
 
 // Linked Update function that will be set to the InternalStateManager

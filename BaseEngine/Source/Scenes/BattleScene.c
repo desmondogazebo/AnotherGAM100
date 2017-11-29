@@ -29,6 +29,8 @@ A template on creating a customized state manager
 // Loaders
 TextDataLoader BattleScene_Loader_Layout;
 TextDataLoader BattleScene_Loader_ShieldIcon;
+TextDataLoader BattleScene_Loader_WinIcon;
+TextDataLoader BattleScene_Loader_LoseIcon;
 
 // Player Stats
 short PlayerCurrentHealth;
@@ -56,6 +58,10 @@ short AttackFailedPlayer;
 short EnemyIsAttacking;
 float PerfectGuardTimeFrame = 0.5f;
 short RenderShield;
+
+// Player XP
+short DidPlayerLevel;
+short XPScalingFactor = 10;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -142,9 +148,13 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	// Setup the loader that I am about to use.
 	TextDataLoader_Setup(&BattleScene_Loader_Layout);
 	TextDataLoader_Setup(&BattleScene_Loader_ShieldIcon);
+	TextDataLoader_Setup(&BattleScene_Loader_WinIcon);
+	TextDataLoader_Setup(&BattleScene_Loader_LoseIcon);
 	// Load the sprites that will be used in the battle scene
 	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Battle/Borders.txt");
 	BattleScene_Loader_ShieldIcon.LoadResource(&BattleScene_Loader_ShieldIcon, "Resources/Battle/Guard.txt");
+	BattleScene_Loader_WinIcon.LoadResource(&BattleScene_Loader_WinIcon, "Resources/Battle/Win.txt");
+	BattleScene_Loader_LoseIcon.LoadResource(&BattleScene_Loader_LoseIcon, "Resources/Battle/Lose.txt");
 	
 	// Set up base variables
 	RenderShield = EnemyIsAttacking = AttackFailedPlayer = AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
@@ -233,6 +243,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 				EnemyCurrentHealth -= Get_PlayerATK(&BaseEngine->playerData);
 				if (EnemyCurrentHealth <= 0)
 				{
+					DidPlayerLevel = Gain_PlayerExp(&BaseEngine->playerData, CurrentEnemy.lvl * XPScalingFactor);
 					EnemyCurrentHealth = 0;
 					Self->InternalState = BS_Results;
 				}
@@ -344,7 +355,12 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		}
 		break;
 	case BS_Results:
-		
+		if (isKeyPressed(VK_RETURN))
+		{
+			if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+			else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+		}
 		break;
 	}
 }
@@ -452,6 +468,8 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 	// Free the stuff initiallized in the Internal State Manager
 	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
 	BattleScene_Loader_ShieldIcon.Exit(&BattleScene_Loader_ShieldIcon);
+	BattleScene_Loader_WinIcon.Exit(&BattleScene_Loader_WinIcon);
+	BattleScene_Loader_LoseIcon.Exit(&BattleScene_Loader_LoseIcon);
 	//FreeEnemy(&CurrentEnemy);
 }
 
@@ -563,10 +581,80 @@ void RenderAttackAnimation(BattleScene* Self, Engine* BaseEngine)
 void RenderResults(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
+	char TempCharArray[10];
 
 	// Render the layout
 	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_dgrey));
 
+	// Render the appropriate icon & text
+	Vector2 IconPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X*0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.35f));
+	Vector2 TextRenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X*0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.7f));
+	// Player Lost
+	if (PlayerCurrentHealth <= 0)
+	{
+		// Lose Icon
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(IconPosition.x - (short)((float)BattleScene_Loader_LoseIcon.NumberOfColumns * 0.5f), IconPosition.y - (short)((float)BattleScene_Loader_LoseIcon.NumberOfRows * 0.5f)), BattleScene_Loader_LoseIcon.TextData, BattleScene_Loader_LoseIcon.NumberOfRows, BattleScene_Loader_LoseIcon.NumberOfColumns, getColor(c_black, c_red));
+		
+		// Loss Text
+		ResetCharArray(ScreenLineInfoBuffer);
+		strcpy(ScreenLineInfoBuffer, "< You have lost all your earned XP for your current level... >");
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y)), ScreenLineInfoBuffer, getColor(c_black, c_red));
+
+		// XP Text
+		ResetCharArray(ScreenLineInfoBuffer);
+		strcpy(ScreenLineInfoBuffer, "< You need ");
+		sprintf(TempCharArray, "%d", Get_PlayerRequiredEXPForLevel(&BaseEngine->playerData));
+		strcat(ScreenLineInfoBuffer, TempCharArray);
+		strcat(ScreenLineInfoBuffer, " more XP to level up... >");
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y + 2)), ScreenLineInfoBuffer, getColor(c_black, c_dgrey));
+	
+		// Input Text
+		ResetCharArray(ScreenLineInfoBuffer);
+		strcpy(ScreenLineInfoBuffer, "Press <ENTER> to return to the world!");
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y + 5)), ScreenLineInfoBuffer, getColor(c_black, c_lgrey));
+
+	}
+	// Player Won
+	else if (EnemyCurrentHealth <= 0)
+	{
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(IconPosition.x - (short)((float)BattleScene_Loader_WinIcon.NumberOfColumns * 0.5f), IconPosition.y - (short)((float)BattleScene_Loader_WinIcon.NumberOfRows * 0.5f)), BattleScene_Loader_WinIcon.TextData, BattleScene_Loader_WinIcon.NumberOfRows, BattleScene_Loader_WinIcon.NumberOfColumns, getColor(c_black, c_green));
+	
+		// Win Text
+		ResetCharArray(ScreenLineInfoBuffer);
+		strcpy(ScreenLineInfoBuffer, "< You have defeated the enemy! >");
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y)), ScreenLineInfoBuffer, getColor(c_black, c_green));
+
+		if (DidPlayerLevel == 0)
+		{
+			// XP Text
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "< ");
+			sprintf(TempCharArray, "%d", Get_PlayerRemainingEXPForLevel(&BaseEngine->playerData));
+			strcat(ScreenLineInfoBuffer, TempCharArray);
+			strcat(ScreenLineInfoBuffer, " more XP to level up, earned ");
+			sprintf(TempCharArray, "%d", CurrentEnemy.lvl * XPScalingFactor);
+			strcat(ScreenLineInfoBuffer, TempCharArray);
+			strcat(ScreenLineInfoBuffer, " XP this battle! > ");
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y + 2)), ScreenLineInfoBuffer, getColor(c_black, c_dgrey));
+		}
+		else {
+			// Player Leveled Up!
+			ResetCharArray(ScreenLineInfoBuffer);
+			strcpy(ScreenLineInfoBuffer, "< You leveled up to Level: ");
+			sprintf(TempCharArray, "%d", BaseEngine->playerData.lvl);
+			strcat(ScreenLineInfoBuffer, TempCharArray);
+			strcat(ScreenLineInfoBuffer, ", and earned ");
+			sprintf(TempCharArray, "%d", CurrentEnemy.lvl * XPScalingFactor);
+			strcat(ScreenLineInfoBuffer, TempCharArray);
+			strcat(ScreenLineInfoBuffer, " XP this battle! > ");
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y + 2)), ScreenLineInfoBuffer, getColor(c_black, c_dgrey));
+		}
+		// Input Text
+		ResetCharArray(ScreenLineInfoBuffer);
+		strcpy(ScreenLineInfoBuffer, "Press <ENTER> to return to the world!");
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2((short)((float)TextRenderStartPosition.x - (float)strlen(ScreenLineInfoBuffer) * 0.5f), (short)((float)TextRenderStartPosition.y + 6)), ScreenLineInfoBuffer, getColor(c_black, c_lgrey));
+
+	}
 }
 
 // Gameplay Logic Code
