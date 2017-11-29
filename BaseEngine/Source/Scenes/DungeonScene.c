@@ -37,6 +37,14 @@ double dungeon_runDelayY = 0.15; // How fast the player runs on Y axis
 double dungeon_runTimerX = 0;
 double dungeon_runTimerY = 0;
 
+//dungeon transition vairiables
+short dungeon_transitionCount = 0;
+double dungeon_transitionTimer = 0;
+double dungeon_transitionTimerDelay = 0.01;
+short dungeon_waitToggle = 0;
+double dungeon_transitionWaitDelay = 0.5;
+TextDataLoader DungeonTransition_Loader;
+
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
@@ -63,6 +71,7 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self);
 //Local functions that relate to the scene.
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta);
 Vector2 parseRandomSpawnPoint(TextDataLoader map, char charToLookOutFor);
+void DungeonScene_Transition(DungeonScene* Self, Engine* BaseEngine, double Delta);
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -153,9 +162,11 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 {
 	// Here I will initiallize the internal state manager
 	// Setup the loader that I am about to use.
-	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Load the sprites that will be used in the battle scene
+	TextDataLoader_Setup(&DungeonTransition_Loader);
+	DungeonTransition_Loader.LoadResource(&DungeonTransition_Loader, "Resources/BattleTransition.txt");
 
+	TextDataLoader_Setup(&DungeonScene_Loader);
 	// Set the current state
 	Self->InternalState = DS_Exploration;
 
@@ -196,7 +207,8 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 		DungeonScene_PlayerControls(Self, BaseEngine, Delta);
 		DungeonScene_Camera.UpdateCameraLogic(&DungeonScene_Camera, BaseEngine->g_console, &DungeonScene_Loader, &Self->player.position);
 		break;
-	case DS_Battle:
+	case DS_Transition:
+		DungeonScene_Transition(Self, BaseEngine, Delta);
 		break;
 	default: 
 		break;
@@ -215,8 +227,11 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		break;
-	case DS_Battle:
-		break;
+	case DS_Transition:
+	{
+		Vector2 location = { -80 + dungeon_transitionCount, 0 };
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, DungeonTransition_Loader.TextData, DungeonTransition_Loader.NumberOfRows, DungeonTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
+	}
 	default:
 		break;
 	}
@@ -228,6 +243,8 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self)
 	// Free the stuff initiallized in the Internal State Manager
 	DungeonScene_Loader.Exit(&DungeonScene_Loader);
 }
+
+//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta)
 {
@@ -245,8 +262,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-				self->InternalState = DS_Battle;
+				self->InternalState = DS_Transition;
 			}
 		}
 	}
@@ -274,8 +290,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-				self->InternalState = DS_Battle;
+				self->InternalState = DS_Transition;
 			}
 		}
 	}
@@ -303,8 +318,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-				self->InternalState = DS_Battle;
+				self->InternalState = DS_Transition;
 			}
 		}
 	}
@@ -332,8 +346,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-				self->InternalState = DS_Battle;
+				self->InternalState = DS_Transition;
 			}
 		}
 	}
@@ -362,8 +375,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-					self->InternalState = DS_Battle;
+					self->InternalState = DS_Transition;
 				}
 				plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
 				if (plrMoveCode == 1)
@@ -372,8 +384,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-					self->InternalState = DS_Battle;
+					self->InternalState = DS_Transition;
 				}
 			}
 		}
@@ -382,5 +393,33 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 	{
 		dungeon_runTimerX = 0;
 		dungeon_moveDirection.x = 0;
+	}
+}
+
+void DungeonScene_Transition(DungeonScene* self, Engine* BaseEngine, double Delta)
+{
+	dungeon_transitionTimer += Delta;
+
+	if (dungeon_waitToggle == 0)
+	{
+		if (dungeon_transitionTimer > dungeon_transitionTimerDelay)
+		{
+			dungeon_transitionCount++;
+			dungeon_transitionTimer = 0;
+			if (dungeon_transitionCount == 80)
+			{
+				dungeon_waitToggle = 1;
+			}
+		}
+	}
+	else if (dungeon_waitToggle == 1)
+	{
+		if (dungeon_transitionTimer > dungeon_transitionWaitDelay)
+		{
+			dungeon_transitionCount = 0;
+			dungeon_transitionTimer = 0;
+			dungeon_waitToggle = 0;
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+		}
 	}
 }

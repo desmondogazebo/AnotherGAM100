@@ -25,7 +25,7 @@ typedef struct DungeonScene
 	enum {
 		DS_NOTHING,
 		DS_Exploration,
-		DS_Battle
+		DS_Transition,
 	}DS_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
