@@ -43,6 +43,12 @@ void EnemyEncounterHandler_LinkedInitiallize(EnemyEncounterHandler* Self)
 	InitiallizeEnemy(Self, Enemy_Goblin, "Resources/Enemy/Goblin.txt");
 	InitiallizeEnemy(Self, Enemy_Rat, "Resources/Enemy/Rat.txt");
 
+	InitiallizeEnemy(Self, Boss_DatBoiLv1, "Resources/Enemy/DatBoi1.txt");
+	InitiallizeEnemy(Self, Boss_DatBoiLv2, "Resources/Enemy/DatBoi2.txt");
+	InitiallizeEnemy(Self, Boss_DatBoiLv3, "Resources/Enemy/DatBoi3.txt");
+	InitiallizeEnemy(Self, Boss_DatBoiLv4, "Resources/Enemy/DatBoi4.txt");
+	InitiallizeEnemy(Self, Boss_DatBoiLv5, "Resources/Enemy/DatBoi5.txt");
+
 	// Set up a default for testing
 	Self->CurrentEnemy = &Self->EnemyList[Enemy_Ghost];
 	Self->PreviousSceneWasDungeon = 0;
