@@ -76,16 +76,6 @@ void RenderResults(BattleScene* Self, Engine* BaseEngine);
 void BarLogic(float BarSpeed, double Delta);
 Vector2 RandomizeOptimalBarThresholds();
 
-// Utility Functions
-void ResetCharArray(char* Array)
-{
-	memset(Array, 0, sizeof(char) * strlen(Array));
-}
-
-int IntRandomizeRange(int Lower, int Upper) {
-	return((rand() % (Upper - Lower + 1)) + Lower);
-}
-
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -98,7 +88,7 @@ void BattleScene_Setup(BattleScene* Self)
 	Self->InternalStateManager.Exit = BattleScene_LinkedInternalExit;
 
 	// Set the current state
-	Self->InternalState = BS_PlayerTurnChoice;
+	Self->InternalState = BS_Loading;
 
 	// Set up the functions of this object
 	Self->Initiallize = BattleScene_LinkedInitiallize;
@@ -139,9 +129,8 @@ void BattleScene_LinkedInternalInitiallize(BattleScene* Self)
 	TextDataLoader_Setup(&BattleScene_Loader_Layout);
 	// Load the sprites that will be used in the battle scene
 	BattleScene_Loader_Layout.LoadResource(&BattleScene_Loader_Layout, "Resources/Battle/Borders.txt");
-	// Load the enemy
-	PopulateEnemy(&CurrentEnemy, "Resources/Enemy/Goblin.txt");
-	EnemyCurrentHealth = CurrentEnemy.hp;
+	
+	// Set up base variables
 	AttackAnimationRunning = PlayerTurnChoiceSelector = 0;
 	BattleScene_Timer = 0.f;
 	BarIncrementationDirection = 1;
@@ -156,7 +145,10 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	switch (Self->InternalState)
 	{
 	case BS_Loading:
-		//Self->InternalState = ;
+		// Load the enemy
+		CurrentEnemy = *BaseEngine->InternalSceneSystem.InternalEncounterHandler.CurrentEnemy;
+		EnemyCurrentHealth = CurrentEnemy.hp;
+		Self->InternalState = BS_PlayerTurnChoice;
 		break;
 	case BS_PlayerTurnChoice:
 		// Handle choice selection
@@ -269,7 +261,7 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
 	BattleScene_Loader_Layout.Exit(&BattleScene_Loader_Layout);
-	FreeEnemy(&CurrentEnemy);
+	//FreeEnemy(&CurrentEnemy);
 }
 
 // Scene Based Functions

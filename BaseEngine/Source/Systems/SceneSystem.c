@@ -136,6 +136,8 @@ void SceneSystem_LinkedInternalInitiallize(SceneSystem* Self)
 	// Here I will initiallize the internal state manager
 	// Initiallizing Scenes
 	InitiallizeScenes(Self);
+	EnemyEncounterHandler_Setup(&Self->InternalEncounterHandler);
+	Self->InternalEncounterHandler.Initiallize(&Self->InternalEncounterHandler);
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -201,4 +203,7 @@ void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 	Self->InternalWorldViewScene.Exit(&Self->InternalWorldViewScene);
 	Self->InternalMenuScene.Exit(&Self->InternalMenuScene);
 	Self->InternalSplashScene.Exit(&Self->InternalSplashScene);
+
+	// Free up other miscellaneous objects
+	Self->InternalEncounterHandler.Exit(&Self->InternalEncounterHandler);
 }

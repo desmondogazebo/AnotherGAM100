@@ -147,6 +147,9 @@
     <ClCompile Include="Source\Player\PlayerData.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\LogicalObjects\EnemyEncounterHandler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Rooms\Room.h">
@@ -213,6 +216,9 @@
       <Filter>Header Files\LogicalObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player\PlayerData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LogicalObjects\EnemyEncounterHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,6 +23,9 @@ A system that utillizes states to manage the activity of each scene.
 #include "../Scenes/SplashScene.h"
 #include "../Scenes/MenuScene.h"
 
+// Inclusion of Other Objects
+#include "../LogicalObjects/EnemyEncounterHandler.h"
+
 /* Public Struct & Functions */
 typedef struct SceneSystem
 {
@@ -59,6 +62,9 @@ typedef struct SceneSystem
 	DungeonScene InternalDungeonScene;
 	SplashScene InternalSplashScene;
 	MenuScene InternalMenuScene;
+
+	// Objects
+	EnemyEncounterHandler InternalEncounterHandler;
 
 }SceneSystem;
 
