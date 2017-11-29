@@ -27,7 +27,7 @@ typedef struct DungeonScene
 		DS_TransitionToBoss,
 		DS_TransitionToWorld
 	}DS_States;
-	enum CSM_States InternalState;
+	enum DS_States InternalState;
 	BaseStateManager InternalStateManager;
 
 	Player player;

@@ -197,6 +197,8 @@ void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* BaseEngine)
 // Linked Exit function that will be set to the InternalStateManager
 void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 {
+	// Free up other miscellaneous objects
+	Self->InternalEncounterHandler.Exit(&Self->InternalEncounterHandler);
 	// Free the stuff initiallized in the Internal State Manager
 	Self->InternalBattleScene.Exit(&Self->InternalBattleScene);
 	Self->InternalDungeonScene.Exit(&Self->InternalDungeonScene);
@@ -204,6 +206,4 @@ void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 	Self->InternalMenuScene.Exit(&Self->InternalMenuScene);
 	Self->InternalSplashScene.Exit(&Self->InternalSplashScene);
 
-	// Free up other miscellaneous objects
-	Self->InternalEncounterHandler.Exit(&Self->InternalEncounterHandler);
 }

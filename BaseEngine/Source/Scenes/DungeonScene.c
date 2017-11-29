@@ -256,8 +256,6 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self)
 	DungeonScene_Loader.Exit(&DungeonScene_Loader);
 }
 
-//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
-
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta)
 {
 	if (isKeyPressed('W'))
