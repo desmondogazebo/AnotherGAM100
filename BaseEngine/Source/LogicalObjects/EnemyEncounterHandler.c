@@ -91,4 +91,5 @@ void InitiallizeEnemy(EnemyEncounterHandler* Self, enum Enemies EnemyToLoad, cha
 	// Set the enemy into the array
 	Self->EnemyList[EnemyToLoad] = *NewEnemy; 
 	Self->EnemyValueChecker[EnemyToLoad] = 1;
+	free(NewEnemy);
 }

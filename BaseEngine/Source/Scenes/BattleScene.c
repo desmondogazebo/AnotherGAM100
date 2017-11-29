@@ -81,7 +81,6 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine);
 void BattleScene_LinkedInternalExit(BattleScene* Self);
 
 // Scene Based Functions
-void RenderLoading(BattleScene* Self, Engine* BaseEngine);
 void RenderBattle(BattleScene* Self, Engine* BaseEngine);
 void RenderAttackMeter(BattleScene* Self, Engine* BaseEngine);
 void RenderAttackAnimation(BattleScene* Self, Engine* BaseEngine);
@@ -232,6 +231,11 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 			{
 				AttackAnimationRunning = 1;
 				EnemyCurrentHealth -= Get_PlayerATK(&BaseEngine->playerData);
+				if (EnemyCurrentHealth <= 0)
+				{
+					EnemyCurrentHealth = 0;
+					Self->InternalState = BS_Results;
+				}
 			}
 			else AttackFailedPlayer = 1;
 			BattleScene_Timer = 0.f;
@@ -293,6 +297,11 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 				EnemyIsAttacking = 0;
 				BattleScene_Timer = 0.f;
 				RenderShield = 0;
+				if (PlayerCurrentHealth <= 0)
+				{
+					PlayerCurrentHealth = 0;
+					Self->InternalState = BS_Results;
+				}
 			}
 			else if (isKeyPressed(VK_SPACE))
 			{
@@ -323,6 +332,11 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		{
 			// Player takes damage as he failed to perfect guard
 			PlayerCurrentHealth -= CurrentEnemy.atk;
+			if (PlayerCurrentHealth <= 0)
+			{
+				PlayerCurrentHealth = 0;
+				Self->InternalState = BS_Results;
+			}
 			// I'm guarding for no reason guard failed
 			AttackFailedPlayer = 1;
 			RenderShield = 0;
@@ -330,6 +344,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		}
 		break;
 	case BS_Results:
+		
 		break;
 	}
 }
@@ -426,6 +441,7 @@ void BattleScene_LinkedInternalRender(BattleScene* Self, Engine* BaseEngine)
 		
 		break;
 	case BS_Results:
+		RenderResults(Self, BaseEngine);
 		break;
 	}
 }
@@ -440,12 +456,6 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 }
 
 // Scene Based Functions
-void RenderLoading(BattleScene* Self, Engine* BaseEngine)
-{
-	ResetCharArray(ScreenLineInfoBuffer);
-
-}
-
 void RenderBattle(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
@@ -553,6 +563,9 @@ void RenderAttackAnimation(BattleScene* Self, Engine* BaseEngine)
 void RenderResults(BattleScene* Self, Engine* BaseEngine)
 {
 	ResetCharArray(ScreenLineInfoBuffer);
+
+	// Render the layout
+	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_dgrey));
 
 }
 
