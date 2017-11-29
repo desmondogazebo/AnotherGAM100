@@ -90,6 +90,8 @@ void WorldViewScene_LinkedInternalExit(WorldViewScene* self);
 
 // Split functions to make file neater
 void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta);
+void HandlePlayerMovement(int plrMoveCode, WorldViewScene* self, Engine* BaseEngine, short *MovementCheck);
+
 void WrapPlayer(WorldViewScene* self);
 Room* Add_Room(WorldViewScene* self, char *mapString);
 void CopyMapData(char*** targetArray, char** copyArray, int numRow, int numCol);
@@ -255,6 +257,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 			RenderDungeonIndicators(self, BaseEngine, Vec2(0,0));
 		}
 		ReplaceDungeonEntrance(self, BaseEngine);
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
 		break;
 	case WVS_TRANSITION:
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));
@@ -304,6 +307,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		}
 
 		ReplaceDungeonEntrance(self, BaseEngine);
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
 		break;
 	case WVS_DUNGEONTRANSITION:
 		{
@@ -313,16 +317,20 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_dungeonTransitionSprite.TextData, wvs_dungeonTransitionSprite.NumberOfRows, wvs_dungeonTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
 		}
 		ReplaceDungeonEntrance(self, BaseEngine);
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
 		break;
 	case WVS_BATTLETRANSITION:
-	{
-		Vector2 location = { -BaseEngine->g_console->consoleSize.X + wvs_battleTransitionCount, 0 };
-		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
-		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_battleTransitionSprite.TextData, wvs_battleTransitionSprite.NumberOfRows, wvs_battleTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
-	}
-	ReplaceDungeonEntrance(self, BaseEngine);
-	}
+		{
+			Vector2 location = { -BaseEngine->g_console->consoleSize.X + wvs_battleTransitionCount, 0 };
+			BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_battleTransitionSprite.TextData, wvs_battleTransitionSprite.NumberOfRows, wvs_battleTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
+		}
+		ReplaceDungeonEntrance(self, BaseEngine);
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
+		break;
+		}
+		
 }
 
 // Linked Exit function that will be set to the InternalStateManager
@@ -347,19 +355,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			self->wKeyPressed = 1;
 			wvs_moveDirection.y--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
-			if (plrMoveCode == 1)
-			{
-				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if(self->currentRoomIndex == 0)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-			}
-			else if (plrMoveCode == 3)
-				MovementCheck = 1;
+			HandlePlayerMovement(plrMoveCode, self, BaseEngine, &MovementCheck);
 		}
 	}
 	else
@@ -380,19 +376,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			self->sKeyPressed = 1;
 			wvs_moveDirection.y++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
-			if (plrMoveCode == 1)
-			{
-				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 0)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-			}
-			else if (plrMoveCode == 3)
-				MovementCheck = 1;
+			HandlePlayerMovement(plrMoveCode, self, BaseEngine, &MovementCheck);
 		}
 	}
 	else
@@ -413,19 +397,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			self->aKeyPressed = 1;
 			wvs_moveDirection.x--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
-			if (plrMoveCode == 1)
-			{
-				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 0)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-			}
-			else if (plrMoveCode == 3)
-				MovementCheck = 1;
+			HandlePlayerMovement(plrMoveCode, self, BaseEngine, &MovementCheck);
 		}
 	}
 	else
@@ -446,19 +418,7 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			self->dKeyPressed = 1;
 			wvs_moveDirection.x++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
-			if (plrMoveCode == 1)
-			{
-				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				else if (self->currentRoomIndex == 0)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-			}
-			else if (plrMoveCode == 3)
-				MovementCheck = 1;
+			HandlePlayerMovement(plrMoveCode, self, BaseEngine, &MovementCheck);
 		}
 	}
 	else
@@ -481,19 +441,8 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 
 				short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
 				short plrMoveCode2 = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
-				if (plrMoveCode == 1 || plrMoveCode2 == 1)
-				{
-					if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
-						self->InternalState = WVS_DUNGEONTRANSITION;
-					else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
-						self->InternalState = WVS_DUNGEONTRANSITION;
-					else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
-						self->InternalState = WVS_DUNGEONTRANSITION;
-					else if (self->currentRoomIndex == 0)
-						self->InternalState = WVS_DUNGEONTRANSITION;
-				}
-				else if (plrMoveCode == 3 || plrMoveCode2 == 3)
-					MovementCheck = 1;
+				HandlePlayerMovement(plrMoveCode, self, BaseEngine, &MovementCheck);
+				HandlePlayerMovement(plrMoveCode2, self, BaseEngine, &MovementCheck);
 			}
 		}
 	}
@@ -511,6 +460,8 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			// Do something
 			self->InternalState = WVS_BATTLETRANSITION;
 			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
 		}
 	}
 }
@@ -831,6 +782,10 @@ void ReplaceDungeonEntrance(WorldViewScene* self, Engine* BaseEngine)
 	{
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', '@', getColor(c_black, c_red));
 	}
+	if ((self->currentRoomIndex == 4 || self->previousRoomIndex == 4) && BaseEngine->playerData.bossFlag < 4)
+	{
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', ' ', getColor(c_black, c_black));
+	}
 }
 
 void BattleTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
@@ -860,4 +815,23 @@ void BattleTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
+}
+
+void HandlePlayerMovement(int plrMoveCode, WorldViewScene* self, Engine* BaseEngine , short *MovementCheck)
+{
+	if (plrMoveCode == 1)
+	{
+		if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+			self->InternalState = WVS_DUNGEONTRANSITION;
+		else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+			self->InternalState = WVS_DUNGEONTRANSITION;
+		else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+			self->InternalState = WVS_DUNGEONTRANSITION;
+		else if (self->currentRoomIndex == 4 && BaseEngine->playerData.bossFlag >= 4)
+			self->InternalState = WVS_DUNGEONTRANSITION;
+		else if (self->currentRoomIndex == 0)
+			self->InternalState = WVS_DUNGEONTRANSITION;
+	}
+	else if (plrMoveCode == 3)
+		(*MovementCheck) = 1;
 }
