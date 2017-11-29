@@ -180,7 +180,7 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	Self->metBoss = 0;
 	Self->firstFrameOfUpdate = 0;
 	Self->wKeyPressed = Self->sKeyPressed = Self->aKeyPressed = Self->dKeyPressed = 0;
-
+	dungeon_moveDirection = Vec2(0, 0);
 	//LOCAL VARIABLES
 	dungeon_initialRunDelay = 0.3;
 	dungeon_runDelayX = 0.1;
@@ -229,7 +229,7 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 			if (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex != 4)
 			{
 				int randomMap = rand() % ((sizeof(maps) / sizeof(char*)) - 1);
-				DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[4]);
+				DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[randomMap]);
 			}
 			else
 			{
@@ -488,7 +488,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 	if (MovementCheck == 1)
 	{
 		// Check if a monster has been encountered
-		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 0, Enemy_Bird, Enemy_Rat) == 1)
+		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Bird, Enemy_Rat) == 1)
 		{
 			// Do something
 			self->InternalState = DS_TransitionToBattle;
@@ -522,6 +522,7 @@ void DungeonScene_Transition(DungeonScene* self, Engine* BaseEngine, double Delt
 			dungeon_transitionCount = 0;
 			dungeon_transitionTimer = 0;
 			dungeon_waitToggle = 0;
+			self->InternalState = DS_Exploration;
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 		}
 	}
@@ -575,8 +576,14 @@ void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 				break;
 			}
 			//change current scene
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
 			Self->InternalState = DS_Exploration; //change state safely
+			dungeon_bossCount = 0;
+			dungeon_bossToggle = 0;
+			dungeon_bossTimer = 0;
+			dungeon_bossDelay = 0.01;
 		}
 	}
 }
