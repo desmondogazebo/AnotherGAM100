@@ -178,21 +178,8 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 	// Set the current state
 	Self->InternalState = DS_Exploration;
 	Self->metBoss = 0;
+	Self->firstFrameOfUpdate = 0;
 	Self->wKeyPressed = Self->sKeyPressed = Self->aKeyPressed = Self->dKeyPressed = 0;
-
-	//ADD MORE IF NEEDED.
-	char *maps[] = {
-		"Resources/Dungeons/dungeon0.txt", //completed
-		"Resources/Dungeons/dungeon1.txt", //todo
-		"Resources/Dungeons/dungeon2.txt", //todo
-		"Resources/Dungeons/dungeon3.txt"  //todo
-	};
-
-	int randomMap = rand() % (sizeof(maps) / sizeof(char*));
-
-	DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[randomMap]);
-	Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader, 'E'));
-	DungeonCamera_Setup(&DungeonScene_Camera);
 
 	//LOCAL VARIABLES
 	dungeon_initialRunDelay = 0.3;
@@ -228,6 +215,32 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 		BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 		break;
 	case DS_Exploration:
+		if (Self->firstFrameOfUpdate == 0)
+		{
+			//ADD MORE IF NEEDED.
+			char *maps[] = {
+				"Resources/Dungeons/dungeon0.txt", //completed
+				"Resources/Dungeons/dungeon1.txt", //completed
+				"Resources/Dungeons/dungeon2.txt", //completed
+				"Resources/Dungeons/dungeon3.txt",  //completed
+				"Resources/Dungeons/dungeon4.txt" //DO NOT EVER RANDOM THIS
+			};
+
+			if (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex != 4)
+			{
+				int randomMap = rand() % ((sizeof(maps) / sizeof(char*)) - 1);
+				DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[4]);
+			}
+			else
+			{
+				DungeonScene_Loader.LoadResource(&DungeonScene_Loader, maps[4]);
+			}
+			Initialize_Player(&Self->player, parseRandomSpawnPoint(DungeonScene_Loader, 'E'));
+			DungeonCamera_Setup(&DungeonScene_Camera);
+
+			Self->firstFrameOfUpdate = 1;
+		}
+
 		DungeonScene_PlayerControls(Self, BaseEngine, Delta);
 		DungeonScene_Camera.UpdateCameraLogic(&DungeonScene_Camera, BaseEngine->g_console, &DungeonScene_Loader, &Self->player.position);
 		break;
@@ -254,6 +267,9 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 			case 2:
 				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene4.txt");
 				break;
+			case 4:
+				DungeonBossTransition_Loader.LoadResource(&DungeonBossTransition_Loader, "Resources/Information/Boss_cutscene5.txt");
+				break;
 			}
 			Self->metBoss = 1;
 		}
@@ -274,8 +290,11 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 	case DS_TransitionToWorld:
 		break;
 	case DS_Exploration:
-		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
+		if (Self->firstFrameOfUpdate == 1)
+		{
+			BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
+		}
 		break;
 	case DS_TransitionToBattle:
 	{
