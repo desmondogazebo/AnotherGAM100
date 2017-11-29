@@ -35,6 +35,7 @@ void EnemyEncounterHandler_LinkedInitiallize(EnemyEncounterHandler* Self)
 {
 	// Set the array to null
 	memset(Self->EnemyList, 0, sizeof(Enemy) * Boss_Max);
+	memset(Self->EnemyValueChecker, 0, sizeof(short) * Boss_Max);
 
 	// Load all the valid enemy types
 	InitiallizeEnemy(Self, Enemy_Bird, "Resources/Enemy/Bird.txt");
@@ -43,7 +44,7 @@ void EnemyEncounterHandler_LinkedInitiallize(EnemyEncounterHandler* Self)
 	InitiallizeEnemy(Self, Enemy_Rat, "Resources/Enemy/Rat.txt");
 
 	// Set up a default for testing
-	Self->CurrentEnemy = Self->EnemyList[Enemy_Ghost];
+	Self->CurrentEnemy = &Self->EnemyList[Enemy_Ghost];
 }
 
 void EnemyEncounterHandler_LinkedExit(EnemyEncounterHandler* Self)
@@ -51,8 +52,8 @@ void EnemyEncounterHandler_LinkedExit(EnemyEncounterHandler* Self)
 	Self->CurrentEnemy = NULL;
 	// Free the memory used in the array for enemies
 	for (int i = 0; i < Boss_Max; ++i)
-		if (Self->EnemyList[i] != NULL)
-			FreeEnemy(Self->EnemyList[i]);
+		if (Self->EnemyValueChecker[i] > 0)
+			FreeEnemy(&Self->EnemyList[i]);
 }
 
 // Randomizes an encounter
@@ -63,7 +64,7 @@ short EnemyEncounterHandler_RandomizeEncounter(EnemyEncounterHandler* Self, unsi
 	// Percent check for an encounter
 	if (EncounterPercent > IntRandomizeRange(0, 100)){
 		// Randomize a monster
-		Self->CurrentEnemy = Self->EnemyList[IntRandomizeRange(MinimumThreshold, MaximumThreshold)];
+		Self->CurrentEnemy = &Self->EnemyList[IntRandomizeRange(MinimumThreshold, MaximumThreshold)];
 		DidMonsterSpawn = 1;
 	}
 	return DidMonsterSpawn;
@@ -72,7 +73,7 @@ short EnemyEncounterHandler_RandomizeEncounter(EnemyEncounterHandler* Self, unsi
 // Sets up the encounter
 void EnemyEncounterHandler_SetUpEncounter(EnemyEncounterHandler* Self, enum Enemies MonsterToEncounter)
 {
-	Self->CurrentEnemy = Self->EnemyList[MonsterToEncounter];
+	Self->CurrentEnemy = &Self->EnemyList[MonsterToEncounter];
 }
 
 void InitiallizeEnemy(EnemyEncounterHandler* Self, enum Enemies EnemyToLoad, char* FilePath)
@@ -81,5 +82,6 @@ void InitiallizeEnemy(EnemyEncounterHandler* Self, enum Enemies EnemyToLoad, cha
 	Enemy* NewEnemy = malloc(sizeof(Enemy));
 	PopulateEnemy(NewEnemy, FilePath);
 	// Set the enemy into the array
-	Self->EnemyList[EnemyToLoad] = NewEnemy;
+	Self->EnemyList[EnemyToLoad] = *NewEnemy; 
+	Self->EnemyValueChecker[EnemyToLoad] = 1;
 }

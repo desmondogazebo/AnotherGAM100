@@ -218,7 +218,7 @@ void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, d
 		DungeonScene_PlayerControls(Self, BaseEngine, Delta);
 		DungeonScene_Camera.UpdateCameraLogic(&DungeonScene_Camera, BaseEngine->g_console, &DungeonScene_Loader, &Self->player.position);
 		break;
-	case DS_TransitionToBoss:
+	case DS_TransitionToBattle:
 		DungeonScene_Transition(Self, BaseEngine, Delta);
 		break;
 	default: 
@@ -238,7 +238,7 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 		BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		break;
-	case DS_TransitionToBoss:
+	case DS_TransitionToBattle:
 	{
 		Vector2 location = { -BaseEngine->g_console->consoleSize.X + dungeon_transitionCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, DungeonTransition_Loader.TextData, DungeonTransition_Loader.NumberOfRows, DungeonTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
@@ -258,6 +258,7 @@ void DungeonScene_LinkedInternalExit(DungeonScene* Self)
 
 void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double Delta)
 {
+	short MovementCheck = 0;
 	if (isKeyPressed('W'))
 	{
 		// Key press down
@@ -272,8 +273,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBoss;
+				self->InternalState = DS_TransitionToBattle;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -300,8 +303,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBoss;
+				self->InternalState = DS_TransitionToBattle;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -328,8 +333,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBoss;
+				self->InternalState = DS_TransitionToBattle;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -356,8 +363,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 			}
 			else if (plrMoveCode == 2)
 			{
-				self->InternalState = DS_TransitionToBoss;
+				self->InternalState = DS_TransitionToBattle;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -385,8 +394,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					self->InternalState = DS_TransitionToBoss;
+					self->InternalState = DS_TransitionToBattle;
 				}
+				else if (plrMoveCode == 3)
+					MovementCheck = 1;
 				plrMoveCode = MovePlayer(&self->player, Vec2(0, dungeon_moveDirection.y), DungeonScene_Loader);
 				if (plrMoveCode == 1)
 				{
@@ -394,8 +405,10 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 				}
 				else if (plrMoveCode == 2)
 				{
-					self->InternalState = DS_TransitionToBoss;
+					self->InternalState = DS_TransitionToBattle;
 				}
+				else if (plrMoveCode == 3)
+					MovementCheck = 1;
 			}
 		}
 	}
@@ -403,6 +416,15 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 	{
 		dungeon_runTimerX = 0;
 		dungeon_moveDirection.x = 0;
+	}
+	if (MovementCheck == 1)
+	{
+		// Check if a monster has been encountered
+		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 5, Enemy_Bird, Enemy_Rat) == 1)
+		{
+			// Do something
+			self->InternalState = DS_TransitionToBattle;
+		}
 	}
 }
 
