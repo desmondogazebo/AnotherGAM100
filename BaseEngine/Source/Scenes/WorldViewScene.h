@@ -28,6 +28,7 @@ typedef struct WorldViewScene
 		WVS_ROAMING = 0,
 		WVS_TRANSITION,
 		WVS_DUNGEONTRANSITION,
+		WVS_BATTLETRANSITION,
 		WVS_TOTAL
 	}WVS_States;
 	enum WVS_States InternalState;

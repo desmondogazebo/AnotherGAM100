@@ -54,6 +54,14 @@ short wvs_dungeonWaitToggle = 0;
 double wvs_dungeonTransitionTimerWaitDelay = 0.3;
 TextDataLoader wvs_dungeonTransitionSprite;
 
+// Battle transition variables
+short wvs_battleTransitionCount;
+double wvs_battleTransitionTimer;
+double wvs_battleTransitionTimerDelay;
+short wvs_battleWaitToggle;
+double wvs_battleTransitionWaitDelay;
+TextDataLoader wvs_battleTransitionSprite;
+
 Vector2 wvs_moveDirection = { 0,0 }; // Direction of player movement
 
 ///****************************************************************************
@@ -95,8 +103,9 @@ void InitializeWorldMaps(WorldViewScene* self);
 // Room transition
 void RoomTransition(WorldViewScene* self, double Delta);
 
-// Dungeon transition
+// Dungeon transitions
 void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta);
+void BattleTransition(WorldViewScene* self, Engine* BaseEngine, double Delta);
 
 // Render the dungeon indicators in room 5 (center)
 void RenderDungeonIndicators(WorldViewScene* self, Engine* BaseEngine, Vector2 offset);
@@ -175,6 +184,15 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	Initialize_Player(&self->player, Vec2(5, 5));
 
 	InitializeWorldMaps(self);
+
+	TextDataLoader_Setup(&wvs_battleTransitionSprite);
+	wvs_battleTransitionSprite.LoadResource(&wvs_battleTransitionSprite, "Resources/BattleTransition.txt");
+
+	wvs_battleTransitionCount = 0;
+	wvs_battleTransitionTimer = 0;
+	wvs_battleTransitionTimerDelay = 0.01;
+	wvs_battleWaitToggle = 0;
+	wvs_battleTransitionWaitDelay = 0.5;
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -216,6 +234,9 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, Engine* BaseEngin
 		break;
 	case WVS_DUNGEONTRANSITION:
 		DungeonTransition(self, BaseEngine, Delta);
+		break;
+	case WVS_BATTLETRANSITION:
+		BattleTransition(self, BaseEngine, Delta);
 		break;
 	}
 }
@@ -291,7 +312,16 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 			BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_dungeonTransitionSprite.TextData, wvs_dungeonTransitionSprite.NumberOfRows, wvs_dungeonTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
 		}
+		ReplaceDungeonEntrance(self, BaseEngine);
 		break;
+	case WVS_BATTLETRANSITION:
+	{
+		Vector2 location = { -BaseEngine->g_console->consoleSize.X + wvs_battleTransitionCount, 0 };
+		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, wvs_battleTransitionSprite.TextData, wvs_battleTransitionSprite.NumberOfRows, wvs_battleTransitionSprite.NumberOfColumns, getColor(c_black, c_white));
+	}
+	ReplaceDungeonEntrance(self, BaseEngine);
 	}
 }
 
@@ -300,12 +330,15 @@ void WorldViewScene_LinkedInternalExit(WorldViewScene* self)
 {
 	// Free the stuff initiallized in the Internal State Manager
 	wvs_dungeonTransitionSprite.Exit(&wvs_dungeonTransitionSprite);
+	wvs_battleTransitionSprite.Exit(&wvs_battleTransitionSprite);
 	FreeRoomArray(&(self->roomList));
 }
 
 
 void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 {
+	short MovementCheck = 0;
+
 	if (isKeyPressed('W'))
 	{
 		// Key press down
@@ -322,9 +355,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if(self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -353,9 +388,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -384,9 +421,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -415,9 +454,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 					self->InternalState = WVS_DUNGEONTRANSITION;
-				else
+				else if (self->currentRoomIndex == 0)
 					self->InternalState = WVS_DUNGEONTRANSITION;
 			}
+			else if (plrMoveCode == 3)
+				MovementCheck = 1;
 		}
 	}
 	else
@@ -448,9 +489,11 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 						self->InternalState = WVS_DUNGEONTRANSITION;
 					else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
 						self->InternalState = WVS_DUNGEONTRANSITION;
-					else
+					else if (self->currentRoomIndex == 0)
 						self->InternalState = WVS_DUNGEONTRANSITION;
 				}
+				else if (plrMoveCode == 3 || plrMoveCode2 == 3)
+					MovementCheck = 1;
 			}
 		}
 	}
@@ -458,6 +501,17 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 	{
 		wvs_runTimerX = 0;
 		wvs_moveDirection.x = 0;
+	}
+
+	if (MovementCheck == 1)
+	{
+		// Check if a monster has been encountered
+		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Bird, Enemy_Rat) == 1)
+		{
+			// Do something
+			self->InternalState = WVS_BATTLETRANSITION;
+			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
+		}
 	}
 }
 
@@ -776,5 +830,34 @@ void ReplaceDungeonEntrance(WorldViewScene* self, Engine* BaseEngine)
 	if ((self->currentRoomIndex == 2 || self->previousRoomIndex == 2) && BaseEngine->playerData.bossFlag < 3)
 	{
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', '@', getColor(c_black, c_red));
+	}
+}
+
+void BattleTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
+{
+	wvs_battleTransitionTimer += Delta;
+
+	if (wvs_battleWaitToggle == 0)
+	{
+		if (wvs_battleTransitionTimer > wvs_battleTransitionTimerDelay)
+		{
+			wvs_battleTransitionCount++;
+			wvs_battleTransitionTimer = 0;
+			if (wvs_battleTransitionCount == 80)
+			{
+				wvs_battleWaitToggle = 1;
+			}
+		}
+	}
+	else if (wvs_battleWaitToggle == 1)
+	{
+		if (wvs_battleTransitionTimer > wvs_battleTransitionWaitDelay)
+		{
+			wvs_battleTransitionCount = 0;
+			wvs_battleTransitionTimer = 0;
+			wvs_battleWaitToggle = 0;
+			self->InternalState = WVS_ROAMING;
+			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Battle);
+		}
 	}
 }
