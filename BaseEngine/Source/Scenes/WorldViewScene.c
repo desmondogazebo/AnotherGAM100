@@ -98,6 +98,9 @@ void RoomTransition(WorldViewScene* self, double Delta);
 // Dungeon transition
 void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta);
 
+// Render the dungeon indicators in room 5 (center)
+void RenderDungeonIndicators(WorldViewScene* self, Engine* BaseEngine, Vector2 offset);
+void ReplaceDungeonEntrance(WorldViewScene* self, Engine* BaseEngine);
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -147,6 +150,9 @@ void WorldViewScene_LinkedExit(WorldViewScene* self)
 void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 {
 	// Here I will initiallize the internal state manager
+
+	self->InternalState = WVS_ROAMING;
+
 	// Setup the loader that I am about to use.
 
 	// Initializing variables
@@ -164,16 +170,11 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 	// Initializing room list and player
 
 	InitRoomArray(&(self->roomList), 5);
+	self->currentRoomIndex = 0;
+	self->previousRoomIndex = 0;
 	Initialize_Player(&self->player, Vec2(5, 5));
 
 	InitializeWorldMaps(self);
-
-	Enemy testEnemy;
-	PopulateEnemy(&testEnemy, "Resources/Enemy/Goblin.txt");
-
-	int i = 0;
-
-	FreeEnemy(&testEnemy);
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -183,6 +184,23 @@ void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, Engine* BaseEngin
 	if (isKeyPressed('Q'))
 	{
 		Delta *= 4;
+	}
+
+	if (isKeyPressed('1'))
+	{
+		BaseEngine->playerData.bossFlag = 1;
+	}
+	if (isKeyPressed('2'))
+	{
+		BaseEngine->playerData.bossFlag = 2;
+	}
+	if (isKeyPressed('3'))
+	{
+		BaseEngine->playerData.bossFlag = 3;
+	}
+	if (isKeyPressed('4'))
+	{
+		BaseEngine->playerData.bossFlag = 4;
 	}
 
 	// Do some state logic for the internal state manager
@@ -211,10 +229,60 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 	case WVS_ROAMING:	
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
+		if (self->currentRoomIndex == 4)
+		{
+			RenderDungeonIndicators(self, BaseEngine, Vec2(0,0));
+		}
+		ReplaceDungeonEntrance(self, BaseEngine);
 		break;
 	case WVS_TRANSITION:
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));
 		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, wvs_fakePlayerPosition, "O", getColor(c_black, c_aqua));
+
+		if (self->currentRoomIndex == 4)
+		{
+			Vector2 offset = { 0,0 };
+			if (self->player.dir == NORTH)
+			{				
+				offset.y = -BaseEngine->g_console->consoleSize.Y + wvs_transitionCounter;
+			}
+			else if (self->player.dir == SOUTH)
+			{
+				offset.y = BaseEngine->g_console->consoleSize.Y - wvs_transitionCounter;
+			}
+			else if (self->player.dir == EAST)
+			{
+				offset.x = BaseEngine->g_console->consoleSize.X - wvs_transitionCounter;
+			}
+			else if (self->player.dir == WEST)
+			{
+				offset.x = -BaseEngine->g_console->consoleSize.X + wvs_transitionCounter;
+			}
+			RenderDungeonIndicators(self, BaseEngine, offset);		
+		}
+		else if (self->previousRoomIndex == 4)
+		{
+			Vector2 offset = { 0,0 };
+			if (self->player.dir == NORTH)
+			{
+				offset.y = wvs_transitionCounter;
+			}
+			else if (self->player.dir == SOUTH)
+			{
+				offset.y = -wvs_transitionCounter;
+			}
+			else if (self->player.dir == EAST)
+			{
+				offset.x = -wvs_transitionCounter;
+			}
+			else if (self->player.dir == WEST)
+			{
+				offset.x = wvs_transitionCounter;
+			}
+			RenderDungeonIndicators(self, BaseEngine, offset);
+		}
+
+		ReplaceDungeonEntrance(self, BaseEngine);
 		break;
 	case WVS_DUNGEONTRANSITION:
 		{
@@ -247,7 +315,16 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			wvs_moveDirection.y--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
 			if (plrMoveCode == 1)
-				self->InternalState = WVS_DUNGEONTRANSITION;
+			{
+				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else
+					self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -269,7 +346,16 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			wvs_moveDirection.y++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
 			if (plrMoveCode == 1)
-				self->InternalState = WVS_DUNGEONTRANSITION;
+			{
+				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else
+					self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -291,7 +377,16 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			wvs_moveDirection.x--;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
 			if (plrMoveCode == 1)
-				self->InternalState = WVS_DUNGEONTRANSITION;
+			{
+				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else
+					self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -313,7 +408,16 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 			wvs_moveDirection.x++;
 			short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
 			if (plrMoveCode == 1)
-				self->InternalState = WVS_DUNGEONTRANSITION;
+			{
+				if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+					self->InternalState = WVS_DUNGEONTRANSITION;
+				else
+					self->InternalState = WVS_DUNGEONTRANSITION;
+			}
 		}
 	}
 	else
@@ -335,11 +439,18 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 				wvs_runTimerX = wvs_initialRunDelay;
 
 				short plrMoveCode = MovePlayer(&self->player, Vec2(wvs_moveDirection.x, 0), self->currentRoom->Loader);
-				if (plrMoveCode == 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
-				plrMoveCode = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
-				if (plrMoveCode == 1)
-					self->InternalState = WVS_DUNGEONTRANSITION;
+				short plrMoveCode2 = MovePlayer(&self->player, Vec2(0, wvs_moveDirection.y), self->currentRoom->Loader);
+				if (plrMoveCode == 1 || plrMoveCode2 == 1)
+				{
+					if (self->currentRoomIndex == 6 && BaseEngine->playerData.bossFlag >= 1)
+						self->InternalState = WVS_DUNGEONTRANSITION;
+					else if (self->currentRoomIndex == 8 && BaseEngine->playerData.bossFlag >= 2)
+						self->InternalState = WVS_DUNGEONTRANSITION;
+					else if (self->currentRoomIndex == 2 && BaseEngine->playerData.bossFlag >= 3)
+						self->InternalState = WVS_DUNGEONTRANSITION;
+					else
+						self->InternalState = WVS_DUNGEONTRANSITION;
+				}
 			}
 		}
 	}
@@ -364,15 +475,19 @@ void WrapPlayer(WorldViewScene* self)
 			{
 			case NORTH:
 				self->player.position.y = self->currentRoom->Loader.NumberOfRows - 1;
+				self->currentRoomIndex += 3;
 				break;
 			case SOUTH:
 				self->player.position.y = 0;
+				self->currentRoomIndex -= 3;
 				break;
 			case EAST:
 				self->player.position.x = 0;
+				self->currentRoomIndex += 1;
 				break;
 			case WEST:
 				self->player.position.x = self->currentRoom->Loader.NumberOfColumns - 2;
+				self->currentRoomIndex -= 1;
 				break;
 			}
 		}
@@ -449,6 +564,7 @@ void RoomTransition(WorldViewScene* self, double Delta)
 			FreeMapData(&wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns);
 			self->player.dir = D_TOTAL;
 			self->InternalState = WVS_ROAMING;
+			self->previousRoomIndex = self->currentRoomIndex;
 		}
 	}
 }
@@ -571,7 +687,7 @@ void InitializeWorldMaps(WorldViewScene* self)
 	map5->AddExit(map5, map4, WEST);
 
 	map6->AddExit(map6, map9, NORTH);
-	map6->AddExit(map6, map7, WEST);
+	map6->AddExit(map6, map5, WEST);
 	map6->AddExit(map6, map3, SOUTH);
 
 	map7->AddExit(map7, map8, EAST);
@@ -613,4 +729,49 @@ void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
 	}
 
 
+}
+
+void RenderDungeonIndicators(WorldViewScene* self, Engine* BaseEngine, Vector2 offset)
+{
+	if (BaseEngine->playerData.bossFlag == 0)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "^", getColor(c_black, c_aqua));
+	else if (BaseEngine->playerData.bossFlag > 0)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "^", getColor(c_black, c_lime));
+
+	if (BaseEngine->playerData.bossFlag < 1)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_red));
+	else if (BaseEngine->playerData.bossFlag == 1)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_aqua));
+	else if (BaseEngine->playerData.bossFlag > 1)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_lime));
+
+	if (BaseEngine->playerData.bossFlag < 2)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_red));
+	else if (BaseEngine->playerData.bossFlag == 2)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_aqua));
+	else if (BaseEngine->playerData.bossFlag > 2)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_lime));
+
+	if (BaseEngine->playerData.bossFlag < 3)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_red));
+	else if (BaseEngine->playerData.bossFlag == 3)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_aqua));
+	else if (BaseEngine->playerData.bossFlag > 3)
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_lime));
+}
+
+void ReplaceDungeonEntrance(WorldViewScene* self, Engine* BaseEngine)
+{
+	if ((self->currentRoomIndex == 6 || self->previousRoomIndex == 6) && BaseEngine->playerData.bossFlag < 1)
+	{
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', '@', getColor(c_black, c_red));
+	}
+	if ((self->currentRoomIndex == 8 || self->previousRoomIndex == 8) && BaseEngine->playerData.bossFlag < 2)
+	{
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', '@', getColor(c_black, c_red));
+	}
+	if ((self->currentRoomIndex == 2 || self->previousRoomIndex == 2) && BaseEngine->playerData.bossFlag < 3)
+	{
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '@', '@', getColor(c_black, c_red));
+	}
 }

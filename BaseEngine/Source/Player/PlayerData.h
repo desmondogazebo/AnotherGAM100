@@ -9,13 +9,14 @@ to get player stats
 
 ******************************************************************************/
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLAYERDATA_H
+#define PLAYERDATA_H
 
 typedef struct PlayerData
 {
 	int lvl;
 	int exp;
+	int bossFlag;
 }PlayerData;
 
 void Setup_PlayerData(PlayerData* player);

@@ -130,6 +130,10 @@ void MenuScene_LinkedInternalInitiallize(MenuScene* Self)
 	// Initialize variables
 	Self->wKeyPressed = 0;
 	Self->sKeyPressed = 0;
+
+	Self->InternalState = CSM_MENU;
+	Self->selectedMenuState = SEL_START;
+
 }
 
 // Linked Update function that will be set to the InternalStateManager
@@ -293,6 +297,7 @@ void Menu_Transition(MenuScene* Self, Engine* BaseEngine, double Delta)
 			menu_transitionCount = 0;
 			menu_transitionTimer = 0;
 			menu_waitToggle = 0;
+			Setup_PlayerData(&BaseEngine->playerData);
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 		}
 	}

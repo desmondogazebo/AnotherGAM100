@@ -17,6 +17,7 @@ This file shows an outline of the Engine
 #include "timer.h"
 #include "Console.h"
 #include "..\Systems\SceneSystem.h"
+#include "..\Player\PlayerData.h"
 
 //Class Structure of the Engine
 typedef struct Engine
@@ -30,6 +31,9 @@ typedef struct Engine
 	//Time and console entities
 	Timer* g_timer;
 	Console* g_console;
+
+	// Player data
+	PlayerData playerData;
 
 	//global variables
 	int g_quitGame;

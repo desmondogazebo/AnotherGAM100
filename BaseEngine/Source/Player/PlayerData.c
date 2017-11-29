@@ -15,6 +15,7 @@ void Setup_PlayerData(PlayerData* player)
 {
 	player->lvl = 1;
 	player->exp = 0;
+	player->bossFlag = 0;
 }
 
 short Gain_PlayerExp(PlayerData* player, int exp)

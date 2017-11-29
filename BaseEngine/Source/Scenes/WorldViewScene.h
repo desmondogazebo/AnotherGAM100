@@ -35,6 +35,8 @@ typedef struct WorldViewScene
 
 	RoomArray roomList;
 	Room* currentRoom;
+	int currentRoomIndex;
+	int previousRoomIndex;
 
 	Player player;
 

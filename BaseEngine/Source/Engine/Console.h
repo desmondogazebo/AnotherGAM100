@@ -36,6 +36,7 @@ typedef struct Console{
 	void(*FlushBufferToConsole)();
 	void(*text_WriteToBuffer)();
 	void(*sprite_WriteToBuffer)();
+	void(*replace_withColor)();
 	void(*map_WriteToBuffer)();
 	void(*dungeon_WriteToBuffer)();
 	void(*WriteToConsole)();
@@ -54,6 +55,7 @@ void Console_setConsoleSize(Console* ptr, Vector2 size);
 void Console_clearBuffer(Console* ptr, WORD c);
 void Console_text_writeToBuffer(Console* ptr, Vector2 loc, char* data, WORD c);
 void Console_sprite_writeToBuffer(Console* ptr, Vector2 loc, char** data, unsigned short row, unsigned short col, WORD c);
+void Console_replace_withColor(Console* ptr, char target, char replacement, WORD c);
 void Console_map_writeToBuffer(Console* ptr, char** data, unsigned short row, unsigned short col, WORD c);
 void Console_dungeon_writeToBuffer(Console* ptr, char** data, int offsetX, int offsetY, WORD c);
 

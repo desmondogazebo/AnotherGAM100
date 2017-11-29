@@ -180,10 +180,14 @@ void Console_text_writeToBuffer(Console* theConsole, Vector2 loc, char* data, WO
 	//if the length of the data exceeds the buffer size, we chop it off at the end
 	length = min(theConsole->screenDataBufferSize - index - 1, length);
 	//write the data to buffer manually
-	for (size_t i = 0; i < length; ++i)
+	if (loc.x < theConsole->consoleSize.X && loc.y < theConsole->consoleSize.Y
+		&& loc.x >= 0 && loc.y >= 0)
 	{
-		theConsole->screenDataBuffer[index + i].Char.AsciiChar = data[i];
-		theConsole->screenDataBuffer[index + i].Attributes = colour;
+		for (size_t i = 0; i < length; ++i)
+		{
+			theConsole->screenDataBuffer[index + i].Char.AsciiChar = data[i];
+			theConsole->screenDataBuffer[index + i].Attributes = colour;
+		}
 	}
 }
 
@@ -267,6 +271,18 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 				}
 			}
 			//everything else is chopped off
+		}
+	}
+}
+
+void Console_replace_withColor(Console* theConsole, char target, char replacement, WORD colour)
+{
+	for (int i = 0; i < theConsole->screenDataBufferSize; i++)
+	{
+		if (theConsole->screenDataBuffer[i].Char.AsciiChar == target)
+		{
+			theConsole->screenDataBuffer[i].Char.AsciiChar = replacement;
+			theConsole->screenDataBuffer[i].Attributes = colour;
 		}
 	}
 }
@@ -403,6 +419,7 @@ Console* MakeConsole()
 	theConsole->map_WriteToBuffer = &Console_map_writeToBuffer;
 	theConsole->sprite_WriteToBuffer= &Console_sprite_writeToBuffer;
 	theConsole->dungeon_WriteToBuffer = &Console_dungeon_writeToBuffer;
+	theConsole->replace_withColor = &Console_replace_withColor;
 
 	theConsole->SetConsoleSize = &Console_setConsoleSize;
 	theConsole->WriteToConsole = &Console_writeToConsole;
