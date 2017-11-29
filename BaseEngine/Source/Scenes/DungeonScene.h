@@ -23,9 +23,9 @@ typedef struct DungeonScene
 {
 	/* Public Parameters */
 	enum {
-		DS_NOTHING,
 		DS_Exploration,
-		DS_Transition,
+		DS_TransitionToBoss,
+		DS_TransitionToWorld
 	}DS_States;
 	enum CSM_States InternalState;
 	BaseStateManager InternalStateManager;
