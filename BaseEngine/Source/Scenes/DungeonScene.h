@@ -25,7 +25,8 @@ typedef struct DungeonScene
 	enum {
 		DS_Exploration,
 		DS_TransitionToBattle,
-		DS_TransitionToWorld
+		DS_TransitionToWorld,
+		DS_TransitionToBoss
 	}DS_States;
 	enum DS_States InternalState;
 	BaseStateManager InternalStateManager;
@@ -36,6 +37,8 @@ typedef struct DungeonScene
 	short sKeyPressed;
 	short aKeyPressed;
 	short dKeyPressed;
+
+	short metBoss;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */
