@@ -42,6 +42,7 @@ typedef struct EnemyEncounterHandler
 
 	// The result of what enemy was randomized
 	Enemy* CurrentEnemy;
+	enum Enemies CurrentEnemyType;
 	// An array holding all the enemy objects
 	Enemy EnemyList[Boss_Max];
 	short EnemyValueChecker[Boss_Max];

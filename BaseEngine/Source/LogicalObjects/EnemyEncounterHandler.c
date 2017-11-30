@@ -75,7 +75,8 @@ short EnemyEncounterHandler_RandomizeEncounter(EnemyEncounterHandler* Self, unsi
 	// Percent check for an encounter
 	if (EncounterPercent > IntRandomizeRange(0, 100)){
 		// Randomize a monster
-		Self->CurrentEnemy = &Self->EnemyList[IntRandomizeRange(MinimumThreshold, MaximumThreshold)];
+		Self->CurrentEnemyType = IntRandomizeRange(MinimumThreshold, MaximumThreshold);
+		Self->CurrentEnemy = &Self->EnemyList[Self->CurrentEnemyType];
 		DidMonsterSpawn = 1;
 	}
 	return DidMonsterSpawn;
@@ -85,6 +86,7 @@ short EnemyEncounterHandler_RandomizeEncounter(EnemyEncounterHandler* Self, unsi
 void EnemyEncounterHandler_SetUpEncounter(EnemyEncounterHandler* Self, enum Enemies MonsterToEncounter)
 {
 	Self->CurrentEnemy = &Self->EnemyList[MonsterToEncounter];
+	Self->CurrentEnemyType = MonsterToEncounter;
 }
 
 void InitiallizeEnemy(EnemyEncounterHandler* Self, enum Enemies EnemyToLoad, char* FilePath)

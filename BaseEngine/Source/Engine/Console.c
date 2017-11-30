@@ -259,11 +259,6 @@ void Console_sprite_writeToBuffer(Console* theConsole, Vector2 location, char** 
 					}
 					//theConsole->screenDataBuffer[actualValue].Attributes = colour;
 				}
-				else if (data[y][x] == '$')
-				{
-					theConsole->screenDataBuffer[actualValue].Char.AsciiChar = 130;
-					theConsole->screenDataBuffer[actualValue].Attributes = colour;
-				}
 				else
 				{
 					theConsole->screenDataBuffer[actualValue].Char.AsciiChar = data[y][x];
@@ -360,16 +355,6 @@ void Console_dungeon_writeToBuffer(Console* theConsole, char** data, int offsetX
 					theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
 				}
 				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
-			}
-			else if (data[y + offsetY][x + offsetX] == 'E')
-			{
-				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = ' ';
-				theConsole->screenDataBuffer[(x + y * col)].Attributes = colour;
-			}
-			else if (data[y + offsetY][x + offsetX] == '#')
-			{
-				theConsole->screenDataBuffer[(x + y * col)].Char.AsciiChar = 219;
-				theConsole->screenDataBuffer[(x + y * col)].Attributes = getColor(c_black, c_dgrey);
 			}
 			else
 			{
