@@ -258,6 +258,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		}
 		ReplaceDungeonEntrance(self, BaseEngine);
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '^', '^', getColor(c_dblue, c_white));
 		break;
 	case WVS_TRANSITION:
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));
@@ -308,6 +309,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 
 		ReplaceDungeonEntrance(self, BaseEngine);
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '^', '^', getColor(c_dblue, c_white));
 		break;
 	case WVS_DUNGEONTRANSITION:
 		{
@@ -318,6 +320,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		}
 		ReplaceDungeonEntrance(self, BaseEngine);
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '^', '^', getColor(c_dblue, c_white));
 		break;
 	case WVS_BATTLETRANSITION:
 		{
@@ -328,9 +331,9 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		}
 		ReplaceDungeonEntrance(self, BaseEngine);
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '^', '^', getColor(c_dblue, c_white));
 		break;
 		}
-		
 }
 
 // Linked Exit function that will be set to the InternalStateManager
