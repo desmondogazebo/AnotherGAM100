@@ -574,6 +574,9 @@ void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 			case 2:																							   
 				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv4);
 				break;
+			case 4:
+				EnemyEncounterHandler_SetUpEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, Boss_DatBoiLv5);
+				break;
 			}
 			//change current scene
 			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
