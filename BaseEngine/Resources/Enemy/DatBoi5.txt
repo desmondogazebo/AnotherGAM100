@@ -1,6 +1,6 @@
 Name:Another Boi
-HP:200
-ATK:30
-LVL:50
-SPD:3
+HP:300
+ATK:60
+LVL:30
+SPD:80
 SPRITE:Resources/Enemy/Sprites/DatBoi5Sprite.txt

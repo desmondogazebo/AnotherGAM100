@@ -1,6 +1,6 @@
 Name:Unicorn
-HP:50
+HP:90
 ATK:20
-LVL:6
-SPD:4
+LVL:16
+SPD:30
 SPRITE:Resources/Enemy/Sprites/UnicornSprite.txt

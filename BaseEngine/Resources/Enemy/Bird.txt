@@ -1,6 +1,6 @@
 Name:Bird
-HP:20
-ATK:10
+HP:10
+ATK:4
 LVL:2
-SPD:2
+SPD:5
 SPRITE:Resources/Enemy/Sprites/BirdSprite.txt
