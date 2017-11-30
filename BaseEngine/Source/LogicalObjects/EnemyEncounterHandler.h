@@ -28,6 +28,8 @@ typedef struct EnemyEncounterHandler
 		Enemy_Goblin,
 		Enemy_Ghost,
 		Enemy_Skeleton,
+		Enemy_Unicorn,
+		Enemy_Dragon,
 		Enemy_Max,
 		// Bosses
 		Boss_DatBoiLv1,
