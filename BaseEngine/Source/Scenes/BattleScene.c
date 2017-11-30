@@ -57,7 +57,7 @@ short AttackFailedPlayer;
 
 // Enemy Attack Values
 short EnemyIsAttacking;
-float PerfectGuardTimeFrame = 0.5f;
+float PerfectGuardTimeFrame = 0.3f;
 short RenderShield;
 
 // Player XP
@@ -173,11 +173,18 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	// Clearing the input buffer before handling checks
 	isKeyPressed(VK_SPACE);
 	isKeyPressed(VK_RETURN);
+	float BarSpeedRatio = ((float)CurrentEnemy.spd) / (float)Get_PlayerSPD(&BaseEngine->playerData);
+	// Clamp the speed ratio
+	if (BarSpeedRatio > 2)
+		BarSpeedRatio = 2;
+	else if (BarSpeedRatio < 0.5f)
+		BarSpeedRatio = 0.5f;
 	switch (Self->InternalState)
 	{
 	case BS_Loading:
 		// Load the enemy
 		CurrentEnemy = *BaseEngine->InternalSceneSystem.InternalEncounterHandler.CurrentEnemy;
+		CurrentEnemyType = BaseEngine->InternalSceneSystem.InternalEncounterHandler.CurrentEnemyType;
 		EnemyCurrentHealth = CurrentEnemy.hp;
 		Self->InternalState = BS_PlayerTurnChoice;
 
@@ -232,7 +239,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_PlayerTurnAttack:
 		if (MeterActive)
 		{
-			BarLogic((float)CurrentEnemy.spd * 50 * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd), Delta);
+			BarLogic((float)CurrentEnemy.spd * 50 * BarSpeedRatio, Delta);
 			AttackAnimationRunning = 0;
 		}
 		else if (!AttackAnimationRunning && !AttackFailedPlayer){
@@ -287,7 +294,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_PlayerTurnRun:
 		if (MeterActive)
 		{
-			BarLogic((float)CurrentEnemy.spd * 100 * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd), Delta);
+			BarLogic((float)CurrentEnemy.spd * 100 * BarSpeedRatio, Delta);
 			AttackAnimationRunning = 0;
 		}
 		else if (!AttackAnimationRunning && !AttackFailedPlayer) {
@@ -301,7 +308,12 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 					CurrentEnemyType == Boss_DatBoiLv4 || 
 					CurrentEnemyType == Boss_DatBoiLv5)
 				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
-				else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+				else
+				{
+					if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
+						BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+					else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+				}
 			}
 			else AttackFailedPlayer = 1;
 			BattleScene_Timer = 0.f;
@@ -323,7 +335,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		BattleScene_Timer += (float)Delta;
 		if (EnemyIsAttacking)
 		{
-			if (BattleScene_Timer > PerfectGuardTimeFrame * ((float)Get_PlayerSPD(&BaseEngine->playerData) / (float)CurrentEnemy.spd))
+			if (BattleScene_Timer > PerfectGuardTimeFrame * BarSpeedRatio)
 			{
 				// Player takes damage as he failed to perfect guard
 				PlayerCurrentHealth -= CurrentEnemy.atk;
@@ -380,9 +392,18 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_Results:
 		if (isKeyPressed(VK_RETURN))
 		{
-			if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
-				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
-			else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			if (CurrentEnemyType == Boss_DatBoiLv1 ||
+				CurrentEnemyType == Boss_DatBoiLv2 ||
+				CurrentEnemyType == Boss_DatBoiLv3 ||
+				CurrentEnemyType == Boss_DatBoiLv4 ||
+				CurrentEnemyType == Boss_DatBoiLv5)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			else
+			{
+				if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
+					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+				else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			}
 		}
 		break;
 	}
@@ -505,6 +526,7 @@ void RenderBattle(BattleScene* Self, Engine* BaseEngine)
 	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2((short)(BaseEngine->g_console->consoleSize.X * 0.5f) - (short)(CurrentEnemy.spriteColumns * 0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.5f) - (short)(CurrentEnemy.spriteRows*0.75f)), CurrentEnemy.sprite, CurrentEnemy.spriteRows, CurrentEnemy.spriteColumns, getColor(c_black, c_red));
 	// Render the layout
 	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_dgrey));
+	BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '#', 219, getColor(c_black, c_dgrey));
 	// Render the text on screen
 	// Enemy Name
 	strcpy(ScreenLineInfoBuffer, CurrentEnemy.name);
@@ -608,7 +630,7 @@ void RenderResults(BattleScene* Self, Engine* BaseEngine)
 
 	// Render the layout
 	BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(0, 0), BattleScene_Loader_Layout.TextData, BattleScene_Loader_Layout.NumberOfRows, BattleScene_Loader_Layout.NumberOfColumns, getColor(c_black, c_dgrey));
-
+	BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '#', 219, getColor(c_black, c_dgrey));
 	// Render the appropriate icon & text
 	Vector2 IconPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X*0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.35f));
 	Vector2 TextRenderStartPosition = Vec2((short)(BaseEngine->g_console->consoleSize.X*0.5f), (short)(BaseEngine->g_console->consoleSize.Y * 0.7f));
@@ -617,7 +639,7 @@ void RenderResults(BattleScene* Self, Engine* BaseEngine)
 	{
 		// Lose Icon
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(IconPosition.x - (short)((float)BattleScene_Loader_LoseIcon.NumberOfColumns * 0.5f), IconPosition.y - (short)((float)BattleScene_Loader_LoseIcon.NumberOfRows * 0.5f)), BattleScene_Loader_LoseIcon.TextData, BattleScene_Loader_LoseIcon.NumberOfRows, BattleScene_Loader_LoseIcon.NumberOfColumns, getColor(c_black, c_red));
-		
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '#', 219, getColor(c_black, c_red));
 		// Loss Text
 		ResetCharArray(ScreenLineInfoBuffer);
 		strcpy(ScreenLineInfoBuffer, "< You have lost all your earned XP for your current level... >");
@@ -641,7 +663,7 @@ void RenderResults(BattleScene* Self, Engine* BaseEngine)
 	else if (EnemyCurrentHealth <= 0)
 	{
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, Vec2(IconPosition.x - (short)((float)BattleScene_Loader_WinIcon.NumberOfColumns * 0.5f), IconPosition.y - (short)((float)BattleScene_Loader_WinIcon.NumberOfRows * 0.5f)), BattleScene_Loader_WinIcon.TextData, BattleScene_Loader_WinIcon.NumberOfRows, BattleScene_Loader_WinIcon.NumberOfColumns, getColor(c_black, c_green));
-	
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '#', 219, getColor(c_black, c_green));
 		// Win Text
 		ResetCharArray(ScreenLineInfoBuffer);
 		strcpy(ScreenLineInfoBuffer, "< You have defeated the enemy! >");

@@ -77,8 +77,13 @@ void Engine_update(Engine* theEngine, Timer* theTimer)
 	{
 		theEngine->g_quitGame = 1;
 	}
+	
 	theTimer->Update(theTimer);
-
+	// Debug code
+	if (isKeyPressed(VK_SHIFT))
+	{
+		theTimer->dt *= 4;
+	}
 	// Update the Scene System's current Update target
 	theEngine->InternalSceneSystem.Update(&theEngine->InternalSceneSystem, theEngine, theTimer->dt);
 }

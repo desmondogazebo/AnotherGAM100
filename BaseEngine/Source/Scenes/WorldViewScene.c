@@ -200,12 +200,6 @@ void WorldViewScene_LinkedInternalInitiallize(WorldViewScene* self)
 // Linked Update function that will be set to the InternalStateManager
 void WorldViewScene_LinkedInternalUpdate(WorldViewScene* self, Engine* BaseEngine, double Delta)
 {
-	// Debug code
-	if (isKeyPressed('Q'))
-	{
-		Delta *= 4;
-	}
-
 	if (isKeyPressed('1'))
 	{
 		BaseEngine->playerData.bossFlag = 1;

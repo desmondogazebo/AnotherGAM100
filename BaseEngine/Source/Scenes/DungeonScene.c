@@ -202,11 +202,7 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 // Linked Update function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
-	// Debug code
-	if (isKeyPressed('Q'))
-	{
-		Delta *= 4;
-	}
+	isKeyPressed(VK_RETURN);
 
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
@@ -293,6 +289,11 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 		if (Self->firstFrameOfUpdate == 1)
 		{
 			BaseEngine->g_console->dungeon_WriteToBuffer(BaseEngine->g_console, DungeonScene_Loader.TextData, DungeonScene_Camera.CalculatedMapOffset.x, DungeonScene_Camera.CalculatedMapOffset.y, getColor(c_black, c_white));
+			BaseEngine->g_console->replace_withColor(BaseEngine->g_console, 'E', ' ', getColor(c_black, c_white));
+			BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '#', 219, getColor(c_black, c_dgrey));
+			BaseEngine->g_console->replace_withColor(BaseEngine->g_console, 'X', 'X', getColor(c_black, c_red));
+			BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '/', '/', getColor(c_black, c_red));
+			BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '\\', '\\', getColor(c_black, c_red));
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(Self->player.position.x - DungeonScene_Camera.CalculatedMapOffset.x, Self->player.position.y - DungeonScene_Camera.CalculatedMapOffset.y), "O", getColor(c_black, c_aqua));
 		}
 		break;
@@ -305,6 +306,7 @@ void DungeonScene_LinkedInternalRender(DungeonScene* Self, Engine* BaseEngine)
 	{
 		Vector2 location = { -BaseEngine->g_console->consoleSize.X + dungeon_bossCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, DungeonBossTransition_Loader.TextData, DungeonBossTransition_Loader.NumberOfRows, DungeonBossTransition_Loader.NumberOfColumns, getColor(c_black, c_white));
+		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '$', 130, getColor(c_black, c_white));
 	}
 		break;
 	default:
