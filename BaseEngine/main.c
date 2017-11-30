@@ -33,7 +33,7 @@ int main()
 	//width and height are scalable
 	
 	//Initialize the Engine
-	theEngine->Init(theEngine, 120, Vec2(80, 25), Vec2(10, 18));
+	theEngine->Init(theEngine, 120, Vec2(80, 25), Vec2(15, 27));
 
 	//Start the internal clock of the program
 	theEngine->g_timer->StartTimer(theEngine->g_timer);
