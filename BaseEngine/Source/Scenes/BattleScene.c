@@ -295,10 +295,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 			int CurrentIndex = (int)(JustMeterPercent * 0.01f * BarLength);
 			if (CurrentIndex >= AttackThreshold.x && CurrentIndex <= AttackThreshold.y)
 			{
-				// Player Manages to Escape
-				if (BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon)
-					BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
-				else BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 			}
 			else AttackFailedPlayer = 1;
 			BattleScene_Timer = 0.f;

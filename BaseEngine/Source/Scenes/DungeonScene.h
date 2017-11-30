@@ -39,6 +39,7 @@ typedef struct DungeonScene
 	short dKeyPressed;
 
 	short metBoss;
+	short firstFrameOfUpdate;
 
 	/* Public Function Pointers*/
 	/* Initiallize, requires an instance of itself */
