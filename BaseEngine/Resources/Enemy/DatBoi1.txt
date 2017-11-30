@@ -1,6 +1,6 @@
 Name:Dat Boi
 HP:50
-ATK:10
-LVL:10
-SPD:3
+ATK:9
+LVL:6
+SPD:7
 SPRITE:Resources/Enemy/Sprites/DatBoi1Sprite.txt
