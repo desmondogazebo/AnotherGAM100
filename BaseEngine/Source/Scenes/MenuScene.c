@@ -68,6 +68,8 @@ void Menu_Transition(MenuScene* Self, Engine* BaseEngine, double Delta);
 
 void Menu_InstructionsUpdate(MenuScene* Self, Engine* BaseEngine, double Delta);
 
+FMOD_SOUND* Sound_Select;
+
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -133,12 +135,12 @@ void MenuScene_LinkedInternalInitiallize(MenuScene* Self)
 
 	Self->InternalState = MM_MENU;
 	Self->selectedMenuState = SEL_START;
-
 }
 
 // Linked Update function that will be set to the InternalStateManager
 void MenuScene_LinkedInternalUpdate(MenuScene* Self, Engine* BaseEngine, double Delta)
 {
+	isKeyPressed(VK_RETURN);
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
 	{
@@ -261,7 +263,6 @@ void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
 		if (Self->selectedMenuState == SEL_START)
 		{
 			Self->InternalState = MM_TRANSITION;
-			//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
 		}
 		else if (Self->selectedMenuState == SEL_EXIT)
 		{
@@ -271,6 +272,8 @@ void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
 		{
 			Self->InternalState = MM_INSTRUCTION;
 		}
+		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/select.wav", &Sound_Select);
+		BaseEngine->Play_Sound(BaseEngine, Sound_Select);
 	}
 }
 
@@ -310,6 +313,7 @@ void Menu_InstructionsUpdate(MenuScene* Self, Engine* BaseEngine, double Delta)
 	if (isKeyPressed(VK_RETURN))
 	{
 		tempToggle = 1;
+		
 	}
 
 	if (menu_instructionToggle == 0)

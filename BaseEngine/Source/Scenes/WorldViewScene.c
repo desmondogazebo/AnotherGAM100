@@ -451,14 +451,17 @@ void PlayerControls(WorldViewScene* self, Engine* BaseEngine, double Delta)
 
 	if (MovementCheck == 1)
 	{
-		// Check if a monster has been encountered
-		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Bird, Enemy_Rat) == 1)
+		if (!isKeyPressed(VK_SHIFT))
 		{
-			// Do something
-			self->InternalState = WVS_BATTLETRANSITION;
-			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
-			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
-			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			// Check if a monster has been encountered
+			if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Rat, Enemy_Frog) == 1)
+			{
+				// Do something
+				self->InternalState = WVS_BATTLETRANSITION;
+				BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 0;
+				BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+				BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+			}
 		}
 	}
 }

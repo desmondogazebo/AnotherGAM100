@@ -22,12 +22,12 @@ typedef struct EnemyEncounterHandler
 	/* Public Parameters */
 	enum {
 		// Enemies
-		Enemy_Bird = 0,
+		Enemy_Rat = 0,
+		Enemy_Bird,
 		Enemy_Frog,
-		Enemy_Rat,
 		Enemy_Goblin,
-		Enemy_Ghost,
 		Enemy_Skeleton,
+		Enemy_Ghost,
 		Enemy_Unicorn,
 		Enemy_Dragon,
 		Enemy_Max,

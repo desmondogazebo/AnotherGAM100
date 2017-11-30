@@ -50,8 +50,7 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vect
 	FMOD_RESULT result = FMOD_System_Create(&theEngine->SoundEngine);	
 	FMODErrorCheck(result);
 	result = FMOD_System_Init(theEngine->SoundEngine, 32, FMOD_INIT_NORMAL, 0);
-	FMODErrorCheck(result);
-	
+
 	//Creating the internal clock object
 	theEngine->g_timer = Timer_Create();
 	//Initializing the clock object
@@ -140,7 +139,7 @@ void Engine_exit(Engine* theEngine)
 
 void Engine_LoadSound(Engine* theEngine, char* filename, FMOD_SOUND* soundToLoadTo) 
 {
-	FMOD_RESULT result = FMOD_System_CreateSound(theEngine->SoundEngine, filename, FMOD_DEFAULT, 0, &soundToLoadTo);
+	FMOD_RESULT result = FMOD_System_CreateSound(theEngine->SoundEngine, filename, FMOD_DEFAULT, 0, soundToLoadTo);
 	FMODErrorCheck(result);
 }
 

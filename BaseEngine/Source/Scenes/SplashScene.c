@@ -50,6 +50,8 @@ void SplashScene_LinkedInternalRender(SplashScene* Self, Engine* BaseEngine);
 // Linked Exit function that will be set to the InternalStateManager.Exit
 void SplashScene_LinkedInternalExit(SplashScene* Self);
 
+FMOD_SOUND* AnotherDungeon;
+
 ///****************************************************************************
 // Function Definitions
 ///****************************************************************************
@@ -114,7 +116,8 @@ void SplashScene_LinkedInternalUpdate(SplashScene* Self, Engine* BaseEngine, dou
 	case SS_Loading:
 		if (SplashScene_LoadTimer >= 1)
 		{
-			//BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Dungeon);
+			BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/anotherdungeon.wav", &AnotherDungeon);
+			BaseEngine->Play_Sound(BaseEngine, AnotherDungeon);
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_MainMenu);
 			SplashScene_LoadTimer = 0;
 		}

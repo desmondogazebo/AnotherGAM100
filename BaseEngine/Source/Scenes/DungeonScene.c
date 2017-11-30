@@ -490,13 +490,35 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 	if (MovementCheck == 1)
 	{
 		// Check if a monster has been encountered
-		if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, Enemy_Bird, Enemy_Rat) == 1)
+		Vector2 EnemyRange;
+		switch (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex)
 		{
-			// Do something
-			self->InternalState = DS_TransitionToBattle;
-			BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 1;
-			BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
-			BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+		case 0:
+			EnemyRange = Vec2(Enemy_Rat, Enemy_Goblin);
+			break;
+		case 6:
+			EnemyRange = Vec2(Enemy_Bird, Enemy_Skeleton);
+			break;
+		case 8:
+			EnemyRange = Vec2(Enemy_Goblin, Enemy_Unicorn);
+			break;
+		case 2:
+			EnemyRange = Vec2(Enemy_Skeleton, Enemy_Dragon);
+			break;
+		}
+		if (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex != 4)
+		{
+			if (!isKeyPressed(VK_SHIFT))
+			{
+				if (EnemyEncounterHandler_RandomizeEncounter(&BaseEngine->InternalSceneSystem.InternalEncounterHandler, 2, EnemyRange.x, EnemyRange.y) == 1)
+				{
+					// Do something
+					self->InternalState = DS_TransitionToBattle;
+					BaseEngine->InternalSceneSystem.InternalEncounterHandler.PreviousSceneWasDungeon = 1;
+					BaseEngine->InternalSceneSystem.InternalBattleScene.Exit(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+					BaseEngine->InternalSceneSystem.InternalBattleScene.Initiallize(&BaseEngine->InternalSceneSystem.InternalBattleScene);
+				}
+			}
 		}
 	}
 }

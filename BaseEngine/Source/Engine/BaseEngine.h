@@ -51,5 +51,4 @@ typedef struct Engine
 
 Engine* MakeEngine();
 
-
 #endif // _BE_H

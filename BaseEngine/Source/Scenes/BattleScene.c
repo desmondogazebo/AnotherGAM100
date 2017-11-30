@@ -64,6 +64,12 @@ short RenderShield;
 short DidPlayerLevel;
 short XPScalingFactor = 10;
 
+// Sound Pointers
+FMOD_SOUND* Sound_Hit;
+FMOD_SOUND* Sound_Attack;
+FMOD_SOUND* Sound_Select;
+FMOD_SOUND* Sound_Guard;
+
 ///****************************************************************************
 // Private Function Prototypes
 ///****************************************************************************
@@ -187,7 +193,10 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		CurrentEnemyType = BaseEngine->InternalSceneSystem.InternalEncounterHandler.CurrentEnemyType;
 		EnemyCurrentHealth = CurrentEnemy.hp;
 		Self->InternalState = BS_PlayerTurnChoice;
-
+		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/shing.wav", &Sound_Attack);
+		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/ugh.wav", &Sound_Hit);
+		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/select.wav", &Sound_Select);
+		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/guard.wav", &Sound_Guard);
 		// Load the player
 		PlayerCurrentHealth = Get_PlayerHP(&BaseEngine->playerData);
 		break;
@@ -200,6 +209,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		// Lock in the player's selection
 		else if (isKeyPressed(VK_RETURN))
 		{
+			BaseEngine->Play_Sound(BaseEngine, Sound_Select);
 			// Check the selected choice, do something
 			switch (PlayerTurnChoiceSelector)
 			{
@@ -249,6 +259,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 			{
 				AttackAnimationRunning = 1;
 				EnemyCurrentHealth -= Get_PlayerATK(&BaseEngine->playerData);
+				BaseEngine->Play_Sound(BaseEngine, Sound_Attack);
 				if (EnemyCurrentHealth <= 0)
 				{
 					DidPlayerLevel = Gain_PlayerExp(&BaseEngine->playerData, CurrentEnemy.lvl * XPScalingFactor);
@@ -343,6 +354,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 				EnemyIsAttacking = 0;
 				BattleScene_Timer = 0.f;
 				RenderShield = 0;
+				BaseEngine->Play_Sound(BaseEngine, Sound_Hit);
 				if (PlayerCurrentHealth <= 0)
 				{
 					PlayerCurrentHealth = 0;
@@ -352,6 +364,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 			else if (isKeyPressed(VK_SPACE))
 			{
 				// Perfect Guard
+				BaseEngine->Play_Sound(BaseEngine, Sound_Guard);
 				AttackAnimationRunning = 1;
 				EnemyIsAttacking = 0;
 				BattleScene_Timer = 0.f;
@@ -378,6 +391,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		{
 			// Player takes damage as he failed to perfect guard
 			PlayerCurrentHealth -= CurrentEnemy.atk;
+			BaseEngine->Play_Sound(BaseEngine, Sound_Hit);
 			if (PlayerCurrentHealth <= 0)
 			{
 				PlayerCurrentHealth = 0;
@@ -392,6 +406,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_Results:
 		if (isKeyPressed(VK_RETURN))
 		{
+			BaseEngine->Play_Sound(BaseEngine, Sound_Select);
 			if (CurrentEnemyType == Boss_DatBoiLv1 ||
 				CurrentEnemyType == Boss_DatBoiLv2 ||
 				CurrentEnemyType == Boss_DatBoiLv3 ||
