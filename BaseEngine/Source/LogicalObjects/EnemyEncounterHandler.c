@@ -44,6 +44,8 @@ void EnemyEncounterHandler_LinkedInitiallize(EnemyEncounterHandler* Self)
 	InitiallizeEnemy(Self, Enemy_Rat, "Resources/Enemy/Rat.txt");
 	InitiallizeEnemy(Self, Enemy_Skeleton, "Resources/Enemy/Skeleton.txt");
 	InitiallizeEnemy(Self, Enemy_Frog, "Resources/Enemy/Frog.txt");
+	InitiallizeEnemy(Self, Enemy_Unicorn, "Resources/Enemy/Unicorn.txt");
+	InitiallizeEnemy(Self, Enemy_Dragon, "Resources/Enemy/Dragon.txt");
 
 	InitiallizeEnemy(Self, Boss_DatBoiLv1, "Resources/Enemy/DatBoi1.txt");
 	InitiallizeEnemy(Self, Boss_DatBoiLv2, "Resources/Enemy/DatBoi2.txt");

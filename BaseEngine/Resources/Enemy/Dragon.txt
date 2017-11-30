@@ -1,0 +1,6 @@
+Name:Unicorn
+HP:100
+ATK:25
+LVL:8
+SPD:5
+SPRITE:Resources/Enemy/Sprites/DragonSprite.txt
