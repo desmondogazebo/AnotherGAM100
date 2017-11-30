@@ -29,7 +29,7 @@ void PopulateEnemy(Enemy* target, char* filePath)
 		case 0:
 			//target->name = (char*)malloc(strlen(token) * sizeof(char));
 			//strcpy(target->name, token);
-			for (int j = 0; j < strlen(token); ++j)
+			for (int j = 0; j < (int)strlen(token); ++j)
 			{
 				target->name[j] = token[j];
 			}
