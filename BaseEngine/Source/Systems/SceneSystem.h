@@ -22,6 +22,7 @@ A system that utillizes states to manage the activity of each scene.
 #include "../Scenes/DungeonScene.h"
 #include "../Scenes/SplashScene.h"
 #include "../Scenes/MenuScene.h"
+#include "../Scenes/WinScene.h"
 
 // Inclusion of Other Objects
 #include "../LogicalObjects/EnemyEncounterHandler.h"
@@ -37,7 +38,7 @@ typedef struct SceneSystem
 		SS_PlayerMenu,
 		SS_Dungeon,
 		SS_Battle,
-		SS_Story,
+		SS_Win,
 		SS_Total,
 	}SS_Scenes;
 	enum CSM_States InternalState;
@@ -62,6 +63,7 @@ typedef struct SceneSystem
 	DungeonScene InternalDungeonScene;
 	SplashScene InternalSplashScene;
 	MenuScene InternalMenuScene;
+	WinScene InternalWinScene;
 
 	// Objects
 	EnemyEncounterHandler InternalEncounterHandler;

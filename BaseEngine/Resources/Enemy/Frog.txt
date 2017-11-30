@@ -2,5 +2,5 @@ Name:Frog
 HP:15
 ATK:5
 LVL:4
-SPD:4
+SPD:3
 SPRITE:Resources/Enemy/Sprites/FrogSprite.txt

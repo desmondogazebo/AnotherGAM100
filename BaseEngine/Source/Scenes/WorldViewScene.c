@@ -666,6 +666,8 @@ void InitializeWorldMaps(WorldViewScene* self)
 	Room* map8 = Add_Room(self, "Resources/Maps/WorldMap8.txt"); // Map8
 	Room* map9 = Add_Room(self, "Resources/Maps/WorldMap9.txt"); // Map9
 
+
+	self->currentRoom = map1;
 	// MAP LAYOUT IS AS SUCH
 	// 7 // 8 // 9
 	// 4 // 5 // 6
@@ -742,30 +744,30 @@ void DungeonTransition(WorldViewScene* self, Engine* BaseEngine, double Delta)
 void RenderDungeonIndicators(WorldViewScene* self, Engine* BaseEngine, Vector2 offset)
 {
 	if (BaseEngine->playerData.bossFlag == 0)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "^", getColor(c_black, c_aqua));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "*", getColor(c_black, c_aqua));
 	else if (BaseEngine->playerData.bossFlag > 0)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "^", getColor(c_black, c_lime));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 15 + offset.y), "*", getColor(c_black, c_lime));
 
 	if (BaseEngine->playerData.bossFlag < 1)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_red));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "*", getColor(c_black, c_red));
 	else if (BaseEngine->playerData.bossFlag == 1)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_aqua));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "*", getColor(c_black, c_aqua));
 	else if (BaseEngine->playerData.bossFlag > 1)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "^", getColor(c_black, c_lime));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(35 + offset.x, 10 + offset.y), "*", getColor(c_black, c_lime));
 
 	if (BaseEngine->playerData.bossFlag < 2)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_red));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "*", getColor(c_black, c_red));
 	else if (BaseEngine->playerData.bossFlag == 2)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_aqua));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "*", getColor(c_black, c_aqua));
 	else if (BaseEngine->playerData.bossFlag > 2)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "^", getColor(c_black, c_lime));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 10 + offset.y), "*", getColor(c_black, c_lime));
 
 	if (BaseEngine->playerData.bossFlag < 3)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_red));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "*", getColor(c_black, c_red));
 	else if (BaseEngine->playerData.bossFlag == 3)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_aqua));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "*", getColor(c_black, c_aqua));
 	else if (BaseEngine->playerData.bossFlag > 3)
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "^", getColor(c_black, c_lime));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(45 + offset.x, 15 + offset.y), "*", getColor(c_black, c_lime));
 }
 
 void ReplaceDungeonEntrance(WorldViewScene* self, Engine* BaseEngine)

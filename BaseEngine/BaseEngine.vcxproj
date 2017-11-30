@@ -34,7 +34,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -99,10 +99,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)BaseEngine/FMOD/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)BaseEngine/FMOD/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SolutionDir)BaseEngine\FMOD\lib\fmod_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,6 +138,7 @@
     <ClCompile Include="Source\Scenes\DungeonScene.c" />
     <ClCompile Include="Source\Scenes\MenuScene.c" />
     <ClCompile Include="Source\Scenes\SplashScene.c" />
+    <ClCompile Include="Source\Scenes\WinScene.c" />
     <ClCompile Include="Source\Scenes\WorldViewScene.c" />
     <ClCompile Include="Source\StateManager\CustomStateManager.c" />
     <ClCompile Include="Source\Systems\SceneSystem.c" />
@@ -159,6 +163,7 @@
     <ClInclude Include="Source\Scenes\DungeonScene.h" />
     <ClInclude Include="Source\Scenes\MenuScene.h" />
     <ClInclude Include="Source\Scenes\SplashScene.h" />
+    <ClInclude Include="Source\Scenes\WinScene.h" />
     <ClInclude Include="Source\Scenes\WorldViewScene.h" />
     <ClInclude Include="Source\StateManager\BaseStateManager.h" />
     <ClInclude Include="Source\StateManager\CustomStateManager.h" />
@@ -177,8 +182,20 @@
     <Text Include="Resources\Dungeons\dungeon4.txt" />
     <Text Include="Resources\Dungeons\dungeonTemplate.txt" />
     <Text Include="Resources\DungeonTransition.txt" />
+    <Text Include="Resources\Enemy\Bird.txt" />
+    <Text Include="Resources\Enemy\DatBoi1.txt" />
+    <Text Include="Resources\Enemy\DatBoi2.txt" />
+    <Text Include="Resources\Enemy\DatBoi3.txt" />
+    <Text Include="Resources\Enemy\DatBoi4.txt" />
+    <Text Include="Resources\Enemy\DatBoi5.txt" />
+    <Text Include="Resources\Enemy\Dragon.txt" />
+    <Text Include="Resources\Enemy\Frog.txt" />
+    <Text Include="Resources\Enemy\Ghost.txt" />
     <Text Include="Resources\Enemy\Goblin.txt" />
+    <Text Include="Resources\Enemy\Rat.txt" />
+    <Text Include="Resources\Enemy\Skeleton.txt" />
     <Text Include="Resources\Enemy\Sprites\GoblinSprite.txt" />
+    <Text Include="Resources\Enemy\Unicorn.txt" />
     <Text Include="Resources\GameTransition.txt" />
     <Text Include="Resources\Information\Boss_cutscene1.txt" />
     <Text Include="Resources\Information\Boss_cutscene2.txt" />
@@ -196,6 +213,7 @@
     <Text Include="Resources\Maps\WorldMap7.txt" />
     <Text Include="Resources\Maps\WorldMap8.txt" />
     <Text Include="Resources\Maps\WorldMap9.txt" />
+    <Text Include="Resources\WinScreen.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -47,8 +47,9 @@ float JustMeterPercent;
 float BattleScene_Timer;
 int BarIncrementationDirection;
 int MeterActive;
-int BarLength = 30;
+int BarLength = 35;
 Vector2 AttackThreshold;
+int BarSpeed = 150;
 
 // Animation Values
 short AttackAnimationRunning;
@@ -57,7 +58,7 @@ short AttackFailedPlayer;
 
 // Enemy Attack Values
 short EnemyIsAttacking;
-float PerfectGuardTimeFrame = 0.3f;
+float PerfectGuardTimeFrame = 0.4f;
 short RenderShield;
 
 // Player XP
@@ -181,10 +182,8 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	isKeyPressed(VK_RETURN);
 	float BarSpeedRatio = ((float)CurrentEnemy.spd) / (float)Get_PlayerSPD(&BaseEngine->playerData);
 	// Clamp the speed ratio
-	if (BarSpeedRatio > 2)
-		BarSpeedRatio = 2;
-	else if (BarSpeedRatio < 0.5f)
-		BarSpeedRatio = 0.5f;
+	if (BarSpeedRatio < 0.1f)
+		BarSpeedRatio = 0.1f;
 	switch (Self->InternalState)
 	{
 	case BS_Loading:
@@ -201,6 +200,11 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		PlayerCurrentHealth = Get_PlayerHP(&BaseEngine->playerData);
 		break;
 	case BS_PlayerTurnChoice:
+		if (isKeyPressed(VK_BACK))
+		{
+			BaseEngine->playerData.lvl++;
+			PlayerCurrentHealth = Get_PlayerHP(&BaseEngine->playerData);
+		}
 		// Handle choice selection
 		if ((isKeyPressed('W') || isKeyPressed(VK_UP)) && PlayerTurnChoiceSelector)
 			PlayerTurnChoiceSelector = 0;
@@ -249,7 +253,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_PlayerTurnAttack:
 		if (MeterActive)
 		{
-			BarLogic((float)CurrentEnemy.spd * 50 * BarSpeedRatio, Delta);
+			BarLogic((float)BarSpeed * BarSpeedRatio, Delta);
 			AttackAnimationRunning = 0;
 		}
 		else if (!AttackAnimationRunning && !AttackFailedPlayer){
@@ -280,6 +284,9 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 						case Boss_DatBoiLv4:
 							FlagValueForCurrentBoss = 4;
 							break;
+						case Boss_DatBoiLv5:
+							FlagValueForCurrentBoss = 5;
+							break;
 					}
 					if (FlagValueForCurrentBoss > 0 && BaseEngine->playerData.bossFlag < FlagValueForCurrentBoss)
 						BaseEngine->playerData.bossFlag = FlagValueForCurrentBoss;
@@ -305,7 +312,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 	case BS_PlayerTurnRun:
 		if (MeterActive)
 		{
-			BarLogic((float)CurrentEnemy.spd * 100 * BarSpeedRatio, Delta);
+			BarLogic((float)BarSpeed * 1.5f * BarSpeedRatio, Delta);
 			AttackAnimationRunning = 0;
 		}
 		else if (!AttackAnimationRunning && !AttackFailedPlayer) {
@@ -346,7 +353,7 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		BattleScene_Timer += (float)Delta;
 		if (EnemyIsAttacking)
 		{
-			if (BattleScene_Timer > PerfectGuardTimeFrame * BarSpeedRatio)
+			if (BattleScene_Timer > PerfectGuardTimeFrame * (float)Get_PlayerSPD(&BaseEngine->playerData)/ ((float)CurrentEnemy.spd))
 			{
 				// Player takes damage as he failed to perfect guard
 				PlayerCurrentHealth -= CurrentEnemy.atk;
@@ -407,7 +414,9 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 		if (isKeyPressed(VK_RETURN))
 		{
 			BaseEngine->Play_Sound(BaseEngine, Sound_Select);
-			if (CurrentEnemyType == Boss_DatBoiLv1 ||
+			 if (CurrentEnemyType == Boss_DatBoiLv5 && BaseEngine->playerData.bossFlag == 5)
+				BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_Win);
+			else if (CurrentEnemyType == Boss_DatBoiLv1 ||
 				CurrentEnemyType == Boss_DatBoiLv2 ||
 				CurrentEnemyType == Boss_DatBoiLv3 ||
 				CurrentEnemyType == Boss_DatBoiLv4 ||

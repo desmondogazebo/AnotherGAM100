@@ -73,12 +73,16 @@ void InitiallizeScenes(SceneSystem* Self)
 	// Menu Scene Init
 	MenuScene_Setup(&Self->InternalMenuScene);
 	Self->InternalMenuScene.Initiallize(&Self->InternalMenuScene);
+	// Win Scene Init
+	WinScene_Setup(&Self->InternalWinScene);
+	Self->InternalWinScene.Initiallize(&Self->InternalWinScene);
 	// Set their state managers
 	SceneDataStorage[SS_Battle] = &Self->InternalBattleScene.InternalStateManager;
 	SceneDataStorage[SS_WorldView] = &Self->InternalWorldViewScene.InternalStateManager;
 	SceneDataStorage[SS_Dungeon] = &Self->InternalDungeonScene.InternalStateManager;
 	SceneDataStorage[SS_Splash] = &Self->InternalSplashScene.InternalStateManager;
 	SceneDataStorage[SS_MainMenu] = &Self->InternalMenuScene.InternalStateManager;
+	SceneDataStorage[SS_Win] = &Self->InternalWinScene.InternalStateManager;
 }
 
 void SceneSystem_Setup(SceneSystem* Self)
@@ -162,6 +166,10 @@ void SceneSystem_LinkedInternalUpdate(SceneSystem* Self, Engine* BaseEngine, dou
 				break;
 			case SS_MainMenu:
 				SceneDataStorage[Self->InternalState]->Update(&Self->InternalMenuScene, BaseEngine, Delta);
+				break;
+			case SS_Win:
+				SceneDataStorage[Self->InternalState]->Update(&Self->InternalWinScene, BaseEngine, Delta);
+				break;
 			default:
 				break;
 		}
@@ -189,6 +197,9 @@ void SceneSystem_LinkedInternalRender(SceneSystem* Self, Engine* BaseEngine)
 			case SS_MainMenu:
 				SceneDataStorage[Self->InternalState]->Render(&Self->InternalMenuScene, BaseEngine);
 				break;
+			case SS_Win:
+				SceneDataStorage[Self->InternalState]->Render(&Self->InternalWinScene, BaseEngine);
+				break;
 			default:
 				break;
 		}
@@ -205,5 +216,5 @@ void SceneSystem_LinkedInternalExit(SceneSystem* Self)
 	Self->InternalWorldViewScene.Exit(&Self->InternalWorldViewScene);
 	Self->InternalMenuScene.Exit(&Self->InternalMenuScene);
 	Self->InternalSplashScene.Exit(&Self->InternalSplashScene);
-
+	Self->InternalWinScene.Exit(&Self->InternalWinScene);
 }

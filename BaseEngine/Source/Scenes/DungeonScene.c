@@ -202,7 +202,7 @@ void DungeonScene_LinkedInternalInitiallize(DungeonScene* Self)
 // Linked Update function that will be set to the InternalStateManager
 void DungeonScene_LinkedInternalUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
-	isKeyPressed(VK_RETURN);
+	isKeyPressed(VK_SPACE);
 
 	// Do some state logic for the internal state manager
 	switch (Self->InternalState)
@@ -494,7 +494,7 @@ void DungeonScene_PlayerControls(DungeonScene* self, Engine* BaseEngine, double 
 		switch (BaseEngine->InternalSceneSystem.InternalWorldViewScene.currentRoomIndex)
 		{
 		case 0:
-			EnemyRange = Vec2(Enemy_Rat, Enemy_Goblin);
+			EnemyRange = Vec2(Enemy_Rat, Enemy_Frog);
 			break;
 		case 6:
 			EnemyRange = Vec2(Enemy_Bird, Enemy_Skeleton);
@@ -556,7 +556,7 @@ void Dungeon_BossUpdate(DungeonScene* Self, Engine* BaseEngine, double Delta)
 {
 
 	short tempToggle = 0;
-	if (isKeyPressed(VK_RETURN))
+	if (isKeyPressed(VK_SPACE))
 	{
 		tempToggle = 1;
 	}

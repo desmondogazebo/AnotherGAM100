@@ -302,6 +302,9 @@ void Menu_Transition(MenuScene* Self, Engine* BaseEngine, double Delta)
 			menu_waitToggle = 0;
 			Setup_PlayerData(&BaseEngine->playerData);
 			BaseEngine->InternalSceneSystem.SetCurrentScene(&BaseEngine->InternalSceneSystem, SS_WorldView);
+			Self->InternalState = MM_MENU;
+			BaseEngine->playerData.lvl = 1;
+			BaseEngine->playerData.exp = 0;
 		}
 	}
 }
