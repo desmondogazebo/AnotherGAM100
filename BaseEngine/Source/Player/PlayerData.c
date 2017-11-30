@@ -37,7 +37,7 @@ short Gain_PlayerExp(PlayerData* player, int exp)
 // Amount of total exp to next level
 short Get_PlayerRequiredEXPForLevel(PlayerData* player)
 {
-	return player->lvl * 50;
+	return player->lvl * 25;
 }
 
 // Amount of remaining exp to next level

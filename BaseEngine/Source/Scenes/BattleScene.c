@@ -37,6 +37,7 @@ short PlayerCurrentHealth;
 
 // Enemy Data
 Enemy CurrentEnemy;
+enum Enemies CurrentEnemyType;
 int EnemyCurrentHealth;
 char ScreenLineInfoBuffer[100];
 int PlayerTurnChoiceSelector;
@@ -245,6 +246,25 @@ void BattleScene_LinkedInternalUpdate(BattleScene* Self, Engine* BaseEngine, dou
 				{
 					DidPlayerLevel = Gain_PlayerExp(&BaseEngine->playerData, CurrentEnemy.lvl * XPScalingFactor);
 					EnemyCurrentHealth = 0;
+					// Increase boss flag based on boss
+					int FlagValueForCurrentBoss = 0;
+					switch (CurrentEnemyType)
+					{
+						case Boss_DatBoiLv1:
+							FlagValueForCurrentBoss = 1;
+							break;
+						case Boss_DatBoiLv2:
+							FlagValueForCurrentBoss = 2;
+							break;
+						case Boss_DatBoiLv3:
+							FlagValueForCurrentBoss = 3;
+							break;
+						case Boss_DatBoiLv4:
+							FlagValueForCurrentBoss = 4;
+							break;
+					}
+					if (FlagValueForCurrentBoss > 0 && BaseEngine->playerData.bossFlag < FlagValueForCurrentBoss)
+						BaseEngine->playerData.bossFlag = FlagValueForCurrentBoss;
 					Self->InternalState = BS_Results;
 				}
 			}
