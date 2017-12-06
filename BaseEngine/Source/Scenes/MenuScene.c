@@ -1,7 +1,9 @@
 /******************************************************************************
-filename    MenuScene.h
+filename    MenuScene.c
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 The menu screen that occurs after the splash screen.

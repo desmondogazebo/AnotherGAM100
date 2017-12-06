@@ -2,7 +2,8 @@
 filename    Utilities.h
 author      Qingping Zheng & Rui An Ryan Lim
 DP email    qingping.zheng@digipen.edu & l.ruianryan@digipen.edu
-course      GAM100
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 This header file has helpful tools that are not associated with anything.

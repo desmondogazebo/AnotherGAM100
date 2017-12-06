@@ -1,7 +1,10 @@
 /******************************************************************************
-filename    DungeonScene.h
+filename    DungeonScene.c
 author      Rui An Ryan Lim & Qingping Zheng
 DP email    l.ruianryan@digipen.edu
+	    qingping.zheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 16 November 2017
 

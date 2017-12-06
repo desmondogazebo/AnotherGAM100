@@ -1,0 +1,24 @@
+################################################################################
+####                                                                        ####
+###                                 Credits                                  ###
+##                                                                            ##
+#   President: Claude Comair                                                   #
+#                                                                              #
+#   Instructors: Siobhan Beeman & Justin Chambers                              #
+#                                                                              #
+#   Developers (Programmers): Rui An Ryan Lim, Keith Cheng & Qingping Zheng    #
+#                                                                              #
+#                                                                              #
+#                                                                              #
+#                                 Copyrights                                   #
+#                                                                              #
+#   FMOD Sound Library. Copyright (c), Firelight Technologies Pty, Ltd         #
+#                                                                              #
+#   Copyright 2017 DigiPen (USA) Corporation                                   #
+#                                                                              #
+#                                                                              #
+#                                                                              #
+##                                                                            ##
+###                  PRESS <ENTER> TO RETURN TO THE MAIN MENU                ###
+####                                                                        ####
+################################################################################

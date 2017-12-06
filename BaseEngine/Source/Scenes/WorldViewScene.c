@@ -2,6 +2,8 @@
 filename    WorldViewScene.c
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 14 November 2017
 

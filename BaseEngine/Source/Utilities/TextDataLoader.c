@@ -2,6 +2,8 @@
 filename    TextDataLoader.c
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 This file contains utility functions to load and access the data within a text
