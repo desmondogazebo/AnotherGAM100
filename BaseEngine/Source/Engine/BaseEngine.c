@@ -1,3 +1,15 @@
+/******************************************************************************
+filename    BaseEngine.c
+author      Qingping Zheng
+DP email    qingping.zheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
+
+Brief Description:
+This file contains definitions for Engine code
+
+******************************************************************************/
+
 #include "BaseEngine.h"
 #include "..\Utilities\Utilities.h"
 #include "..\Utilities\Vector2.h"
@@ -41,7 +53,7 @@ void Engine_init(Engine* theEngine, unsigned short fps, Vector2 screenSize, Vect
 	//Constructor call
 	theEngine->g_console->Init(theEngine->g_console, screenSize, "GAM100 PROJECT");
 	//Set font of the console
-	theEngine->g_console->SetConsoleFont(theEngine->g_console, fontSize, L"Consolas");
+	theEngine->g_console->SetConsoleFont(theEngine->g_console, fontSize, L"Raster Fonts");
 
 	//Initializing variables
 	theEngine->g_quitGame = 0;

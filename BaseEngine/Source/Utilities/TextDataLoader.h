@@ -2,6 +2,8 @@
 filename    TextDataLoader.h
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 31 October 2017
 

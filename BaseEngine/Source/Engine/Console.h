@@ -2,7 +2,8 @@
 filename    Console.h
 author      Qingping Zheng
 DP email    qingping.zheng@digipen.edu
-course      GAM100
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 This header file shows an outline of the Console generation.

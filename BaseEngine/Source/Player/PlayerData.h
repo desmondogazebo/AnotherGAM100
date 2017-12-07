@@ -1,7 +1,9 @@
 /******************************************************************************
 filename	PlayerData.h
-author      Keith Cheng & Rui An Ryan Lim
-DP email	keith.cheng@digipen.edu & l.ruianryan@digipen.edu
+author      	Keith Cheng
+DP email	keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 PlayerData class used to store playerdata variables as well as various functions
