@@ -2,6 +2,8 @@
 filename    Room.c
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 Room class functons

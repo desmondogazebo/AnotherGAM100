@@ -2,6 +2,8 @@
 filename    WorldViewScene.c
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 14 November 2017
 
@@ -245,7 +247,6 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 	{
 	case WVS_ROAMING:	
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, self->currentRoom->mapToRender, self->currentRoom->Loader.NumberOfRows, self->currentRoom->Loader.NumberOfColumns, getColor(c_black, c_white));
-		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		if (self->currentRoomIndex == 4)
 		{
 			RenderDungeonIndicators(self, BaseEngine, Vec2(0,0));
@@ -253,6 +254,7 @@ void WorldViewScene_LinkedInternalRender(WorldViewScene* self, Engine* BaseEngin
 		ReplaceDungeonEntrance(self, BaseEngine);
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '&', 5, getColor(c_black, c_green));
 		BaseEngine->g_console->replace_withColor(BaseEngine->g_console, '^', '^', getColor(c_dblue, c_white));
+		BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, self->player.position, "O", getColor(c_black, c_aqua));
 		break;
 	case WVS_TRANSITION:
 		BaseEngine->g_console->map_WriteToBuffer(BaseEngine->g_console, wvs_transitionMap, wvs_transitionMapRows, wvs_transitionMapColumns, getColor(c_black, c_white));

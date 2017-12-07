@@ -2,6 +2,8 @@
 filename    MenuScene.h
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 The menu screen that occurs after the splash screen.
@@ -22,7 +24,8 @@ typedef struct MenuScene
 	enum {
 		MM_MENU = 0,
 		MM_TRANSITION,
-		MM_INSTRUCTION
+		MM_INSTRUCTION,
+		MM_CREDITS
 	}MM_States;
 	enum MM_States InternalState;
 	BaseStateManager InternalStateManager;
@@ -30,6 +33,7 @@ typedef struct MenuScene
 	enum{
 		SEL_START,
 		SEL_INSTR,
+		SEL_CRED,
 		SEL_EXIT,
 		SEL_TOTAL
 	}MENU_SELECTED;

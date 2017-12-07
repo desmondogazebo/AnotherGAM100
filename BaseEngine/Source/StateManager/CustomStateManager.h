@@ -2,6 +2,8 @@
 filename    CustomStateManager.h
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 7 November 2017
 

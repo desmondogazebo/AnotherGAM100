@@ -1,7 +1,9 @@
 /******************************************************************************
-filename    MenuScene.h
+filename    MenuScene.c
 author      Keith Cheng
 DP email    keith.cheng@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Brief Description:
 The menu screen that occurs after the splash screen.
@@ -37,6 +39,8 @@ short menu_instructionToggle = 0;
 double menu_instructionTimer = 0;
 double menu_instructionDelay = 0.01;
 TextDataLoader Instructions_Loader;
+
+TextDataLoader Credits_Loader;
 
 ///****************************************************************************
 // Private Function Prototypes
@@ -124,10 +128,12 @@ void MenuScene_LinkedInternalInitiallize(MenuScene* Self)
 	TextDataLoader_Setup(&MenuScene_Loader);
 	TextDataLoader_Setup(&GameTransition_Loader);
 	TextDataLoader_Setup(&Instructions_Loader);
+	TextDataLoader_Setup(&Credits_Loader);
 	// Load the sprites that will be used in the battle scene
 	MenuScene_Loader.LoadResource(&MenuScene_Loader, "Resources/MainMenuLogo.txt");
 	GameTransition_Loader.LoadResource(&GameTransition_Loader, "Resources/GameTransition.txt");
 	Instructions_Loader.LoadResource(&Instructions_Loader, "Resources/Information/Instructions.txt");
+	Credits_Loader.LoadResource(&Credits_Loader, "Resources/Information/Credits.txt");
 
 	// Initialize variables
 	Self->wKeyPressed = 0;
@@ -152,6 +158,10 @@ void MenuScene_LinkedInternalUpdate(MenuScene* Self, Engine* BaseEngine, double 
 		break;
 	case MM_INSTRUCTION:
 		Menu_InstructionsUpdate(Self, BaseEngine, Delta);
+		break;
+	case MM_CREDITS:
+		Menu_InstructionsUpdate(Self, BaseEngine, Delta);
+		break;
 	default: 
 		break;
 	}
@@ -170,19 +180,29 @@ void MenuScene_LinkedInternalRender(MenuScene* Self, Engine* BaseEngine)
 		{
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 13), "Start", selectedColor);
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 15), "Instructions", normalColor);
-			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Exit", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Credits", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 19), "Exit", normalColor);
 		}
 		else if (Self->selectedMenuState == SEL_EXIT)
 		{
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 13), "Start", normalColor);
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 15), "Instructions", normalColor);
-			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Exit", selectedColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Credits", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 19), "Exit", selectedColor);
 		}
 		else if (Self->selectedMenuState == SEL_INSTR)
 		{
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 13), "Start", normalColor);
 			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 15), "Instructions", selectedColor);
-			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Exit", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Credits", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 19), "Exit", normalColor);
+		}
+		else if (Self->selectedMenuState == SEL_CRED)
+		{
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 13), "Start", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 15), "Instructions", normalColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 17), "Credits", selectedColor);
+			BaseEngine->g_console->text_WriteToBuffer(BaseEngine->g_console, Vec2(20, 19), "Exit", normalColor);
 		}
 	}
 
@@ -202,6 +222,13 @@ void MenuScene_LinkedInternalRender(MenuScene* Self, Engine* BaseEngine)
 		Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_instructionCount, 0 };
 		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, Instructions_Loader.TextData, Instructions_Loader.NumberOfRows, Instructions_Loader.NumberOfColumns, getColor(c_black, c_white));
 	}
+		break;
+	case MM_CREDITS:
+	{
+		Vector2 location = { -BaseEngine->g_console->consoleSize.X + menu_instructionCount, 0 };
+		BaseEngine->g_console->sprite_WriteToBuffer(BaseEngine->g_console, location, Credits_Loader.TextData, Credits_Loader.NumberOfRows, Credits_Loader.NumberOfColumns, getColor(c_black, c_white));
+	}
+	break;
 	default:
 		break;
 	}
@@ -214,6 +241,7 @@ void MenuScene_LinkedInternalExit(MenuScene* Self)
 	MenuScene_Loader.Exit(&MenuScene_Loader);
 	GameTransition_Loader.Exit(&GameTransition_Loader);
 	Instructions_Loader.Exit(&Instructions_Loader);
+	Credits_Loader.Exit(&Credits_Loader);
 }
 
 void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
@@ -271,6 +299,10 @@ void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
 		else if (Self->selectedMenuState == SEL_INSTR)
 		{
 			Self->InternalState = MM_INSTRUCTION;
+		}
+		else if (Self->selectedMenuState == SEL_CRED)
+		{
+			Self->InternalState = MM_CREDITS;
 		}
 		BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/select.wav", &Sound_Select);
 		BaseEngine->Play_Sound(BaseEngine, Sound_Select);

@@ -1,7 +1,9 @@
 /******************************************************************************
-filename    SplashScene.h
+filename    SplashScene.c
 author      Rui An Ryan Lim
 DP email    l.ruianryan@digipen.edu
+Course: 	GAM100F17
+Copyright © 2017 DigiPen (USA) Corporation
 
 Created on 23 November 2017
 
@@ -114,7 +116,7 @@ void SplashScene_LinkedInternalUpdate(SplashScene* Self, Engine* BaseEngine, dou
 	switch (Self->InternalState)
 	{
 	case SS_Loading:
-		if (SplashScene_LoadTimer >= 1)
+		if (SplashScene_LoadTimer >= 2)
 		{
 			BaseEngine->Load_Sound(BaseEngine, "Resources/Sounds/anotherdungeon.wav", &AnotherDungeon);
 			BaseEngine->Play_Sound(BaseEngine, AnotherDungeon);

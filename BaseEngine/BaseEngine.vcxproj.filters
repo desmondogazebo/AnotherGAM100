@@ -350,5 +350,6 @@
       <Filter>Resource Files\Enemy</Filter>
     </Text>
     <Text Include="Resources\WinScreen.txt" />
+    <Text Include="Resources\Information\Credits.txt" />
   </ItemGroup>
 </Project>
