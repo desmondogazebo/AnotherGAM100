@@ -541,6 +541,10 @@ void BattleScene_LinkedInternalExit(BattleScene* Self)
 	BattleScene_Loader_WinIcon.Exit(&BattleScene_Loader_WinIcon);
 	BattleScene_Loader_LoseIcon.Exit(&BattleScene_Loader_LoseIcon);
 	//FreeEnemy(&CurrentEnemy);
+	ReleaseSound(Sound_Hit);
+	ReleaseSound(Sound_Attack);
+	ReleaseSound(Sound_Select);
+	ReleaseSound(Sound_Guard);
 }
 
 // Scene Based Functions

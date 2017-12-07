@@ -149,7 +149,7 @@ void Engine_exit(Engine* theEngine)
 	free(theEngine);
 }
 
-void Engine_LoadSound(Engine* theEngine, char* filename, FMOD_SOUND* soundToLoadTo) 
+void Engine_LoadSound(Engine* theEngine, char* filename, FMOD_SOUND** soundToLoadTo) 
 {
 	FMOD_RESULT result = FMOD_System_CreateSound(theEngine->SoundEngine, filename, FMOD_DEFAULT, 0, soundToLoadTo);
 	FMODErrorCheck(result);
@@ -160,6 +160,15 @@ void Engine_PlaySound(Engine* theEngine, FMOD_SOUND* soundToPlay)
 	FMOD_RESULT result = FMOD_System_PlaySound(theEngine->SoundEngine, soundToPlay, 0, 0, 0);
 	FMODErrorCheck(result);
 }
+
+void ReleaseSound(FMOD_SOUND* SoundToDelete)
+{
+	if (SoundToDelete == NULL)
+		return;
+	FMOD_RESULT result = FMOD_Sound_Release(SoundToDelete);
+	FMODErrorCheck(result);
+}
+
 
 /*
 Function Name: MakeEngine
@@ -178,7 +187,6 @@ Engine* MakeEngine()
 	theEngine->Shutdown = &Engine_exit;
 	theEngine->Load_Sound = &Engine_LoadSound;
 	theEngine->Play_Sound = &Engine_PlaySound;
-
 	//Returns the modified Engine entity
 	return theEngine;
 }

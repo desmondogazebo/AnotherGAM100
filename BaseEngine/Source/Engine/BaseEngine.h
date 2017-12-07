@@ -51,5 +51,6 @@ typedef struct Engine
 } Engine;
 
 Engine* MakeEngine();
+void ReleaseSound(FMOD_SOUND* SoundToDelete);
 
 #endif // _BE_H

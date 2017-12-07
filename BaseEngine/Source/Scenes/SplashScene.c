@@ -149,4 +149,5 @@ void SplashScene_LinkedInternalExit(SplashScene* Self)
 {
 	// Free the stuff initiallized in the Internal State Manager
 	SplashScene_Loader.Exit(&SplashScene_Loader);
+	ReleaseSound(AnotherDungeon);
 }

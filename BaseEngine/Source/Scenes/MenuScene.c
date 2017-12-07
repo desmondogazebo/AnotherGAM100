@@ -242,6 +242,7 @@ void MenuScene_LinkedInternalExit(MenuScene* Self)
 	GameTransition_Loader.Exit(&GameTransition_Loader);
 	Instructions_Loader.Exit(&Instructions_Loader);
 	Credits_Loader.Exit(&Credits_Loader);
+	ReleaseSound(Sound_Select);
 }
 
 void Menu_Controls(MenuScene* Self, Engine* BaseEngine)
